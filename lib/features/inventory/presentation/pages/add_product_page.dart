@@ -93,18 +93,22 @@ class _AddProductPageState extends State<AddProductPage> {
                                   final newProduct = Product(
                                     id: 0,
                                     // Assuming 0 for a new product, or auto-incremented by DB
-                                    name: _nameController.text,
-                                    note: _noteController.text,
+                                    name: _nameController.text.trim(),
+                                    note: _noteController.text.trim(),
                                     purchasePrice:
-                                        double.tryParse(_costController.text) ??
+                                        double.tryParse(
+                                          _costController.text.trim(),
+                                        ) ??
                                         0.0,
                                     sellingPrice:
                                         double.tryParse(
-                                          _priceController.text,
+                                          _priceController.text.trim(),
                                         ) ??
                                         0.0,
                                     currentInventory:
-                                        int.tryParse(_stockController.text) ??
+                                        int.tryParse(
+                                          _stockController.text.trim(),
+                                        ) ??
                                         0,
                                     createdAt: DateTime.now(),
                                   );

@@ -16,4 +16,16 @@ class Product {
     required this.sellingPrice,
     this.note = "",
   });
+
+  @override
+  String toString() {
+    // TODO: implement toString
+    return 'Product: '
+        'id: $id, '
+        'name: "$name", '
+        'note: "$note"'
+        'currentInventory: $currentInventory, '
+        'purchasePrice: $purchasePrice, '
+        'sellingPrice: $sellingPrice';
+  }
 }

@@ -42,6 +42,10 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
 
     on<GetProductByIdEvent>(_onGetProductByIdEvent);
 
+    on<EditProductEvent>(_onEditProductEvent);
+
+    on<UpdateProductEvent>(_onUpdateProductEvent);
+
     on<DeleteProductEvent>(_onDeleteProductEvent);
   }
 
@@ -85,6 +89,29 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
       (error) => emit(InventoryFailure(message: error.message)),
       (product) => emit(InventoryGotProductById(product: product)),
     );
+  }
+
+  // this method is used to put the app in the editing sate
+  void _onEditProductEvent(
+    EditProductEvent event,
+    Emitter<InventoryState> emit,
+  ) async {
+    emit(InventoryEditProduct(product: event.product));
+    OPrint.c('App in editing state!');
+  }
+
+  void _onUpdateProductEvent(
+    UpdateProductEvent event,
+    Emitter<InventoryState> emit,
+  ) async {
+    final res = await _updateProduct(event.product);
+
+    res.fold((error) => emit(InventoryFailure(message: error.message)), (
+      updatedProduct,
+    ) {
+      emit(InventorySuccess());
+      emit(InventoryGotProductById(product: updatedProduct));
+    });
   }
 
   void _onDeleteProductEvent(

@@ -3,6 +3,7 @@ import 'package:shagaf_ledger/core/common/colored_prints.dart';
 import 'package:shagaf_ledger/core/common/widgets/custom_primary_button.dart';
 import 'package:shagaf_ledger/features/inventory/domain/entities/product.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/widgets/delete_product_button.dart';
+import 'package:shagaf_ledger/features/inventory/presentation/widgets/edit_product_button.dart';
 
 class ProductDetailsScreen extends StatelessWidget {
   final Product product;
@@ -71,17 +72,7 @@ class ProductDetailsScreen extends StatelessWidget {
 
           SizedBox(height: 20),
 
-          SizedBox(
-            width: double.infinity,
-            child: CustomPrimaryButton(
-              text: "تعديل المنتج",
-              onPressed: () {
-                // Navigate to Edit page
-              },
-            ),
-          ),
-
-          DeleteProductButton(product: product),
+          EditProductButton(product: product),
         ],
       ),
     );

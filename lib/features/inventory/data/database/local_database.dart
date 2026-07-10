@@ -1,3 +1,4 @@
+import 'package:shagaf_ledger/core/common/colored_prints.dart';
 import 'package:shagaf_ledger/core/common/errors/database_exception.dart';
 import 'package:shagaf_ledger/core/common/errors/unknown_exception.dart';
 import 'package:shagaf_ledger/features/inventory/data/models/product_model.dart';
@@ -50,6 +51,59 @@ class LocalDatabase {
   }
 
   // updateProduct
+  Future<ProductModel> updateProduct({
+    required ProductModel productModel,
+  }) async {
+    return _try<ProductModel>(() async {
+      OPrint.g('Updating product: ${productModel}');
+
+      final updateRes = await localDB.update(
+        productsTable,
+        productModel.toMap(update: true),
+        where: 'id = ?',
+        whereArgs: [productModel.id],
+      );
+
+      OPrint.g('Update affected $updateRes row(s).');
+
+      final fetchRes = await localDB.query(
+        productsTable,
+        where: "id = ?",
+        whereArgs: [productModel.id],
+      );
+
+      if (fetchRes.isEmpty) {
+        OPrint.r('ERROR: No product found with ID ${productModel.id}');
+        throw Exception("Update verification failed.");
+      }
+
+      // Using the new toString() implementation
+      final updatedProduct = ProductModel.fromMap(fetchRes.first);
+      OPrint.g('Successfully retrieved updated product: $updatedProduct');
+
+      return updatedProduct;
+    });
+  }
+
+  // Future<ProductModel> updateProduct({
+  //   required ProductModel productModel,
+  // }) async {
+  //   return _try<ProductModel>(() async {
+  //     final updateRes = await localDB.update(
+  //       productsTable,
+  //       productModel.toMap(update: true),
+  //       where: 'id = ?',
+  //       whereArgs: [productModel.id],
+  //     );
+  //     final fetchRes = await localDB.query(
+  //       productsTable,
+  //       where: "id = ?",
+  //       whereArgs: [productModel.id],
+  //     );
+  //
+  //     return ProductModel.fromMap(fetchRes.first);
+  //   });
+  // }
 
   // deleteProduct
   Future<void> deleteProduct({required int productId}) async {

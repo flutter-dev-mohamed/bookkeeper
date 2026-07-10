@@ -38,8 +38,10 @@ class InventoryRepositoryImp implements InventoryRepository {
 
   @override
   Future<Either<Failure, Product>> updateProduct({required Product product}) {
-    // TODO: implement updateProduct
-    throw UnimplementedError();
+    final ProductModel productModel = ProductModel.fromProduct(product);
+    return _try<Product>(
+      () async => await localDatabase.updateProduct(productModel: productModel),
+    );
   }
 
   @override

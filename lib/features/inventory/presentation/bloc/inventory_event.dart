@@ -17,6 +17,14 @@ class GetProductByIdEvent extends InventoryEvent {
   GetProductByIdEvent({required this.productId});
 }
 
+// this event is used to put the app in the editing state only
+class EditProductEvent extends InventoryEvent {
+  final Product product;
+
+  EditProductEvent({required this.product});
+}
+
+// this event is used to actually update the product info
 class UpdateProductEvent extends InventoryEvent {
   final Product product;
 

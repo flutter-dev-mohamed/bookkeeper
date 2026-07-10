@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 
 class CustomTextField extends StatelessWidget {
   final String? label;
+  final String? hintText;
+  final Widget? hint;
+  final EdgeInsetsGeometry? contentPadding;
+  final bool? alignLabelWithHint;
+  final bool? isDense;
   final TextEditingController? controller;
   final bool isObscure;
   final TextInputType keyboardType;
@@ -14,6 +19,11 @@ class CustomTextField extends StatelessWidget {
     this.isObscure = false,
     this.keyboardType = TextInputType.text,
     this.onChanged,
+    this.hintText,
+    this.hint,
+    this.contentPadding,
+    this.alignLabelWithHint,
+    this.isDense,
   });
 
   @override
@@ -27,8 +37,12 @@ class CustomTextField extends StatelessWidget {
       // textAlign: TextAlign.right,
       decoration: InputDecoration(
         labelText: label,
+        hintText: hintText,
+        hint: hint,
+        isDense: isDense,
+        contentPadding: contentPadding,
         // Align label to the right
-        alignLabelWithHint: true,
+        alignLabelWithHint: alignLabelWithHint,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),

@@ -66,15 +66,18 @@ class _InventoryPageState extends State<InventoryPage> {
         ),
 
         // -----------------------------------------------------------------------body
-        body: BlocBuilder<InventoryBloc, InventoryState>(
-          builder: (context, state) {
+        body: BlocConsumer<InventoryBloc, InventoryState>(
+          listener: (context, state) {
             if (state is InventorySuccess) {
               // I only emit InventorySuccess if we deleted a product so reload!
+              OPrint.g('InventoryPage: Should reload products list!.');
               context.read<InventoryBloc>().add(LoadProductsEvent());
             }
             if (state is InventoryProductsLoaded) {
               products = state.products;
             }
+          },
+          builder: (context, state) {
             return Padding(
               padding: const EdgeInsets.all(8.0),
               child: ListView.builder(

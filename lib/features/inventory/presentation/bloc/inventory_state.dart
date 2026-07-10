@@ -32,3 +32,9 @@ final class InventoryFailure extends InventoryState {
 
   InventoryFailure({required this.message});
 }
+
+final class InventoryEditProduct extends InventoryState {
+  final Product product;
+
+  InventoryEditProduct({required this.product});
+}

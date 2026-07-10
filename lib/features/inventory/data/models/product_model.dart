@@ -20,14 +20,15 @@ class ProductModel extends Product {
   // created_at TEXT
   // toIso8601String()
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toMap({bool update = false}) {
     return {
       "name": name,
       "note": note,
       "selling_price": sellingPrice,
       "purchase_price": purchasePrice,
       "current_inventory": currentInventory,
-      "created_at": createdAt.toIso8601String(),
+      // don't add the created_at in when updating
+      if (!update) "created_at": createdAt.toIso8601String(),
     };
   }
 
@@ -54,5 +55,17 @@ class ProductModel extends Product {
       purchasePrice: product.purchasePrice,
       sellingPrice: product.sellingPrice,
     );
+  }
+
+  @override
+  String toString() {
+    return 'ProductModel('
+        'id: $id, '
+        'name: "$name", '
+        'note: "$note"'
+        'currentInventory: $currentInventory, '
+        'purchasePrice: $purchasePrice, '
+        'sellingPrice: $sellingPrice'
+        ')';
   }
 }
