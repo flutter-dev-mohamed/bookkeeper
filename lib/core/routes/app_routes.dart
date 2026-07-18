@@ -16,13 +16,13 @@ class AppRoutes {
   AppRoutes._internal();
 
   GoRouter goRouter = GoRouter(
-    initialLocation: "/inventory",
+    initialLocation: "/orders",
     routes: [
       // you should have:
       // in a shell route
       ShellRoute(
         builder: (context, state, child) {
-          final int index = state.matchedLocation == '/orders' ? 0 : 1;
+          final int index = state.matchedLocation == '/orders' ? 1 : 0;
           return ShellRouteWidget(index: index);
         },
         routes: [

@@ -13,27 +13,29 @@ class ShellRouteWidget extends StatefulWidget {
 }
 
 class _ShellRouteWidgetState extends State<ShellRouteWidget> {
-  // Define your persistent list of pages
-  final List<Widget> _pages = [const OrdersPage(), const InventoryPage()];
+  final List<Widget> _pages = [const InventoryPage(), const OrdersPage()];
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // IndexedStack maintains the state of all pages in the list
-      body: IndexedStack(index: widget.index, children: _pages),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: widget.index,
-        destinations: const [
-          NavigationDestination(icon: Icon(Icons.list), label: 'Orders'),
-          NavigationDestination(
-            icon: Icon(Icons.inventory),
-            label: 'Inventory',
-          ),
-        ],
-        onDestinationSelected: (index) {
-          if (index == 0) context.go('/orders');
-          if (index == 1) context.go('/inventory');
-        },
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
+        // IndexedStack maintains the state of all pages in the list
+        body: IndexedStack(index: widget.index, children: _pages),
+        bottomNavigationBar: NavigationBar(
+          selectedIndex: widget.index,
+          destinations: const [
+            NavigationDestination(
+              icon: Icon(Icons.inventory),
+              label: 'Inventory',
+            ),
+            NavigationDestination(icon: Icon(Icons.list), label: 'Orders'),
+          ],
+          onDestinationSelected: (index) {
+            if (index == 1) context.go('/orders');
+            if (index == 0) context.go('/inventory');
+          },
+        ),
       ),
     );
   }

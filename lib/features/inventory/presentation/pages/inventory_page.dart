@@ -6,7 +6,7 @@ import 'package:shagaf_ledger/core/common/colored_prints.dart';
 import 'package:shagaf_ledger/features/inventory/domain/entities/product.dart';
 import 'package:shagaf_ledger/core/common/widgets/custom_primary_button.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/bloc/inventory_bloc/inventory_bloc.dart';
-import 'package:shagaf_ledger/features/inventory/presentation/widgets/product_tile.dart';
+import 'package:shagaf_ledger/features/inventory/presentation/widgets/inventory_widgets/product_tile.dart';
 
 class InventoryPage extends StatefulWidget {
   const InventoryPage({super.key});
