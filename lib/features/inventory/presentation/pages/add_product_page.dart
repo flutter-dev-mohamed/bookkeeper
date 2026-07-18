@@ -33,17 +33,14 @@ class _AddProductPageState extends State<AddProductPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            'أضف منتج',
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-          centerTitle: true,
-        ),
-        body: Directionality(
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('أضف منتج', style: TextStyle(fontWeight: FontWeight.bold)),
+        centerTitle: true,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Directionality(
           textDirection: TextDirection.rtl,
           child: Column(
             spacing: 12,

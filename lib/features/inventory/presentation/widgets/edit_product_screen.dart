@@ -51,6 +51,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
         children: [
           const SizedBox(height: 20),
           Card(
+            color: Colors.grey.shade200,
             elevation: 2,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
@@ -120,7 +121,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
       decoration: InputDecoration(
         isDense: true,
         contentPadding: EdgeInsets.all(6),
-        hintText: 'ملاحظة',
+        hintText: 'إضافة ملاحظة',
       ),
     );
   }

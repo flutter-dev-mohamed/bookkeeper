@@ -20,7 +20,7 @@ class ProductTile extends StatelessWidget {
         );
       },
       child: Card(
-        color: Colors.grey.shade300,
+        color: Colors.grey.shade200,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
