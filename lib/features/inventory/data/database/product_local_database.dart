@@ -4,11 +4,11 @@ import 'package:shagaf_ledger/core/common/errors/unknown_exception.dart';
 import 'package:shagaf_ledger/features/inventory/data/models/product_model.dart';
 import 'package:sqflite/sqflite.dart';
 
-class LocalDatabase {
+class ProductLocalDatabase {
   final Database localDB;
   static const String productsTable = "products";
 
-  LocalDatabase({required this.localDB});
+  ProductLocalDatabase({required this.localDB});
 
   // getProducts
   Future<List<ProductModel>> loadProducts() async {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shagaf_ledger/core/routes/app_routes.dart';
-import 'package:shagaf_ledger/features/inventory/presentation/bloc/inventory_bloc.dart';
+import 'package:shagaf_ledger/features/inventory/presentation/bloc/inventory_bloc/inventory_bloc.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/pages/inventory_page.dart';
 import 'package:shagaf_ledger/initDependencies/init_dependencies.dart';
 
