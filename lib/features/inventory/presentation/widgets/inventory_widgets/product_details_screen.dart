@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:shagaf_ledger/core/common/colored_prints.dart';
 import 'package:shagaf_ledger/core/common/widgets/custom_primary_button.dart';
 import 'package:shagaf_ledger/features/inventory/domain/entities/product.dart';
-import 'package:shagaf_ledger/features/inventory/presentation/widgets/delete_product_button.dart';
-import 'package:shagaf_ledger/features/inventory/presentation/widgets/edit_product_button.dart';
+import 'package:shagaf_ledger/features/inventory/presentation/widgets/inventory_widgets/delete_product_button.dart';
+import 'package:shagaf_ledger/features/inventory/presentation/widgets/inventory_widgets/edit_product_button.dart';
 
 class ProductDetailsScreen extends StatelessWidget {
   final Product product;
