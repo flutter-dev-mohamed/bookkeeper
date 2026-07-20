@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shagaf_ledger/core/assets/theme/lib/theme.dart';
+import 'package:shagaf_ledger/core/assets/theme/lib/util.dart';
 import 'package:shagaf_ledger/core/routes/app_routes.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/bloc/inventory_bloc/inventory_bloc.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/pages/inventory_page.dart';
@@ -25,12 +27,18 @@ class ShagafLedger extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    TextTheme textTheme = createTextTheme(
+      context,
+      "JetBrains Mono",
+      "JetBrains Mono",
+    );
+    MaterialTheme theme = MaterialTheme(textTheme);
+
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
-      ),
+      theme: theme.light(),
+      darkTheme: theme.dark(),
+      themeMode: ThemeMode.system,
       routerConfig: AppRoutes().goRouter,
     );
   }
