@@ -51,7 +51,6 @@ class _EditProductScreenState extends State<EditProductScreen> {
         children: [
           const SizedBox(height: 20),
           Card(
-            color: Colors.grey.shade200,
             elevation: 2,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
