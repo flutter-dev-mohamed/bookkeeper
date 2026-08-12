@@ -18,6 +18,7 @@ class CustomTextField extends StatefulWidget {
   final int? maxLines;
   final bool unfocusOnTapOutSide;
   final void Function(PointerDownEvent)? onTapOutside;
+  final String? suffixText;
 
   const CustomTextField({
     super.key,
@@ -37,6 +38,7 @@ class CustomTextField extends StatefulWidget {
     this.maxLines,
     this.onTapOutside,
     this.unfocusOnTapOutSide = false,
+    this.suffixText,
   });
 
   @override
@@ -80,6 +82,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
       // Ensures the text typed inside follows RTL flow
       // textAlign: TextAlign.right,
       decoration: InputDecoration(
+        suffixText: widget.suffixText,
         labelText: widget.label,
         hintText: widget.hintText,
         hint: widget.hint,

@@ -7,7 +7,7 @@ import 'package:shagaf_ledger/features/orders/domain/entities/order_item.dart';
 import 'package:shagaf_ledger/features/orders/presentation/widgets/order_item_dropdown_menu.dart';
 import 'package:shagaf_ledger/features/orders/presentation/widgets/quantity_controls.dart';
 
-class SelectedOrderItemTile extends StatefulWidget {
+class SelectedOrderItemTile extends StatelessWidget {
   final OrderItem initialItem;
   final List<Product> availableProducts;
   final int index;
@@ -32,31 +32,22 @@ class SelectedOrderItemTile extends StatefulWidget {
   });
 
   @override
-  State<SelectedOrderItemTile> createState() => _SelectedOrderItemTileState();
-}
-
-class _SelectedOrderItemTileState extends State<SelectedOrderItemTile> {
-  @override
   Widget build(BuildContext context) {
     // the intiItem for this order item
     final initItem = products.firstWhere(
-      (product) => product.id == widget.initialItem.productId,
+      (product) => product.id == initialItem.productId,
     );
-    OPrint.g('build_2 was build');
 
     // TODO: fix the slidable
     return Slidable(
-      key: Key(widget.index.toString()),
-
+      key: Key(index.toString()),
       startActionPane: ActionPane(
         motion: const DrawerMotion(),
-
         extentRatio: 0.25,
+
         children: [
           SlidableAction(
-            onPressed: (_) {
-              widget.onDelete(widget.index);
-            },
+            onPressed: (_) => onDelete(index),
             backgroundColor: Theme.of(context).colorScheme.errorContainer,
             foregroundColor: Theme.of(context).colorScheme.onErrorContainer,
             icon: Icons.delete_rounded,
@@ -66,6 +57,7 @@ class _SelectedOrderItemTileState extends State<SelectedOrderItemTile> {
           ),
         ],
       ),
+
       child: Row(
         children: [
           Expanded(
@@ -74,25 +66,22 @@ class _SelectedOrderItemTileState extends State<SelectedOrderItemTile> {
                 OPrint.by(
                   'you have changed the selected item to: ${newProduct?.name}',
                 );
-
-                widget.onChangedSelection(
+                onChangedSelection(
                   oldProduct: initItem,
                   newProduct: newProduct!,
-                  index: widget.index,
+                  index: index,
                 );
-
-                // update the quantity
-                //
               },
               initialItem: initItem,
-              availableProducts: [initItem, ...widget.availableProducts],
+              availableProducts: [initItem, ...availableProducts],
             ),
           ),
+
           QuantityControls(
             maxInventory: initItem.currentInventory,
-            quantity: widget.initialItem.quantity,
-            index: widget.index,
-            onQuantityChanged: widget.onQuantityChanged,
+            quantity: initialItem.quantity,
+            index: index,
+            onQuantityChanged: onQuantityChanged,
           ),
         ],
       ),

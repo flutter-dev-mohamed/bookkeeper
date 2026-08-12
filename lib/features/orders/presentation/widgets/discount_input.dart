@@ -1,6 +1,7 @@
 import 'package:animated_segmented_tab_control_plus/animated_segmented_tab_control_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:shagaf_ledger/core/common/colored_prints.dart';
+import 'package:shagaf_ledger/core/common/widgets/custom_text_field.dart';
 import 'package:shagaf_ledger/features/orders/domain/entities/order_item.dart';
 
 enum DiscountType { amount, percentage }
@@ -49,6 +50,7 @@ class _DiscountInputState extends State<DiscountInput>
     _tabController.addListener(_onTabChanged);
   }
 
+  //  ──────────────────────────────────────────────────────────────────────────  onTapChanged
   void _onTabChanged() {
     if (_tabController.indexIsChanging) return;
 
@@ -59,6 +61,7 @@ class _DiscountInputState extends State<DiscountInput>
     _notifyParent();
   }
 
+  //  ──────────────────────────────────────────────────────────────────────────  onValueChanged
   void _onValueChanged(String value) {
     final parsedValue = double.tryParse(value) ?? 0;
 
@@ -113,15 +116,12 @@ class _DiscountInputState extends State<DiscountInput>
 
         const SizedBox(height: 12),
 
-        TextField(
+        CustomTextField(
           controller: _textController,
-          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          keyboardType: TextInputType.numberWithOptions(decimal: true),
           onChanged: _onValueChanged,
-          decoration: InputDecoration(
-            hintText: isPercentage ? 'نسبة الخصم' : 'مبلغ الخصم',
-            suffixText: isPercentage ? '%' : 'د.ع',
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
-          ),
+          hintText: isPercentage ? 'نسبة الخصم' : 'مبلغ الخصم',
+          suffixText: isPercentage ? '%' : 'د.ع',
         ),
       ],
     );

@@ -8,11 +8,13 @@ import 'package:shagaf_ledger/features/orders/presentation/widgets/discount_inpu
 class OrderSummarySheet extends StatefulWidget {
   final VoidCallback onContinue;
   final List<OrderItem> orderItems;
+  final void Function(String) onNoteChanged;
 
   const OrderSummarySheet({
     super.key,
     required this.onContinue,
     required this.orderItems,
+    required this.onNoteChanged,
   });
 
   @override
@@ -20,8 +22,21 @@ class OrderSummarySheet extends StatefulWidget {
 }
 
 class _OrderSummarySheetState extends State<OrderSummarySheet> {
+  late final TextEditingController _noteController;
   DiscountType _discountType = DiscountType.amount;
   double _discountValue = 0;
+
+  @override
+  void initState() {
+    _noteController = TextEditingController();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _noteController.dispose();
+    super.dispose();
+  }
 
   String _calculateTotal({bool addDiscount = true}) {
     double total = 0;
@@ -52,12 +67,15 @@ class _OrderSummarySheetState extends State<OrderSummarySheet> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.orderItems.isEmpty) {
+      return SizedBox.shrink();
+    }
     return DraggableScrollableSheet(
       initialChildSize: 0.13,
       minChildSize: 0.13,
       maxChildSize: 0.85,
       snap: true,
-      snapSizes: const [0.13, 0.45, 0.85],
+      snapSizes: const [0.13, 0.85],
 
       builder: (context, scrollController) {
         return Container(
@@ -111,15 +129,16 @@ class _OrderSummarySheetState extends State<OrderSummarySheet> {
 
                           TextSpan(text: " "),
 
-                          TextSpan(
-                            text: _calculateTotal(addDiscount: false),
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.secondary,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 24,
-                              decoration: TextDecoration.lineThrough,
+                          if (_discountValue > 0)
+                            TextSpan(
+                              text: _calculateTotal(addDiscount: false),
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.secondary,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 24,
+                                decoration: TextDecoration.lineThrough,
+                              ),
                             ),
-                          ),
                         ],
                       ),
                     ),
@@ -161,6 +180,7 @@ class _OrderSummarySheetState extends State<OrderSummarySheet> {
               const SizedBox(height: 10),
               //  ──────────────────────────────────────────────────────────────  note
               CustomTextField(
+                controller: _noteController,
                 keyboardType: TextInputType.multiline,
                 maxLines: 5,
                 unfocusOnTapOutSide: true,
@@ -170,6 +190,7 @@ class _OrderSummarySheetState extends State<OrderSummarySheet> {
                     color: Theme.of(context).colorScheme.tertiary,
                   ),
                 ),
+                onChanged: widget.onNoteChanged,
               ),
             ],
           ),
