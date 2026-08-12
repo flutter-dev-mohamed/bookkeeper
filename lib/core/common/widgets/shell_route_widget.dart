@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/pages/inventory_page.dart';
-import 'package:shagaf_ledger/features/inventory/presentation/pages/orders_page.dart';
+import 'package:shagaf_ledger/features/orders/presentation/pages/orders_page.dart';
 
 class ShellRouteWidget extends StatefulWidget {
   final int index;

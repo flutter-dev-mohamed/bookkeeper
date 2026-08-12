@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shagaf_ledger/core/common/app_consts.dart';
 import 'package:shagaf_ledger/core/common/widgets/shell_route_widget.dart';
-import 'package:shagaf_ledger/features/inventory/domain/entities/product.dart';
+import 'package:shagaf_ledger/core/common/entities/product.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/pages/add_product_page.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/pages/inventory_page.dart';
-import 'package:shagaf_ledger/features/inventory/presentation/pages/orders_page.dart';
+import 'package:shagaf_ledger/features/orders/presentation/pages/add_order_page.dart';
+import 'package:shagaf_ledger/features/orders/presentation/pages/orders_page.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/pages/product_details_page.dart';
 
 class AppRoutes {
@@ -16,7 +17,7 @@ class AppRoutes {
   AppRoutes._internal();
 
   GoRouter goRouter = GoRouter(
-    initialLocation: "/orders",
+    initialLocation: "/orders/addNewOrder",
     routes: [
       // you should have:
       // in a shell route
@@ -60,6 +61,13 @@ class AppRoutes {
           final id = state.pathParameters['productId'];
           return ProductDetailsPage(productId: int.parse(id ?? ''));
         },
+      ),
+
+      // add order
+      GoRoute(
+        path: "/orders/addNewOrder",
+        name: AppConsts().addNewOrderPage,
+        builder: (context, state) => AddOrderPage(),
       ),
     ],
   );

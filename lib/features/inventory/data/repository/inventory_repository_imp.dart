@@ -3,7 +3,7 @@ import 'package:shagaf_ledger/core/common/errors/database_exception.dart';
 import 'package:shagaf_ledger/core/common/errors/failure.dart';
 import 'package:shagaf_ledger/features/inventory/data/database/product_local_database.dart';
 import 'package:shagaf_ledger/features/inventory/data/models/product_model.dart';
-import 'package:shagaf_ledger/features/inventory/domain/entities/product.dart';
+import 'package:shagaf_ledger/core/common/entities/product.dart';
 import 'package:shagaf_ledger/features/inventory/domain/repository/inventory_repository.dart';
 
 class InventoryRepositoryImp implements InventoryRepository {
@@ -51,6 +51,19 @@ class InventoryRepositoryImp implements InventoryRepository {
     return await _try<void>(
       () async =>
           await productLocalDatabase.deleteProduct(productId: productId),
+    );
+  }
+
+  @override
+  Future<Either<Failure, void>> decrementInventory({
+    required int productId,
+    required int quantity,
+  }) async {
+    return await _try(
+      () => productLocalDatabase.decrementProductInventory(
+        productId: productId,
+        quantity: quantity,
+      ),
     );
   }
 

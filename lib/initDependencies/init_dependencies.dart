@@ -7,7 +7,7 @@ import 'package:shagaf_ledger/features/inventory/domain/use_cases/delete_product
 import 'package:shagaf_ledger/features/inventory/domain/use_cases/get_product_by_id.dart';
 import 'package:shagaf_ledger/features/inventory/domain/use_cases/get_products.dart';
 import 'package:shagaf_ledger/features/inventory/domain/use_cases/update_product.dart';
-import 'package:shagaf_ledger/features/inventory/presentation/bloc/inventory_bloc/inventory_bloc.dart';
+import 'package:shagaf_ledger/features/inventory/presentation/bloc/inventory_bloc.dart';
 import 'package:shagaf_ledger/initDependencies/init_local_database.dart';
 import 'package:sqflite/sqflite.dart';
 

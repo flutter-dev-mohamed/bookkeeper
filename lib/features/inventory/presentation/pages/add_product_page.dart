@@ -4,8 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:shagaf_ledger/core/common/colored_prints.dart';
 import 'package:shagaf_ledger/core/common/widgets/custom_text_field.dart';
 import 'package:shagaf_ledger/core/common/widgets/custom_primary_button.dart';
-import 'package:shagaf_ledger/features/inventory/domain/entities/product.dart';
-import 'package:shagaf_ledger/features/inventory/presentation/bloc/inventory_bloc/inventory_bloc.dart';
+import 'package:shagaf_ledger/core/common/entities/product.dart';
+import 'package:shagaf_ledger/features/inventory/presentation/bloc/inventory_bloc.dart';
 
 class AddProductPage extends StatefulWidget {
   const AddProductPage({super.key});

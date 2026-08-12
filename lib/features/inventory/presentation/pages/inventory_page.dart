@@ -3,10 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shagaf_ledger/core/common/app_consts.dart';
 import 'package:shagaf_ledger/core/common/colored_prints.dart';
-import 'package:shagaf_ledger/features/inventory/domain/entities/product.dart';
+import 'package:shagaf_ledger/core/common/product_list.dart';
+import 'package:shagaf_ledger/core/common/entities/product.dart';
 import 'package:shagaf_ledger/core/common/widgets/custom_primary_button.dart';
-import 'package:shagaf_ledger/features/inventory/presentation/bloc/inventory_bloc/inventory_bloc.dart';
-import 'package:shagaf_ledger/features/inventory/presentation/widgets/inventory_widgets/product_tile.dart';
+import 'package:shagaf_ledger/features/inventory/presentation/bloc/inventory_bloc.dart';
+import 'package:shagaf_ledger/features/inventory/presentation/widgets/product_tile.dart';
 
 class InventoryPage extends StatefulWidget {
   const InventoryPage({super.key});
@@ -16,33 +17,6 @@ class InventoryPage extends StatefulWidget {
 }
 
 class _InventoryPageState extends State<InventoryPage> {
-  List<Product> products = [
-    Product(
-      id: 1,
-      name: 'Atomic Habits',
-      createdAt: DateTime.now(),
-      currentInventory: 13,
-      purchasePrice: 12.3,
-      sellingPrice: 20,
-    ),
-    Product(
-      id: 2,
-      name: 'Harry Potter',
-      createdAt: DateTime.now(),
-      currentInventory: 13,
-      purchasePrice: 12.3,
-      sellingPrice: 12,
-    ),
-    Product(
-      id: 3,
-      name: 'Clean Code',
-      createdAt: DateTime.now(),
-      currentInventory: 13,
-      purchasePrice: 12.3,
-      sellingPrice: 7,
-    ),
-  ];
-
   @override
   void initState() {
     super.initState();

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shagaf_ledger/core/common/app_consts.dart';
 import 'package:shagaf_ledger/core/common/colored_prints.dart';
-import 'package:shagaf_ledger/features/inventory/domain/entities/product.dart';
+import 'package:shagaf_ledger/core/common/entities/product.dart';
 
 class ProductTile extends StatelessWidget {
   final Product product;
