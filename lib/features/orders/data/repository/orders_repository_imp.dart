@@ -6,6 +6,7 @@ import 'package:shagaf_ledger/features/orders/data/database/orders_database.dart
 import 'package:shagaf_ledger/features/orders/data/models/order_entity_model.dart';
 import 'package:shagaf_ledger/features/orders/data/models/order_item_model.dart';
 import 'package:shagaf_ledger/features/orders/domain/entities/order_entity.dart';
+import 'package:shagaf_ledger/features/orders/domain/entities/order_item.dart';
 import 'package:shagaf_ledger/features/orders/domain/repository/orders_repository.dart';
 
 class OrdersRepositoryImp implements OrdersRepository {
@@ -25,6 +26,7 @@ class OrdersRepositoryImp implements OrdersRepository {
   @override
   Future<Either<Failure, void>> createOrder({
     required OrderEntity order,
+    required List<OrderItem> items,
   }) async {
     return await tryRepo<void>(() async {
       final OrderEntityModel orderModel = OrderEntityModel.fromOrderEntity(
@@ -35,7 +37,7 @@ class OrdersRepositoryImp implements OrdersRepository {
         orderMap: orderModel.toMap(),
       );
 
-      orderModel.items.map((item) async {
+      items.map((item) async {
         final itemModel = OrderItemModel.fromEntity(item);
 
         await orderItemsDatabase.insertOrderItem(
