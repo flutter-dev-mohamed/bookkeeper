@@ -1,6 +1,7 @@
 import 'package:shagaf_ledger/core/common/colored_prints.dart';
 import 'package:shagaf_ledger/core/common/errors/database_exception.dart';
 import 'package:shagaf_ledger/core/common/errors/unknown_exception.dart';
+import 'package:shagaf_ledger/core/common/functions/try_db.dart';
 import 'package:shagaf_ledger/features/inventory/data/models/product_model.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -12,7 +13,7 @@ class ProductLocalDatabase {
 
   // getProducts
   Future<List<ProductModel>> loadProducts() async {
-    return _try<List<ProductModel>>(() async {
+    return tryDB<List<ProductModel>>(() async {
       final productsMapList = await localDB.query(productsTable);
 
       final List<ProductModel> productModelList = productsMapList.map((
@@ -27,7 +28,7 @@ class ProductLocalDatabase {
 
   // addProduct
   Future<int> addProduct({required ProductModel productModel}) async {
-    return _try<int>(() async {
+    return tryDB<int>(() async {
       // this returns the raw id or the productId
       return await localDB.insert(productsTable, productModel.toMap());
     });
@@ -35,7 +36,7 @@ class ProductLocalDatabase {
 
   // getProductById
   Future<ProductModel> getProductById({required int productId}) async {
-    return _try<ProductModel>(() async {
+    return tryDB<ProductModel>(() async {
       final List<Map<String, dynamic>> result = await localDB.query(
         productsTable,
         where: 'id = ?',
@@ -54,7 +55,7 @@ class ProductLocalDatabase {
   Future<ProductModel> updateProduct({
     required ProductModel productModel,
   }) async {
-    return _try<ProductModel>(() async {
+    return tryDB<ProductModel>(() async {
       OPrint.g('Updating product: ${productModel}');
 
       final updateRes = await localDB.update(
@@ -88,7 +89,7 @@ class ProductLocalDatabase {
   // Future<ProductModel> updateProduct({
   //   required ProductModel productModel,
   // }) async {
-  //   return _try<ProductModel>(() async {
+  //   return tryDB<ProductModel>(() async {
   //     final updateRes = await localDB.update(
   //       productsTable,
   //       productModel.toMap(update: true),
@@ -107,7 +108,7 @@ class ProductLocalDatabase {
 
   // deleteProduct
   Future<void> deleteProduct({required int productId}) async {
-    return _try<void>(() async {
+    return tryDB<void>(() async {
       final res = await localDB.delete(
         productsTable,
         where: 'id = ?',
@@ -120,22 +121,12 @@ class ProductLocalDatabase {
     required int productId,
     required int quantity,
   }) async {
-    return _try(() async {
+    return tryDB(() async {
       final row = await localDB.query(productsTable, where: 'id = ?');
       final currentInventory = row.first['current_inventory'] as int;
       final res = await localDB.update(productsTable, {
         "current_inventory": currentInventory - quantity,
       });
     });
-  }
-
-  Future<T> _try<T>(Future<T> Function() action) async {
-    try {
-      return action();
-    } on DatabaseException catch (e) {
-      throw LocalDatabaseException(message: e.toString());
-    } catch (e) {
-      throw UnknownException(message: e.toString());
-    }
   }
 }

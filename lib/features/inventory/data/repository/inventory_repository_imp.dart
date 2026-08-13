@@ -1,6 +1,7 @@
 import 'package:fpdart/src/either.dart';
 import 'package:shagaf_ledger/core/common/errors/database_exception.dart';
 import 'package:shagaf_ledger/core/common/errors/failure.dart';
+import 'package:shagaf_ledger/core/common/functions/try_repo.dart';
 import 'package:shagaf_ledger/features/inventory/data/database/product_local_database.dart';
 import 'package:shagaf_ledger/features/inventory/data/models/product_model.dart';
 import 'package:shagaf_ledger/core/common/entities/product.dart';
@@ -13,14 +14,14 @@ class InventoryRepositoryImp implements InventoryRepository {
 
   @override
   Future<Either<Failure, List<Product>>> getProducts() async {
-    return await _try<List<Product>>(
+    return await tryRepo<List<Product>>(
       () async => await productLocalDatabase.loadProducts(),
     );
   }
 
   @override
   Future<Either<Failure, int>> addProduct({required Product product}) async {
-    return await _try<int>(
+    return await tryRepo<int>(
       () async => await productLocalDatabase.addProduct(
         productModel: ProductModel.fromProduct(product),
       ),
@@ -31,7 +32,7 @@ class InventoryRepositoryImp implements InventoryRepository {
   Future<Either<Failure, Product>> getProductById({
     required int productId,
   }) async {
-    return await _try<Product>(
+    return await tryRepo<Product>(
       () async =>
           await productLocalDatabase.getProductById(productId: productId),
     );
@@ -40,7 +41,7 @@ class InventoryRepositoryImp implements InventoryRepository {
   @override
   Future<Either<Failure, Product>> updateProduct({required Product product}) {
     final ProductModel productModel = ProductModel.fromProduct(product);
-    return _try<Product>(
+    return tryRepo<Product>(
       () async =>
           await productLocalDatabase.updateProduct(productModel: productModel),
     );
@@ -48,7 +49,7 @@ class InventoryRepositoryImp implements InventoryRepository {
 
   @override
   Future<Either<Failure, void>> deleteProduct({required int productId}) async {
-    return await _try<void>(
+    return await tryRepo<void>(
       () async =>
           await productLocalDatabase.deleteProduct(productId: productId),
     );
@@ -59,21 +60,11 @@ class InventoryRepositoryImp implements InventoryRepository {
     required int productId,
     required int quantity,
   }) async {
-    return await _try(
+    return await tryRepo(
       () => productLocalDatabase.decrementProductInventory(
         productId: productId,
         quantity: quantity,
       ),
     );
-  }
-
-  Future<Either<Failure, T>> _try<T>(Future<T> Function() action) async {
-    try {
-      return right(await action());
-    } on LocalDatabaseException catch (e) {
-      return left(Failure(message: e.message));
-    } catch (e) {
-      return left(Failure(message: e.toString()));
-    }
   }
 }
