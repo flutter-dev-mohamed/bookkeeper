@@ -33,8 +33,8 @@ Future<void> createTables(Database db) async {
     unit_selling_price REAL NOT NULL,
     total_price REAL NOT NULL,
     FOREIGN KEY (order_id) REFERENCES orders (id) ON DELETE CASCADE,
-    FOREIGN KEY (product_id) REFERENCES products (id) ON DELETE RESTRICT
   )''');
+  //      FOREIGN KEY (product_id) REFERENCES products (id) ON DELETE RESTRICT
 
   OPrint.g('=========== db tables created ===========');
 }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shagaf_ledger/core/common/colored_prints.dart';
 import 'package:shagaf_ledger/core/common/entities/product.dart';
 import 'package:shagaf_ledger/core/common/product_list.dart';
-import 'package:shagaf_ledger/features/orders/domain/entities/order.dart';
+import 'package:shagaf_ledger/features/orders/domain/entities/order_entity.dart';
 import 'package:shagaf_ledger/features/orders/domain/entities/order_item.dart';
 import 'package:shagaf_ledger/features/orders/presentation/widgets/order_item_dropdown_menu.dart';
 import 'package:shagaf_ledger/features/orders/presentation/widgets/order_summary_sheet.dart';
@@ -29,7 +29,7 @@ class _AddOrderPageState extends State<AddOrderPage> {
   String note = '';
   double totalPrice = 0;
 
-  Order getOrder() {
+  OrderEntity getOrder() {
     // return Order(
     //   id: 0,
     //   createdAt: DateTime.now(),

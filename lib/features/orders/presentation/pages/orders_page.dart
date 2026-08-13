@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shagaf_ledger/core/common/app_consts.dart';
-import 'package:shagaf_ledger/features/orders/domain/entities/order.dart';
+import 'package:shagaf_ledger/features/orders/domain/entities/order_entity.dart';
 import 'package:shagaf_ledger/features/orders/domain/entities/order_item.dart';
 import 'package:shagaf_ledger/features/orders/presentation/widgets/order_tile.dart';
 import 'package:shagaf_ledger/features/orders/presentation/widgets/date_filter_widget.dart';
@@ -16,29 +16,11 @@ class OrdersPage extends StatefulWidget {
 class _OrdersPageState extends State<OrdersPage> {
   DateTime filterOrdersByDay = DateTime.now();
 
-  List<Order> orders = [
-    Order(
+  List<OrderEntity> orders = [
+    OrderEntity(
       id: 0,
-      createdAt: DateTime.now(),
+      createdAt: DateTime.now().toIso8601String(),
       totalPrice: 12,
-      items: [
-        OrderItem(
-          id: 0,
-          orderId: 0,
-          productId: 1,
-          productName: 'productName',
-          quantity: 30,
-          unitSellingPrice: 30,
-        ),
-        OrderItem(
-          id: 0,
-          orderId: 0,
-          productId: 1,
-          productName: 'sec product',
-          quantity: 15,
-          unitSellingPrice: 20,
-        ),
-      ],
     ),
   ];
 

@@ -4,7 +4,7 @@ part of 'orders_bloc.dart';
 sealed class OrdersEvent {}
 
 class CreateOrderEvent extends OrdersEvent {
-  final Order order;
+  final OrderEntity order;
 
   CreateOrderEvent({required this.order});
 }

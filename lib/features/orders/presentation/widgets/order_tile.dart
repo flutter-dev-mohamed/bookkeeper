@@ -1,18 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:shagaf_ledger/core/common/colored_prints.dart';
-import 'package:shagaf_ledger/features/orders/domain/entities/order.dart';
+import 'package:shagaf_ledger/features/orders/domain/entities/order_entity.dart';
 
 class OrderTile extends StatelessWidget {
-  final Order order;
+  final OrderEntity order;
 
   const OrderTile({super.key, required this.order});
-
-  String _getOrderTitle() {
-    final item = order.items.map((item) {
-      return '${item.productName} ${item.quantity}x';
-    });
-    return item.toString();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +21,7 @@ class OrderTile extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(_getOrderTitle(), style: TextStyle(fontSize: 16)),
+              Text(order.id.toString(), style: TextStyle(fontSize: 16)),
               Text(
                 'المجموع: ${order.totalPrice}',
                 style: TextStyle(fontSize: 12, color: Colors.grey),
