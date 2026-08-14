@@ -1,20 +1,24 @@
 import 'package:animated_segmented_tab_control_plus/animated_segmented_tab_control_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shagaf_ledger/core/common/colored_prints.dart';
 import 'package:shagaf_ledger/core/common/widgets/custom_text_field.dart';
 import 'package:shagaf_ledger/features/orders/domain/entities/order_item.dart';
+import 'package:shagaf_ledger/features/orders/presentation/bloc/orders_bloc.dart';
 import 'package:shagaf_ledger/features/orders/presentation/widgets/discount_input.dart';
 
 class OrderSummarySheet extends StatefulWidget {
   final VoidCallback onContinue;
   final List<OrderItem> orderItems;
   final void Function(String) onNoteChanged;
+  final bool isLoading;
 
   const OrderSummarySheet({
     super.key,
     required this.onContinue,
     required this.orderItems,
     required this.onNoteChanged,
+    required this.isLoading,
   });
 
   @override
@@ -68,8 +72,10 @@ class _OrderSummarySheetState extends State<OrderSummarySheet> {
   @override
   Widget build(BuildContext context) {
     if (widget.orderItems.isEmpty) {
-      return SizedBox.shrink();
+      return const SizedBox.shrink();
     }
+
+    //  ────────────────────────────────────────────────────────────────────────  Page UI
     return DraggableScrollableSheet(
       initialChildSize: 0.13,
       minChildSize: 0.13,
@@ -146,15 +152,25 @@ class _OrderSummarySheetState extends State<OrderSummarySheet> {
 
                   // Action button
                   Material(
-                    color: Theme.of(context).colorScheme.primary,
+                    color: !widget.isLoading
+                        ? Theme.of(context).colorScheme.primary
+                        : null,
                     shape: const CircleBorder(),
                     child: InkWell(
                       customBorder: const CircleBorder(),
                       onTap: widget.onContinue,
-                      child: const SizedBox(
+                      child: SizedBox(
                         width: 52,
                         height: 52,
-                        child: Icon(Icons.arrow_forward, color: Colors.white),
+                        child: widget.isLoading
+                            ? CircularProgressIndicator(
+                                color: Theme.of(context).colorScheme.primary,
+                                strokeWidth: 2,
+                              )
+                            : const Icon(
+                                Icons.arrow_forward,
+                                color: Colors.white,
+                              ),
                       ),
                     ),
                   ),

@@ -5,6 +5,7 @@ import 'package:shagaf_ledger/core/assets/theme/lib/util.dart';
 import 'package:shagaf_ledger/core/routes/app_routes.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/bloc/inventory_bloc.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/pages/inventory_page.dart';
+import 'package:shagaf_ledger/features/orders/presentation/bloc/orders_bloc.dart';
 import 'package:shagaf_ledger/initDependencies/init_dependencies.dart';
 
 void main() async {
@@ -16,6 +17,7 @@ void main() async {
     MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => serviceLocator<InventoryBloc>()),
+        BlocProvider(create: (context) => serviceLocator<OrdersBloc>()),
       ],
       child: const ShagafLedger(),
     ),

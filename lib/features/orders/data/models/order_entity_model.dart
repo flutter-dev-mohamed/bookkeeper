@@ -1,4 +1,3 @@
-import 'package:shagaf_ledger/features/orders/data/models/order_item_model.dart';
 import 'package:shagaf_ledger/features/orders/domain/entities/order_entity.dart';
 
 class OrderEntityModel extends OrderEntity {
@@ -11,7 +10,6 @@ class OrderEntityModel extends OrderEntity {
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
       'total_price': totalPrice,
       'created_at': createdAt, // .toIso8601String()
       'note': note,

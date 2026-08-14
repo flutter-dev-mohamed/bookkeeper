@@ -4,7 +4,7 @@ import 'package:sqflite/sqflite.dart';
 
 Future<T> tryDB<T>(Future<T> Function() action) async {
   try {
-    return action();
+    return await action();
   } on DatabaseException catch (e) {
     throw LocalDatabaseException(message: e.toString());
   } catch (e) {

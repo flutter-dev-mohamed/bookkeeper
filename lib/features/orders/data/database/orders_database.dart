@@ -23,9 +23,11 @@ class OrdersDatabase {
   }
 
   //  ——————————————————————————————————————————————————————————————————————————  createOrder: inserts a new order into DB
-  Future<int> createOrder({required Map<String, dynamic> orderMap}) async {
-    return await tryDB<int>(
-      () async => await localDB.insert(ordersTable, orderMap),
-    );
+  Future<int> createOrder({
+    required Map<String, dynamic> orderMap,
+    DatabaseExecutor? executor,
+  }) async {
+    final db = executor ?? localDB;
+    return await tryDB<int>(() async => await db.insert(ordersTable, orderMap));
   }
 }

@@ -20,10 +20,9 @@ class OrderItemModel extends OrderItem {
       unitSellingPrice: entity.unitSellingPrice,
     );
   }
-  
+
   Map<String, dynamic> toMap({required int orderId}) {
     return {
-      'id': id,
       'order_id': orderId,
       'product_id': productId,
       'product_name': productName,

@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:shagaf_ledger/core/common/colored_prints.dart';
 import 'package:shagaf_ledger/core/common/entities/product.dart';
 import 'package:shagaf_ledger/core/common/product_list.dart';
+import 'package:shagaf_ledger/features/inventory/presentation/bloc/inventory_bloc.dart';
 import 'package:shagaf_ledger/features/orders/domain/entities/order_entity.dart';
 import 'package:shagaf_ledger/features/orders/domain/entities/order_item.dart';
+import 'package:shagaf_ledger/features/orders/presentation/bloc/orders_bloc.dart';
 import 'package:shagaf_ledger/features/orders/presentation/widgets/order_item_dropdown_menu.dart';
 import 'package:shagaf_ledger/features/orders/presentation/widgets/order_summary_sheet.dart';
 import 'package:shagaf_ledger/features/orders/presentation/widgets/selected_order_item_tile.dart';
@@ -29,77 +33,108 @@ class _AddOrderPageState extends State<AddOrderPage> {
   String note = '';
   double totalPrice = 0;
 
-  OrderEntity getOrder() {
-    // return Order(
-    //   id: 0,
-    //   createdAt: DateTime.now(),
-    //   totalPrice: totalPrice,
-    //   items: orderItems,
-    //   note: note,
-    //  );
-    // TODO: implement the getOrder func
-    throw UnimplementedError();
-  }
-
   //  ==========================================================================
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
-      body: Directionality(
-        textDirection: TextDirection.rtl,
-        child: Stack(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12.0),
-              child: ListView.separated(
-                separatorBuilder: (context, index) => SizedBox(height: 10),
-                shrinkWrap: true,
-                padding: EdgeInsets.only(bottom: 120),
-                itemCount: orderItems.length + 1,
-                itemBuilder: (context, index) {
-                  // show add order item at the end of the list
-                  if (index == orderItems.length || orderItems.isEmpty) {
-                    return OrderItemDropdownMenu(
-                      onChanged: onSelectedNewItem,
-                      availableProducts: availableProducts,
-                    );
-                  }
-
-                  //
-                  return SelectedOrderItemTile(
-                    index: index,
-                    initialItem: orderItems[index],
-                    availableProducts: availableProducts,
-                    onChangedSelection: onChangedSelection,
-                    onDelete: onDelete,
-                    onQuantityChanged: ({required index, required quantity}) =>
-                        setState(() {
-                          orderItems[index] = orderItems[index].copyWith(
-                            quantity: quantity,
+      appBar: AppBar(
+        title: Text(
+          'إضافة طلب',
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
+      ),
+      body: availableProducts.isEmpty && orderItems.isEmpty
+          // indicate no products
+          ? Center(
+              child: Text(
+                "يرجى اضافة منتجات!",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+              ),
+            )
+          : Directionality(
+              textDirection: TextDirection.rtl,
+              child: Stack(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                    child: ListView.separated(
+                      separatorBuilder: (context, index) =>
+                          SizedBox(height: 10),
+                      shrinkWrap: true,
+                      padding: EdgeInsets.only(bottom: 120),
+                      itemCount: orderItems.length + 1,
+                      itemBuilder: (context, index) {
+                        // show add order item at the end of the list
+                        if (index == orderItems.length || orderItems.isEmpty) {
+                          return OrderItemDropdownMenu(
+                            onChanged: onSelectedNewItem,
+                            availableProducts: availableProducts,
                           );
-                        }),
-                  );
-                },
+                        }
+
+                        //
+                        return SelectedOrderItemTile(
+                          index: index,
+                          initialItem: orderItems[index],
+                          availableProducts: availableProducts,
+                          onChangedSelection: onChangedSelection,
+                          onDelete: onDelete,
+                          onQuantityChanged:
+                              ({required index, required quantity}) =>
+                                  setState(() {
+                                    orderItems[index] = orderItems[index]
+                                        .copyWith(quantity: quantity);
+                                  }),
+                        );
+                      },
+                    ),
+                  ),
+
+                  //  ————————————————————————————————————————————————————————————————  OrderSummarySheet
+                  BlocConsumer<OrdersBloc, OrdersState>(
+                    listener: (context, state) {
+                      if (state is OrdersFailer) {
+                        // alert use in case of error
+                        showOrderErrorDialog(context);
+                      }
+                      if (state is OrderCreated) {
+                        // communicate to the inventory bloc to  reflect the changes
+                        context.read<InventoryBloc>().add(LoadProductsEvent());
+                        // pop the add order page
+                        context.pop();
+                      }
+                    },
+                    builder: (context, state) {
+                      return OrderSummarySheet(
+                        isLoading: state is OrdersLoading,
+                        orderItems: orderItems,
+                        onNoteChanged: (newNote) {
+                          setState(() {
+                            note = newNote;
+                          });
+                        },
+                        onContinue: () {
+                          context.read<OrdersBloc>().add(
+                            CreateOrderEvent(
+                              order: OrderEntity(
+                                id: 0,
+                                createdAt: DateTime.now()
+                                    .toIso8601String()
+                                    .split('T')[0],
+                                totalPrice: totalPrice,
+                              ),
+                              items: orderItems,
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ],
               ),
             ),
-
-            //  ——————————————————————————————————————————————————————————————  OrderSummarySheet
-            OrderSummarySheet(
-              orderItems: orderItems,
-              onNoteChanged: (newNote) {
-                setState(() {
-                  note = newNote;
-                });
-              },
-              onContinue: () {
-                OPrint.bg('add order');
-                getOrder();
-              },
-            ),
-          ],
-        ),
-      ),
     );
   }
 
@@ -160,5 +195,36 @@ class _AddOrderPageState extends State<AddOrderPage> {
       orderItems.removeAt(index);
       availableProducts.add(deletedProduct);
     });
+  }
+
+  //  ——————————————————————————————————————————————————————————————————————————   show Order Error Dialog
+  void showOrderErrorDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        final colorScheme = Theme.of(context).colorScheme;
+        return AlertDialog(
+          backgroundColor: colorScheme.surface,
+          shadowColor: colorScheme.shadow,
+          title: Text(
+            'Error',
+            style: TextStyle(
+              color: colorScheme.error,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          content: const Text(
+            'There was an error saving or adding your order into the database. Please try again.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              // Note: If you are using GoRouter, you can use context.pop() instead
+              child: const Text('Okay'),
+            ),
+          ],
+        );
+      },
+    );
   }
 }

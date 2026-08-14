@@ -5,16 +5,16 @@ sealed class OrdersEvent {}
 
 class CreateOrderEvent extends OrdersEvent {
   final OrderEntity order;
+  final List<OrderItem> items;
 
-  CreateOrderEvent({required this.order});
+  CreateOrderEvent({required this.order, required this.items});
 }
 
 class GetOrdersEvent extends OrdersEvent {
-  final DateTime day;
+  final String day;
 
   GetOrdersEvent({required this.day});
 }
 
-// getOrders(DateTime day)
 // getOrdersForProduct(productId)
 // deleteOrder()

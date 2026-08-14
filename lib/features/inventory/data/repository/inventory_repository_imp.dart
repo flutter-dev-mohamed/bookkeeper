@@ -54,17 +54,4 @@ class InventoryRepositoryImp implements InventoryRepository {
           await productLocalDatabase.deleteProduct(productId: productId),
     );
   }
-
-  @override
-  Future<Either<Failure, void>> decrementInventory({
-    required int productId,
-    required int quantity,
-  }) async {
-    return await tryRepo(
-      () => productLocalDatabase.decrementProductInventory(
-        productId: productId,
-        quantity: quantity,
-      ),
-    );
-  }
 }

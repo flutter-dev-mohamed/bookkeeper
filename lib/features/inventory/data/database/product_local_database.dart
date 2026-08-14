@@ -120,13 +120,26 @@ class ProductLocalDatabase {
   Future<void> decrementProductInventory({
     required int productId,
     required int quantity,
+    DatabaseExecutor? executor,
   }) async {
+    final db = executor ?? localDB;
+
     return tryDB(() async {
-      final row = await localDB.query(productsTable, where: 'id = ?');
+      final row = await db.query(
+        productsTable,
+        where: 'id = ?',
+        whereArgs: [productId],
+      );
+
       final currentInventory = row.first['current_inventory'] as int;
-      final res = await localDB.update(productsTable, {
-        "current_inventory": currentInventory - quantity,
-      });
+      final newInventory = currentInventory - quantity;
+
+      final res = await db.update(
+        productsTable,
+        {"current_inventory": newInventory},
+        where: 'id = ?',
+        whereArgs: [productId],
+      );
     });
   }
 }

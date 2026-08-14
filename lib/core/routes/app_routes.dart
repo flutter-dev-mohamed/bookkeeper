@@ -17,7 +17,7 @@ class AppRoutes {
   AppRoutes._internal();
 
   GoRouter goRouter = GoRouter(
-    initialLocation: "/orders/addNewOrder",
+    initialLocation: "/orders",
     routes: [
       // you should have:
       // in a shell route

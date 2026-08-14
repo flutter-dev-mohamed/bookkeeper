@@ -12,7 +12,7 @@ class ErrorPage extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           //
-          Image.asset('lib/core/assets/error.png', width: 80),
+          Image.asset('lib/core/assets/icons/error.png', width: 80),
           SizedBox(height: 10),
           Text(
             "Error!",

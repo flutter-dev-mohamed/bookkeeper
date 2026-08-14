@@ -112,9 +112,6 @@ class _AddProductPageState extends State<AddProductPage> {
                                   context.read<InventoryBloc>().add(
                                     AddProductEvent(product: newProduct),
                                   );
-                                  OPrint.c(
-                                    "Product should be add to db please!.",
-                                  );
                                 },
                               );
                       },

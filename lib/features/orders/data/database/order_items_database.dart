@@ -22,7 +22,12 @@ class OrderItemsDatabase {
   }
 
   //  ——————————————————————————————————————————————————————————————————————————  insertOrderItems: inserts items into DB
-  Future<void> insertOrderItem({required Map<String, dynamic> orderMap}) async {
-    await tryDB(() async => await localDB.insert(orderItemsTable, orderMap));
+  Future<void> insertOrderItem({
+    required Map<String, dynamic> orderMap,
+    DatabaseExecutor? executor,
+  }) async {
+    final db = executor ?? localDB;
+
+    await tryDB(() async => await db.insert(orderItemsTable, orderMap));
   }
 }

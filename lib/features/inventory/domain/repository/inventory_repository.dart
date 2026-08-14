@@ -12,9 +12,4 @@ abstract interface class InventoryRepository {
   Future<Either<Failure, Product>> updateProduct({required Product product});
 
   Future<Either<Failure, void>> deleteProduct({required int productId});
-
-  Future<Either<Failure, void>> decrementInventory({
-    required int productId,
-    required int quantity,
-  });
 }
