@@ -20,6 +20,8 @@ Future<void> createTables(Database db) async {
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     created_at TEXT NOT NULL DEFAULT (DATETIME('now')),
     total_price REAL NOT NULL,
+    discount_type INTEGER NOT NULL,
+    discount_value REAL NOT NULL,
     note TEXT
   )''');
 

@@ -1,15 +1,19 @@
-import 'package:shagaf_ledger/features/orders/domain/entities/order_item.dart';
-
 class OrderEntity {
-  int id;
-  double totalPrice;
-  String createdAt;
-  String note; // optional
+  final int id;
+  final double totalPrice;
+  final String createdAt;
+  final String note; // optional
+  final DiscountType discountType;
+  final double discountValue;
 
   OrderEntity({
     required this.id,
     required this.createdAt,
     required this.totalPrice,
     this.note = "",
+    required this.discountType,
+    required this.discountValue,
   });
 }
+
+enum DiscountType { amount, percentage }

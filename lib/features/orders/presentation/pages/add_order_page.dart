@@ -30,7 +30,6 @@ class _AddOrderPageState extends State<AddOrderPage> {
 
   //  order params
   List<OrderItem> orderItems = [];
-  String note = '';
   double totalPrice = 0;
 
   //  ==========================================================================
@@ -110,25 +109,29 @@ class _AddOrderPageState extends State<AddOrderPage> {
                       return OrderSummarySheet(
                         isLoading: state is OrdersLoading,
                         orderItems: orderItems,
-                        onNoteChanged: (newNote) {
-                          setState(() {
-                            note = newNote;
-                          });
-                        },
-                        onContinue: () {
-                          context.read<OrdersBloc>().add(
-                            CreateOrderEvent(
-                              order: OrderEntity(
-                                id: 0,
-                                createdAt: DateTime.now()
-                                    .toIso8601String()
-                                    .split('T')[0],
-                                totalPrice: totalPrice,
-                              ),
-                              items: orderItems,
-                            ),
-                          );
-                        },
+                        //  ———————————————————————————————————————————————————— this will run when pressed continue
+                        onContinue:
+                            ({
+                              required discountType,
+                              required discountValue,
+                              required noteText,
+                            }) {
+                              context.read<OrdersBloc>().add(
+                                CreateOrderEvent(
+                                  order: OrderEntity(
+                                    id: 0,
+                                    note: noteText,
+                                    discountType: discountType,
+                                    discountValue: discountValue,
+                                    createdAt: DateTime.now()
+                                        .toIso8601String()
+                                        .split('T')[0],
+                                    totalPrice: totalPrice,
+                                  ),
+                                  items: orderItems,
+                                ),
+                              );
+                            },
                       );
                     },
                   ),

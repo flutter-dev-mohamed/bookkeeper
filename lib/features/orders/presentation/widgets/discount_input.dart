@@ -1,10 +1,7 @@
 import 'package:animated_segmented_tab_control_plus/animated_segmented_tab_control_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:shagaf_ledger/core/common/colored_prints.dart';
 import 'package:shagaf_ledger/core/common/widgets/custom_text_field.dart';
-import 'package:shagaf_ledger/features/orders/domain/entities/order_item.dart';
-
-enum DiscountType { amount, percentage }
+import 'package:shagaf_ledger/features/orders/domain/entities/order_entity.dart';
 
 class DiscountInput extends StatefulWidget {
   final DiscountType initialType;

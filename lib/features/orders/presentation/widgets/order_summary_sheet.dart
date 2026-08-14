@@ -1,23 +1,23 @@
-import 'package:animated_segmented_tab_control_plus/animated_segmented_tab_control_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shagaf_ledger/core/common/colored_prints.dart';
 import 'package:shagaf_ledger/core/common/widgets/custom_text_field.dart';
+import 'package:shagaf_ledger/features/orders/domain/entities/order_entity.dart';
 import 'package:shagaf_ledger/features/orders/domain/entities/order_item.dart';
-import 'package:shagaf_ledger/features/orders/presentation/bloc/orders_bloc.dart';
 import 'package:shagaf_ledger/features/orders/presentation/widgets/discount_input.dart';
 
 class OrderSummarySheet extends StatefulWidget {
-  final VoidCallback onContinue;
+  final void Function({
+    required String noteText,
+    required DiscountType discountType,
+    required double discountValue,
+  })
+  onContinue;
   final List<OrderItem> orderItems;
-  final void Function(String) onNoteChanged;
   final bool isLoading;
 
   const OrderSummarySheet({
     super.key,
     required this.onContinue,
     required this.orderItems,
-    required this.onNoteChanged,
     required this.isLoading,
   });
 
@@ -71,6 +71,7 @@ class _OrderSummarySheetState extends State<OrderSummarySheet> {
 
   @override
   Widget build(BuildContext context) {
+    //  ────────────────────────────────────────────────────────────────────────  this is so that when use empties the orderItems list and this shouldn't show you don't loss user input for: note and discount
     if (widget.orderItems.isEmpty) {
       return const SizedBox.shrink();
     }
@@ -158,7 +159,11 @@ class _OrderSummarySheetState extends State<OrderSummarySheet> {
                     shape: const CircleBorder(),
                     child: InkWell(
                       customBorder: const CircleBorder(),
-                      onTap: widget.onContinue,
+                      onTap: () => widget.onContinue(
+                        discountType: _discountType,
+                        discountValue: _discountValue,
+                        noteText: _noteController.text.trim(),
+                      ),
                       child: SizedBox(
                         width: 52,
                         height: 52,
@@ -206,7 +211,6 @@ class _OrderSummarySheetState extends State<OrderSummarySheet> {
                     color: Theme.of(context).colorScheme.tertiary,
                   ),
                 ),
-                onChanged: widget.onNoteChanged,
               ),
             ],
           ),

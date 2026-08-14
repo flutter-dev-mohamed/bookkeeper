@@ -6,6 +6,8 @@ class OrderEntityModel extends OrderEntity {
     required super.createdAt,
     required super.totalPrice,
     required super.note,
+    required super.discountType,
+    required super.discountValue,
   });
 
   Map<String, dynamic> toMap() {
@@ -13,6 +15,8 @@ class OrderEntityModel extends OrderEntity {
       'total_price': totalPrice,
       'created_at': createdAt, // .toIso8601String()
       'note': note,
+      'discount_type': discountType.index,
+      'discount_value': discountValue,
     };
   }
 
@@ -22,6 +26,8 @@ class OrderEntityModel extends OrderEntity {
       totalPrice: (map['total_price'] as num).toDouble(),
       createdAt: map['created_at'],
       note: map['note'] as String? ?? '',
+      discountType: DiscountType.values[map['discount_type'] as int],
+      discountValue: map['discount_value'],
     );
   }
 
@@ -31,6 +37,8 @@ class OrderEntityModel extends OrderEntity {
       createdAt: entity.createdAt,
       totalPrice: entity.totalPrice,
       note: entity.note,
+      discountType: entity.discountType,
+      discountValue: entity.discountValue,
     );
   }
 }
