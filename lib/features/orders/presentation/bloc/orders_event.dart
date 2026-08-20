@@ -16,5 +16,16 @@ class GetOrdersEvent extends OrdersEvent {
   GetOrdersEvent({required this.day});
 }
 
+class GetOrderDetailsEvent extends OrdersEvent {
+  final int orderId;
+
+  GetOrderDetailsEvent({required this.orderId});
+}
+
+class DeleteOrderEvent extends OrdersEvent {
+  final OrderDetails orderDetails;
+
+  DeleteOrderEvent({required this.orderDetails});
+}
+
 // getOrdersForProduct(productId)
-// deleteOrder()

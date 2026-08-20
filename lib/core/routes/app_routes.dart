@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shagaf_ledger/core/common/app_consts.dart';
+import 'package:shagaf_ledger/core/common/errors/UI/error_page.dart';
 import 'package:shagaf_ledger/core/common/widgets/shell_route_widget.dart';
 import 'package:shagaf_ledger/core/common/entities/product.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/pages/add_product_page.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/pages/inventory_page.dart';
 import 'package:shagaf_ledger/features/orders/presentation/pages/add_order_page.dart';
+import 'package:shagaf_ledger/features/orders/presentation/pages/order_details_page.dart';
 import 'package:shagaf_ledger/features/orders/presentation/pages/orders_page.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/pages/product_details_page.dart';
 
@@ -68,6 +70,17 @@ class AppRoutes {
         path: "/orders/addNewOrder",
         name: AppConsts().addNewOrderPage,
         builder: (context, state) => AddOrderPage(),
+      ),
+      GoRoute(
+        path: "/orders/:orderId",
+        name: AppConsts().orderDetails,
+        builder: (context, state) {
+          final orderId = int.tryParse(state.pathParameters['orderId'] ?? '');
+          if (orderId == null) {
+            return ErrorPage();
+          }
+          return OrderDetailsPage(orderId: orderId);
+        },
       ),
     ],
   );

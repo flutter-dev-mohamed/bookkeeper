@@ -1,3 +1,4 @@
+import 'package:shagaf_ledger/core/common/colored_prints.dart';
 import 'package:shagaf_ledger/features/orders/domain/entities/order_entity.dart';
 
 class OrderEntityModel extends OrderEntity {
@@ -5,25 +6,33 @@ class OrderEntityModel extends OrderEntity {
     required super.id,
     required super.createdAt,
     required super.totalPrice,
+    required super.originalPrice,
     required super.note,
     required super.discountType,
     required super.discountValue,
   });
 
   Map<String, dynamic> toMap() {
-    return {
+    final map = {
       'total_price': totalPrice,
-      'created_at': createdAt, // .toIso8601String()
+      'original_price': originalPrice,
+      'created_at': createdAt,
       'note': note,
       'discount_type': discountType.index,
       'discount_value': discountValue,
     };
+    OPrint.line('toMap Order Entity');
+    OPrint.c('Mapping order toMap: $map');
+    OPrint.line('toMap Order Entity');
+    return map;
   }
 
   factory OrderEntityModel.fromMap({required Map<String, dynamic> map}) {
+    OPrint.y(map);
     return OrderEntityModel(
       id: map['id'] as int,
-      totalPrice: (map['total_price'] as num).toDouble(),
+      totalPrice: map['total_price'],
+      originalPrice: map['original_price'],
       createdAt: map['created_at'],
       note: map['note'] as String? ?? '',
       discountType: DiscountType.values[map['discount_type'] as int],
@@ -36,6 +45,7 @@ class OrderEntityModel extends OrderEntity {
       id: entity.id,
       createdAt: entity.createdAt,
       totalPrice: entity.totalPrice,
+      originalPrice: entity.originalPrice,
       note: entity.note,
       discountType: entity.discountType,
       discountValue: entity.discountValue,

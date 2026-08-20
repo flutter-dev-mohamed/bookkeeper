@@ -1,3 +1,4 @@
+import 'package:shagaf_ledger/core/common/colored_prints.dart';
 import 'package:shagaf_ledger/core/common/errors/database_exception.dart';
 import 'package:shagaf_ledger/core/common/errors/unknown_exception.dart';
 import 'package:shagaf_ledger/core/common/functions/try_db.dart';
@@ -28,5 +29,34 @@ class OrdersDatabase {
   }) async {
     final db = executor ?? _localDB;
     return await tryDB<int>(() async => await db.insert(ordersTable, orderMap));
+  }
+
+  //  ——————————————————————————————————————————————————————————————————————————  getOrder: read (ONLY) the order info from DB
+  Future<Map<String, dynamic>> getOrder({required int orderId}) async =>
+      await tryDB<Map<String, dynamic>>(() async {
+        final res = await _localDB.query(
+          ordersTable,
+          where: "id = ?",
+          whereArgs: [orderId],
+        );
+        final orderMap = res.first;
+        return orderMap;
+      });
+
+  //  ——————————————————————————————————————————————————————————————————————————  delete Order
+  Future<void> deleteOrder({
+    required int orderId,
+    required DatabaseExecutor executor,
+  }) async {
+    await tryDB<void>(() async {
+      final res = await executor.delete(
+        ordersTable,
+        where: 'id = ?',
+        whereArgs: [orderId],
+      );
+      OPrint.line('deleteOrder');
+      OPrint.br(res.toString());
+      OPrint.line('deleteOrder');
+    });
   }
 }

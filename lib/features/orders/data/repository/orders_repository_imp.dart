@@ -5,8 +5,10 @@ import 'package:shagaf_ledger/core/common/functions/try_repo.dart';
 import 'package:shagaf_ledger/features/inventory/data/database/product_local_database.dart';
 import 'package:shagaf_ledger/features/orders/data/database/order_items_database.dart';
 import 'package:shagaf_ledger/features/orders/data/database/orders_database.dart';
+import 'package:shagaf_ledger/features/orders/data/models/order_details_model.dart';
 import 'package:shagaf_ledger/features/orders/data/models/order_entity_model.dart';
 import 'package:shagaf_ledger/features/orders/data/models/order_item_model.dart';
+import 'package:shagaf_ledger/features/orders/domain/entities/Order_details.dart';
 import 'package:shagaf_ledger/features/orders/domain/entities/order_entity.dart';
 import 'package:shagaf_ledger/features/orders/domain/entities/order_item.dart';
 import 'package:shagaf_ledger/features/orders/domain/repository/orders_repository.dart';
@@ -104,6 +106,59 @@ class OrdersRepositoryImp implements OrdersRepository {
 
       OPrint.g('Repository: Successfully mapped ${ordersList.length} orders');
       return ordersList;
+    });
+  }
+
+  @override
+  Future<Either<Failure, OrderDetails>> getOrderDetails({
+    required int orderId,
+  }) async {
+    return await tryRepo<OrderDetailsModel>(() async {
+      // get the order
+      final orderMap = await ordersDatabase.getOrder(orderId: orderId);
+      final order = OrderEntityModel.fromMap(map: orderMap);
+
+      // get the order items list
+      final orderItemMapList = await orderItemsDatabase.getOrderItems(
+        orderId: orderId,
+      );
+
+      final orderItemsList = orderItemMapList.map((itemMap) {
+        return OrderItemModel.fromMap(itemMap);
+      }).toList();
+
+      // return order details
+      final orderDetails = OrderDetailsModel(
+        order: order,
+        items: orderItemsList,
+      );
+      return orderDetails;
+    });
+  }
+
+  @override
+  Future<Either<Failure, void>> deleteOrder({
+    required int orderId,
+    required List<OrderItem> items,
+  }) async {
+    return await tryRepo<void>(() async {
+      await localDB.transaction((txn) async {
+        // delete the order
+        await ordersDatabase.deleteOrder(orderId: orderId, executor: txn);
+        //  delete items
+        await orderItemsDatabase.deleteOrderItem(
+          orderId: orderId,
+          executor: txn,
+        );
+        // loop over the items and increase their inventory
+        for (final item in items) {
+          await productLocalDatabase.incrementProductInventory(
+            productId: item.productId,
+            quantity: item.quantity,
+            executor: txn,
+          );
+        }
+      });
     });
   }
 }

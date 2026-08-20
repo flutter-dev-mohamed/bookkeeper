@@ -30,31 +30,30 @@ class _AddOrderPageState extends State<AddOrderPage> {
 
   //  order params
   List<OrderItem> orderItems = [];
-  double totalPrice = 0;
 
   //  ==========================================================================
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'إضافة طلب',
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(
+            'إضافة طلب',
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+          centerTitle: true,
         ),
-        centerTitle: true,
-      ),
-      body: availableProducts.isEmpty && orderItems.isEmpty
-          // indicate no products
-          ? Center(
-              child: Text(
-                "يرجى اضافة منتجات!",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
-              ),
-            )
-          : Directionality(
-              textDirection: TextDirection.rtl,
-              child: Stack(
+        body: availableProducts.isEmpty && orderItems.isEmpty
+            // indicate no products
+            ? Center(
+                child: Text(
+                  "يرجى اضافة منتجات!",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+                ),
+              )
+            : Stack(
                 children: [
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 12.0),
@@ -99,8 +98,6 @@ class _AddOrderPageState extends State<AddOrderPage> {
                         showOrderErrorDialog(context);
                       }
                       if (state is OrderCreated) {
-                        // communicate to the inventory bloc to  reflect the changes
-                        context.read<InventoryBloc>().add(LoadProductsEvent());
                         // pop the add order page
                         context.pop();
                       }
@@ -112,6 +109,8 @@ class _AddOrderPageState extends State<AddOrderPage> {
                         //  ———————————————————————————————————————————————————— this will run when pressed continue
                         onContinue:
                             ({
+                              required totalPrice,
+                              required originalPrice,
                               required discountType,
                               required discountValue,
                               required noteText,
@@ -127,6 +126,7 @@ class _AddOrderPageState extends State<AddOrderPage> {
                                         .toIso8601String()
                                         .split('T')[0],
                                     totalPrice: totalPrice,
+                                    originalPrice: originalPrice,
                                   ),
                                   items: orderItems,
                                 ),
@@ -137,7 +137,7 @@ class _AddOrderPageState extends State<AddOrderPage> {
                   ),
                 ],
               ),
-            ),
+      ),
     );
   }
 

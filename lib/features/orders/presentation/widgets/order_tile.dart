@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shagaf_ledger/core/common/colored_prints.dart';
+import 'package:go_router/go_router.dart';
+import 'package:shagaf_ledger/core/common/app_consts.dart';
 import 'package:shagaf_ledger/features/orders/domain/entities/order_entity.dart';
 
 class OrderTile extends StatelessWidget {
@@ -11,8 +12,10 @@ class OrderTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // TODO: nav to order details page
-        OPrint.m('ADD FUNCTIONALITY');
+        context.pushNamed(
+          AppConsts().orderDetails,
+          pathParameters: {'orderId': order.id.toString()},
+        );
       },
       child: Card(
         margin: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 3),

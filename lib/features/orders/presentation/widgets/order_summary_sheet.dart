@@ -9,6 +9,8 @@ class OrderSummarySheet extends StatefulWidget {
     required String noteText,
     required DiscountType discountType,
     required double discountValue,
+    required double totalPrice,
+    required double originalPrice,
   })
   onContinue;
   final List<OrderItem> orderItems;
@@ -29,6 +31,8 @@ class _OrderSummarySheetState extends State<OrderSummarySheet> {
   late final TextEditingController _noteController;
   DiscountType _discountType = DiscountType.amount;
   double _discountValue = 0;
+  double originalPrice = 0;
+  double totalPrice = 0;
 
   @override
   void initState() {
@@ -42,31 +46,31 @@ class _OrderSummarySheetState extends State<OrderSummarySheet> {
     super.dispose();
   }
 
-  String _calculateTotal({bool addDiscount = true}) {
-    double total = 0;
+  String _calculateTotal() {
+    totalPrice = 0;
+    originalPrice = 0;
     for (final orderItem in widget.orderItems) {
       double itemTotal = orderItem.unitSellingPrice * orderItem.quantity;
-      total += itemTotal;
+      originalPrice += itemTotal;
     }
 
     // count for the discount
-    if (_discountValue > 0 && addDiscount) {
-      total = _calculateDiscount(total);
-    }
-
-    return total.toString();
-  }
-
-  double _calculateDiscount(double total) {
-    if (_discountType == DiscountType.amount) {
-      final result = total - _discountValue;
-      return result;
+    if (_discountValue > 0) {
+      if (_discountType == DiscountType.amount) {
+        totalPrice = originalPrice - _discountValue;
+      } else {
+        final discountedAmount = (originalPrice / 100) * _discountValue;
+        totalPrice = originalPrice - discountedAmount;
+      }
     } else {
-      final discountedAmount = (total / 100) * _discountValue;
-      final result = total - discountedAmount;
-
-      return result;
+      // no discount
+      totalPrice = originalPrice;
     }
+
+    // Round up to 3 decimal places
+    totalPrice = (totalPrice * 1000).ceil() / 1000;
+
+    return totalPrice.toString();
   }
 
   @override
@@ -138,7 +142,7 @@ class _OrderSummarySheetState extends State<OrderSummarySheet> {
 
                           if (_discountValue > 0)
                             TextSpan(
-                              text: _calculateTotal(addDiscount: false),
+                              text: originalPrice.toString(),
                               style: TextStyle(
                                 color: Theme.of(context).colorScheme.secondary,
                                 fontWeight: FontWeight.w500,
@@ -160,6 +164,8 @@ class _OrderSummarySheetState extends State<OrderSummarySheet> {
                     child: InkWell(
                       customBorder: const CircleBorder(),
                       onTap: () => widget.onContinue(
+                        totalPrice: totalPrice,
+                        originalPrice: originalPrice,
                         discountType: _discountType,
                         discountValue: _discountValue,
                         noteText: _noteController.text.trim(),

@@ -4,6 +4,7 @@ class AppConsts {
   final String inventoryPage = "inventoryPage";
   final String productDetailsPage = "productDetailsPage";
   final String addProductPage = "addProductPage";
+  final String orderDetails = "orderDetails";
 
   // orders
   final String addNewOrderPage = "addNewOrderPage";

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shagaf_ledger/core/common/app_consts.dart';
+import 'package:shagaf_ledger/features/inventory/presentation/bloc/inventory_bloc.dart';
 import 'package:shagaf_ledger/features/orders/domain/entities/order_entity.dart';
 import 'package:shagaf_ledger/features/orders/domain/entities/order_item.dart';
 import 'package:shagaf_ledger/features/orders/presentation/bloc/orders_bloc.dart';
@@ -37,8 +38,12 @@ class _OrdersPageState extends State<OrdersPage> {
             orders = state.orders;
           });
         }
-        // if a new order is added refetch the list
-        if (state is OrderCreated) {
+        // if a new order is added or an order deleted refetch the list
+        if (state is OrderCreated || state is OrdersSuccess) {
+          // communicate to the inventory bloc to  reflect the changes
+          context.read<InventoryBloc>().add(LoadProductsEvent());
+
+          //  refetch the orders
           context.read<OrdersBloc>().add(
             GetOrdersEvent(day: DateTime.now().toIso8601String().split('T')[0]),
           );
