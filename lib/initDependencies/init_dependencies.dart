@@ -13,7 +13,7 @@ import 'package:shagaf_ledger/features/orders/data/database/orders_database.dart
 import 'package:shagaf_ledger/features/orders/data/repository/orders_repository_imp.dart';
 import 'package:shagaf_ledger/features/orders/domain/repository/orders_repository.dart';
 import 'package:shagaf_ledger/features/orders/domain/use_cases/create_order.dart';
-import 'package:shagaf_ledger/features/orders/domain/use_cases/delete_order.dart';
+import 'package:shagaf_ledger/features/orders/domain/use_cases/cancel_order.dart';
 import 'package:shagaf_ledger/features/orders/domain/use_cases/get_order_details.dart';
 import 'package:shagaf_ledger/features/orders/domain/use_cases/get_orders.dart';
 import 'package:shagaf_ledger/features/orders/presentation/bloc/orders_bloc.dart';
@@ -94,12 +94,12 @@ void _initOrdersBloc({required Database db}) {
       createOrder: serviceLocator<CreateOrder>(),
       getOrders: serviceLocator<GetOrders>(),
       getOrderDetails: serviceLocator<GetOrderDetails>(),
-      deleteOrder: serviceLocator<DeleteOrder>(),
+      cancelOrder: serviceLocator<CancelOrder>(),
     ),
   );
 
-  serviceLocator.registerFactory<DeleteOrder>(
-    () => DeleteOrder(ordersRepository: serviceLocator<OrdersRepository>()),
+  serviceLocator.registerFactory<CancelOrder>(
+    () => CancelOrder(ordersRepository: serviceLocator<OrdersRepository>()),
   );
   serviceLocator.registerFactory<GetOrderDetails>(
     () => GetOrderDetails(ordersRepository: serviceLocator<OrdersRepository>()),

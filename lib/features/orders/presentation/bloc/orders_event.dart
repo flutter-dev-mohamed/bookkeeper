@@ -22,10 +22,14 @@ class GetOrderDetailsEvent extends OrdersEvent {
   GetOrderDetailsEvent({required this.orderId});
 }
 
-class DeleteOrderEvent extends OrdersEvent {
-  final OrderDetails orderDetails;
+//  you need event for:
+//  order status completed
+//  order status canceled
+class CancelOrderEvent extends OrdersEvent {
+  final int orderId;
+  final List<OrderItem> items;
 
-  DeleteOrderEvent({required this.orderDetails});
+  CancelOrderEvent({required this.orderId, required this.items});
 }
 
 // getOrdersForProduct(productId)

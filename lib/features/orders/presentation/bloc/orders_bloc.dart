@@ -5,7 +5,7 @@ import 'package:shagaf_ledger/features/orders/domain/entities/Order_details.dart
 import 'package:shagaf_ledger/features/orders/domain/entities/order_entity.dart';
 import 'package:shagaf_ledger/features/orders/domain/entities/order_item.dart';
 import 'package:shagaf_ledger/features/orders/domain/use_cases/create_order.dart';
-import 'package:shagaf_ledger/features/orders/domain/use_cases/delete_order.dart';
+import 'package:shagaf_ledger/features/orders/domain/use_cases/cancel_order.dart';
 import 'package:shagaf_ledger/features/orders/domain/use_cases/get_order_details.dart';
 import 'package:shagaf_ledger/features/orders/domain/use_cases/get_orders.dart';
 
@@ -17,13 +17,13 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
   final CreateOrder _createOrder;
   final GetOrders _getOrders;
   final GetOrderDetails _getOrderDetails;
-  final DeleteOrder _deleteOrder;
+  final CancelOrder _cancelOrder;
 
   OrdersBloc({
     required this._createOrder,
     required this._getOrders,
     required this._getOrderDetails,
-    required this._deleteOrder,
+    required this._cancelOrder,
   }) : super(OrdersInitial()) {
     on<OrdersEvent>((event, emit) {
       OPrint.m(event.toString());
@@ -36,7 +36,7 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
 
     on<GetOrderDetailsEvent>(_onGetOrderDetails);
 
-    on<DeleteOrderEvent>(_onDeleteOrderEvent);
+    on<CancelOrderEvent>(_onCancelOrderEvent);
   }
 
   void _onCreateOrderEvent(
@@ -76,11 +76,14 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
     );
   }
 
-  void _onDeleteOrderEvent(
-    DeleteOrderEvent event,
+  // change this to canceled not delete
+  void _onCancelOrderEvent(
+    CancelOrderEvent event,
     Emitter<OrdersState> emit,
   ) async {
-    final res = await _deleteOrder(event.orderDetails);
+    final res = await _cancelOrder(
+      CancelOrderParams(orderId: event.orderId, items: event.items),
+    );
 
     res.fold(
       (error) => emit(OrdersFailer(message: error.message)),

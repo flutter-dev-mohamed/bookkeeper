@@ -137,20 +137,20 @@ class OrdersRepositoryImp implements OrdersRepository {
   }
 
   @override
-  Future<Either<Failure, void>> deleteOrder({
+  Future<Either<Failure, void>> cancelOrder({
     required int orderId,
     required List<OrderItem> items,
   }) async {
     return await tryRepo<void>(() async {
       await localDB.transaction((txn) async {
-        // delete the order
-        await ordersDatabase.deleteOrder(orderId: orderId, executor: txn);
-        //  delete items
-        await orderItemsDatabase.deleteOrderItem(
-          orderId: orderId,
+        // change order status
+        await ordersDatabase.cancelOrder(
           executor: txn,
+          orderId: orderId,
+          statusNo: OrderStatus.canceled.index,
         );
-        // loop over the items and increase their inventory
+
+        // loop over the items and increase their product inventory
         for (final item in items) {
           await productLocalDatabase.incrementProductInventory(
             productId: item.productId,

@@ -10,6 +10,7 @@ class OrderEntityModel extends OrderEntity {
     required super.note,
     required super.discountType,
     required super.discountValue,
+    super.status,
   });
 
   Map<String, dynamic> toMap() {
@@ -20,6 +21,7 @@ class OrderEntityModel extends OrderEntity {
       'note': note,
       'discount_type': discountType.index,
       'discount_value': discountValue,
+      'status': status.index,
     };
     OPrint.line('toMap Order Entity');
     OPrint.c('Mapping order toMap: $map');
@@ -37,6 +39,7 @@ class OrderEntityModel extends OrderEntity {
       note: map['note'] as String? ?? '',
       discountType: DiscountType.values[map['discount_type'] as int],
       discountValue: map['discount_value'],
+      status: OrderStatus.values[map['status'] as int],
     );
   }
 
@@ -49,6 +52,7 @@ class OrderEntityModel extends OrderEntity {
       note: entity.note,
       discountType: entity.discountType,
       discountValue: entity.discountValue,
+      status: entity.status,
     );
   }
 }

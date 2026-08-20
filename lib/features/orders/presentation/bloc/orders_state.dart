@@ -13,11 +13,12 @@ final class OrdersLoaded extends OrdersState {
   OrdersLoaded({required this.orders});
 }
 
-// this is only used when an order's deleted
+// this is only used when an orders status change completed / canceled
 final class OrdersSuccess extends OrdersState {}
 
 final class OrderCreated extends OrdersState {}
 
+// TODO: MAKE IT SO THAT WHEN AN ERROR OCCURS THIS SHOWS AN ALERT DIALECT
 final class OrdersFailer extends OrdersState {
   final String message;
 

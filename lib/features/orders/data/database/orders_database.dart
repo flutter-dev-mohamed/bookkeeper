@@ -43,20 +43,22 @@ class OrdersDatabase {
         return orderMap;
       });
 
-  //  ——————————————————————————————————————————————————————————————————————————  delete Order
-  Future<void> deleteOrder({
+  //  ——————————————————————————————————————————————————————————————————————————  cancel Order
+  Future<void> cancelOrder({
     required int orderId,
+    required int statusNo,
     required DatabaseExecutor executor,
   }) async {
     await tryDB<void>(() async {
-      final res = await executor.delete(
+      final res = await executor.update(
         ordersTable,
+        {"status": statusNo},
         where: 'id = ?',
         whereArgs: [orderId],
       );
-      OPrint.line('deleteOrder');
+      OPrint.line('cancel Order');
       OPrint.br(res.toString());
-      OPrint.line('deleteOrder');
+      OPrint.line('cancel Order');
     });
   }
 }

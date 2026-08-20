@@ -31,21 +31,4 @@ class OrderItemsDatabase {
 
     await tryDB(() async => await db.insert(orderItemsTable, orderMap));
   }
-
-  //  ——————————————————————————————————————————————————————————————————————————  delete Order item
-  Future<void> deleteOrderItem({
-    required int orderId,
-    required DatabaseExecutor executor,
-  }) async {
-    await tryDB<void>(() async {
-      final res = await executor.delete(
-        orderItemsTable,
-        where: 'order_id = ?',
-        whereArgs: [orderId],
-      );
-      OPrint.line('deleteOrderItem');
-      OPrint.br(res.toString());
-      OPrint.line('deleteOrderItem');
-    });
-  }
 }

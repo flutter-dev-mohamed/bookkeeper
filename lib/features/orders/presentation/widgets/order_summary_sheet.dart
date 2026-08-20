@@ -196,6 +196,8 @@ class _OrderSummarySheetState extends State<OrderSummarySheet> {
               ),
 
               const SizedBox(height: 10),
+
+              // TODO: add a completed check box for order status
               //  ──────────────────────────────────────────────────────────────  discount
               DiscountInput(
                 onChanged: ({required type, required value}) => setState(() {

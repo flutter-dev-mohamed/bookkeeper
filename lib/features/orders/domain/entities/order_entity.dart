@@ -6,6 +6,7 @@ class OrderEntity {
   final String note; // optional
   final DiscountType discountType;
   final double discountValue;
+  final OrderStatus status;
 
   OrderEntity({
     required this.id,
@@ -15,7 +16,10 @@ class OrderEntity {
     this.note = "",
     required this.discountType,
     required this.discountValue,
+    this.status = OrderStatus.completed,
   });
 }
 
 enum DiscountType { amount, percentage }
+
+enum OrderStatus { completed, canceled }

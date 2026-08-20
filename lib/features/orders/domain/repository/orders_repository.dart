@@ -14,7 +14,7 @@ abstract interface class OrdersRepository {
 
   Future<Either<Failure, OrderDetails>> getOrderDetails({required int orderId});
 
-  Future<Either<Failure, void>> deleteOrder({
+  Future<Either<Failure, void>> cancelOrder({
     required int orderId,
     required List<OrderItem> items,
   });

@@ -10,7 +10,7 @@ Future<void> createTables(Database db) async {
       note TEXT,
       selling_price REAL,
       purchase_price REAL,
-      current_inventory INTEGER,
+      current_inventory INTEGER NOT NULL CHECK (current_inventory >= 0),
       created_at TEXT
       )''');
 
@@ -23,6 +23,7 @@ Future<void> createTables(Database db) async {
     original_price REAL NOT NULL,
     discount_type INTEGER NOT NULL,
     discount_value REAL NOT NULL,
+    status INTEGER NOT NULL,
     note TEXT
   )''');
 
@@ -33,7 +34,7 @@ Future<void> createTables(Database db) async {
     order_id INTEGER NOT NULL,
     product_id INTEGER NOT NULL,
     product_name TEXT NOT NULL,
-    quantity INTEGER NOT NULL,
+    quantity INTEGER NOT NULL CHECK (quantity >= 1),
     unit_selling_price REAL NOT NULL,
     total_price REAL NOT NULL,
     FOREIGN KEY (order_id) REFERENCES orders (id) ON DELETE CASCADE
