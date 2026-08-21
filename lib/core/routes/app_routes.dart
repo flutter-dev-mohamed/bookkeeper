@@ -6,6 +6,7 @@ import 'package:shagaf_ledger/core/common/errors/UI/error_page.dart';
 import 'package:shagaf_ledger/core/common/widgets/shell_route_widget.dart';
 import 'package:shagaf_ledger/core/common/entities/product.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/pages/add_product_page.dart';
+import 'package:shagaf_ledger/features/inventory/presentation/pages/archived_products_page.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/pages/inventory_page.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/widgets/edit_product_page.dart';
 import 'package:shagaf_ledger/features/orders/domain/use_cases/get_order_details.dart';
@@ -29,29 +30,33 @@ class AppRoutes {
       // in a shell route
       ShellRoute(
         builder: (context, state, child) {
-          final int index = state.matchedLocation == '/orders' ? 1 : 0;
-          return ShellRouteWidget(index: index);
+          final int index = state.matchedLocation.startsWith('/orders') ? 1 : 0;
+
+          return ShellRouteWidget(index: index, child: child);
         },
         routes: [
           // orders page
           GoRoute(
-            //
-            path: "/orders",
+            path: '/orders',
             name: AppConsts().ordersPage,
             builder: (context, state) => OrdersPage(),
-            routes: [
-              // - the order page
-            ],
           ),
 
           // inventory page
           GoRoute(
-            path: "/inventory",
+            path: '/inventory',
             name: AppConsts().inventoryPage,
             builder: (context, state) => InventoryPage(),
           ),
         ],
       ),
+
+      GoRoute(
+        path: '/inventory/archived_products',
+        name: AppConsts().archivedProductsPage,
+        builder: (context, state) => ArchivedProductsPage(),
+      ),
+
       // add product page
       GoRoute(
         path: "/inventory/add_product",
