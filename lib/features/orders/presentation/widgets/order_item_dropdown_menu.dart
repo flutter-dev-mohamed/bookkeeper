@@ -71,11 +71,12 @@ class OrderItemDropdownMenu extends StatelessWidget {
         ),
         closedBorderRadius: BorderRadius.circular(16),
         expandedBorderRadius: BorderRadius.circular(16),
-        prefixIcon: Image.asset(
-          'lib/core/assets/icons/select_product.png',
-          width: 30,
-          color: Theme.of(context).colorScheme.onSecondaryContainer,
-        ),
+        prefixIcon: Text("📦", style: TextStyle(fontSize: 24)),
+        // prefixIcon: Image.asset(
+        //   'lib/core/assets/icons/select_product.png',
+        //   width: 30,
+        //   color: Theme.of(context).colorScheme.onSecondaryContainer,
+        // ),
         // closedSuffixIcon: Text(''),
       ),
     );

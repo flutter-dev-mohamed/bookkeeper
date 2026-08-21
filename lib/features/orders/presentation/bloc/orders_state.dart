@@ -8,15 +8,14 @@ final class OrdersInitial extends OrdersState {}
 final class OrdersLoading extends OrdersState {}
 
 final class OrdersLoaded extends OrdersState {
+  final DateTime dateFilter;
   final List<OrderEntity> orders;
 
-  OrdersLoaded({required this.orders});
+  OrdersLoaded({required this.orders, required this.dateFilter});
 }
 
-// this is only used when an orders status change completed / canceled
+// this is only used when an orders is created
 final class OrdersSuccess extends OrdersState {}
-
-final class OrderCreated extends OrdersState {}
 
 // TODO: MAKE IT SO THAT WHEN AN ERROR OCCURS THIS SHOWS AN ALERT DIALECT
 final class OrdersFailer extends OrdersState {
@@ -25,11 +24,4 @@ final class OrdersFailer extends OrdersState {
   OrdersFailer({required this.message}) {
     OPrint.br(message);
   }
-}
-
-final class OrdersGotOrderDetails extends OrdersState {
-  final OrderEntity order;
-  final List<OrderItem> items;
-
-  OrdersGotOrderDetails({required this.order, required this.items});
 }

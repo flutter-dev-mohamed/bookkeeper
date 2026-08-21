@@ -17,6 +17,7 @@ import 'package:shagaf_ledger/features/orders/domain/use_cases/cancel_order.dart
 import 'package:shagaf_ledger/features/orders/domain/use_cases/get_order_details.dart';
 import 'package:shagaf_ledger/features/orders/domain/use_cases/get_orders.dart';
 import 'package:shagaf_ledger/features/orders/presentation/bloc/orders_bloc.dart';
+import 'package:shagaf_ledger/features/orders/presentation/order_details_cubit/order_details_cubit.dart';
 import 'package:shagaf_ledger/initDependencies/init_local_database.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -30,6 +31,7 @@ Future<void> initDependencies() async {
 
   _initInventoryBloc(db: localDatabase);
   _initOrdersBloc(db: localDatabase);
+  _initOrderDetailsCubit();
 }
 
 void _initInventoryBloc({required Database db}) {
@@ -93,8 +95,6 @@ void _initOrdersBloc({required Database db}) {
     () => OrdersBloc(
       createOrder: serviceLocator<CreateOrder>(),
       getOrders: serviceLocator<GetOrders>(),
-      getOrderDetails: serviceLocator<GetOrderDetails>(),
-      cancelOrder: serviceLocator<CancelOrder>(),
     ),
   );
 
@@ -128,5 +128,14 @@ void _initOrdersBloc({required Database db}) {
 
   serviceLocator.registerFactory<OrderItemsDatabase>(
     () => OrderItemsDatabase(localDB: db),
+  );
+}
+
+void _initOrderDetailsCubit() {
+  serviceLocator.registerFactory<OrderDetailsCubit>(
+    () => OrderDetailsCubit(
+      getOrderDetails: serviceLocator<GetOrderDetails>(),
+      cancelOrder: serviceLocator<CancelOrder>(),
+    ),
   );
 }

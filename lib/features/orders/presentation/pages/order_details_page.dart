@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shagaf_ledger/core/common/errors/UI/error_page.dart';
+import 'package:shagaf_ledger/core/common/pages/loading_page.dart';
 import 'package:shagaf_ledger/core/common/widgets/custom_primary_button.dart';
 import 'package:shagaf_ledger/core/common/widgets/custom_text_field.dart';
 import 'package:shagaf_ledger/features/orders/domain/entities/Order_details.dart';
 import 'package:shagaf_ledger/features/orders/domain/entities/order_entity.dart';
 import 'package:shagaf_ledger/features/orders/domain/entities/order_item.dart';
 import 'package:shagaf_ledger/features/orders/presentation/bloc/orders_bloc.dart';
+import 'package:shagaf_ledger/features/orders/presentation/order_details_cubit/order_details_cubit.dart';
 
 class OrderDetailsPage extends StatefulWidget {
   final int orderId;
@@ -30,29 +33,34 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
 
   @override
   void initState() {
-    context.read<OrdersBloc>().add(
-      GetOrderDetailsEvent(orderId: widget.orderId),
-    );
+    context.read<OrderDetailsCubit>().getOrder(orderId: widget.orderId);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<OrdersBloc, OrdersState>(
+    return BlocConsumer<OrderDetailsCubit, OrderDetailsState>(
       listener: (context, state) {
-        if (state is OrdersGotOrderDetails) {
+        if (state is GotOrderDetails) {
           order = state.order;
           items = state.items;
-        }
-        if (state is OrdersSuccess) {
-          context.read<OrdersBloc>().add(
-            GetOrderDetailsEvent(orderId: order.id),
-          );
         }
       },
 
       builder: (context, state) {
         final colorScheme = Theme.of(context).colorScheme;
+
+        // —————————————————————————————————————————————————————————————————————  indicate loading
+        if (state is OrderDetailsLoading) {
+          return LoadingPage();
+        }
+
+        // —————————————————————————————————————————————————————————————————————  indicate error
+        if (state is OrderDetailsFailure) {
+          return ErrorPage();
+        }
+
+        // —————————————————————————————————————————————————————————————————————  Page UI
         return Directionality(
           textDirection: TextDirection.rtl,
 
@@ -155,7 +163,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                           ],
                         ),
                       ),
-                      //  ——————————————————————————————————————————————————————————  discount
+                      //  ——————————————————————————————————————————————————————  discount
                       if (order.discountValue > 0)
                         Text(
                           (order.discountType == DiscountType.percentage)
@@ -261,8 +269,9 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
               //  ——————————————————————————————————————————————————————————————  cancel order
               MaterialButton(
                 onPressed: () {
-                  context.read<OrdersBloc>().add(
-                    CancelOrderEvent(orderId: order.id, items: items),
+                  context.read<OrderDetailsCubit>().cancelOrder(
+                    orderId: order.id,
+                    items: items,
                   );
                   context.pop();
                 },

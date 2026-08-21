@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shagaf_ledger/core/common/app_consts.dart';
 import 'package:shagaf_ledger/core/common/errors/UI/error_page.dart';
@@ -7,6 +8,8 @@ import 'package:shagaf_ledger/core/common/entities/product.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/pages/add_product_page.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/pages/inventory_page.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/widgets/edit_product_page.dart';
+import 'package:shagaf_ledger/features/orders/domain/use_cases/get_order_details.dart';
+import 'package:shagaf_ledger/features/orders/presentation/order_details_cubit/order_details_cubit.dart';
 import 'package:shagaf_ledger/features/orders/presentation/pages/add_order_page.dart';
 import 'package:shagaf_ledger/features/orders/presentation/pages/order_details_page.dart';
 import 'package:shagaf_ledger/features/orders/presentation/pages/orders_page.dart';
@@ -82,6 +85,8 @@ class AppRoutes {
         name: AppConsts().addNewOrderPage,
         builder: (context, state) => AddOrderPage(),
       ),
+
+      // order details page
       GoRoute(
         path: "/orders/:orderId",
         name: AppConsts().orderDetails,

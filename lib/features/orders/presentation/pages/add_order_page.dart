@@ -97,7 +97,7 @@ class _AddOrderPageState extends State<AddOrderPage> {
                         // alert use in case of error
                         showOrderErrorDialog(context);
                       }
-                      if (state is OrderCreated) {
+                      if (state is OrdersSuccess) {
                         // pop the add order page
                         context.pop();
                       }
