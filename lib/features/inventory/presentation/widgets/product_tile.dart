@@ -11,31 +11,133 @@ class ProductTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        OPrint.by('\nYou clicked ${product.name}!.');
-        context.pushNamed(
-          AppConsts().productDetailsPage,
-          pathParameters: {"productId": product.id.toString()},
-        );
-      },
-      child: Card(
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    // TODO: change these values
+    final bool isLowStock = product.currentInventory <= 200;
+    final bool isOutOfStock = product.currentInventory == 0;
+
+    return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: colorScheme.outlineVariant),
+      ),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: () {
+          context.pushNamed(
+            AppConsts().productDetailsPage,
+            pathParameters: {"productId": product.id.toString()},
+          );
+        },
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
+          padding: const EdgeInsets.all(16),
+          child: Row(
             children: [
-              Text(
-                product.name,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              // Product icon
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: colorScheme.primaryContainer,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Center(
+                  child: Text("📦", style: TextStyle(fontSize: 24)),
+                ),
               ),
-              Text(
-                '${product.currentInventory} units',
-                style: TextStyle(color: Colors.grey),
+
+              const SizedBox(width: 14),
+
+              // Product information
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      product.name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+
+                    const SizedBox(height: 6),
+
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.inventory_2_outlined,
+                          size: 15,
+                          color: colorScheme.onSurfaceVariant,
+                        ),
+                        const SizedBox(width: 5),
+                        Text(
+                          '${product.currentInventory} قطعة',
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
+
+              const SizedBox(width: 12),
+
+              // Inventory status
+              if (product.isArchived)
+                _InventoryStatus(
+                  label: 'منتج مؤرشف',
+                  color: Colors.orangeAccent,
+                )
+              else if (isOutOfStock)
+                _InventoryStatus(
+                  label: 'Out of stock',
+                  color: colorScheme.error,
+                )
+              else if (isLowStock)
+                _InventoryStatus(
+                  label: 'Low stock',
+                  color: colorScheme.tertiary,
+                ),
+
+              const SizedBox(width: 8),
+
+              Icon(Icons.chevron_right, color: colorScheme.onSurfaceVariant),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _InventoryStatus extends StatelessWidget {
+  final String label;
+  final Color color;
+
+  const _InventoryStatus({required this.label, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+          color: color,
         ),
       ),
     );

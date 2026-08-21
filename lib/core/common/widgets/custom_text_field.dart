@@ -74,7 +74,6 @@ class _CustomTextFieldState extends State<CustomTextField> {
       onTapOutside:
           widget.onTapOutside ??
           (event) {
-            OPrint.r('this should unfocus');
             if (widget.unfocusOnTapOutSide) {
               _focusNode.unfocus();
             }

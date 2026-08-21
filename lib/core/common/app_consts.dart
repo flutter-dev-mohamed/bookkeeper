@@ -5,8 +5,9 @@ class AppConsts {
   final String productDetailsPage = "productDetailsPage";
   final String editProductPage = "editProductPage";
   final String addProductPage = "addProductPage";
-  final String orderDetails = "orderDetails";
+  final String archivedProductsPage = "archivedProductsPage";
 
   // orders
   final String addNewOrderPage = "addNewOrderPage";
+  final String orderDetails = "orderDetails";
 }

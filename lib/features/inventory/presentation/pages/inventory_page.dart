@@ -29,52 +29,59 @@ class _InventoryPageState extends State<InventoryPage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            'المخزن',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 28),
-          ),
-          centerTitle: true,
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'المخزن',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 28),
         ),
-
-        // -----------------------------------------------------------------------body
-        body: BlocConsumer<InventoryBloc, InventoryState>(
-          listener: (context, state) {
-            OPrint.line(' Inventory Page Listener state: $state ');
-            if (state is InventorySuccess) {
-              // InventorySuccess state is emitted on:
-              // -  Add product
-              context.read<InventoryBloc>().add(LoadProductsEvent());
-            }
-            if (state is InventoryProductsLoaded) {
-              products = state.products;
-            }
-          },
-          builder: (context, state) {
-            return Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ListView.builder(
-                itemCount: products.length,
-                itemBuilder: (context, index) =>
-                    ProductTile(product: products[index]),
-              ),
-            );
-          },
-        ),
-
-        floatingActionButton: FloatingActionButton(
+        centerTitle: true,
+        leading: IconButton.filledTonal(
+          tooltip: 'Add product',
           onPressed: () {
             context.pushNamed(AppConsts().addProductPage).then((value) {
-              // call this after we pop back here to reload a fresh productList from DB
               if (context.mounted) {
                 context.read<InventoryBloc>().add(LoadProductsEvent());
               }
             });
           },
-          child: Icon(Icons.add_rounded, size: 50),
+          icon: const Icon(
+            Icons.add_rounded,
+            size: 30,
+            fontWeight: FontWeight.bold,
+          ),
         ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              context.pushNamed(AppConsts().archivedProductsPage);
+            },
+            icon: Icon(Icons.archive_rounded, size: 30),
+          ),
+        ],
+      ),
+
+      // -----------------------------------------------------------------------body
+      body: BlocConsumer<InventoryBloc, InventoryState>(
+        listener: (context, state) {
+          OPrint.line(' Inventory Page Listener state: $state ');
+          if (state is InventorySuccess) {
+            // InventorySuccess state is emitted on:
+            // -  Add product
+            context.read<InventoryBloc>().add(LoadProductsEvent());
+          }
+          if (state is InventoryProductsLoaded) {
+            products = state.products;
+          }
+        },
+        builder: (context, state) {
+          return ListView.builder(
+            padding: const EdgeInsets.only(bottom: 24),
+            itemCount: products.length,
+            itemBuilder: (context, index) =>
+                ProductTile(product: products[index]),
+          );
+        },
       ),
     );
   }

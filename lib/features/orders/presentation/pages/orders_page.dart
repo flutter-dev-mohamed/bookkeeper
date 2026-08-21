@@ -81,25 +81,32 @@ class _OrdersPageState extends State<OrdersPage> {
                   ),
                 )
               : ListView.builder(
+                  padding: const EdgeInsets.only(bottom: 100),
                   itemCount: orders.length,
                   itemBuilder: (context, index) =>
                       OrderTile(order: orders[index]),
                 ),
 
+          floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
           floatingActionButton: _shouldShowAddOrderButton(state)
-              ? FloatingActionButton(
+              ? FloatingActionButton.extended(
                   heroTag: null,
                   elevation: 3,
-                  shape: CircleBorder(),
+                  backgroundColor: Theme.of(
+                    context,
+                  ).colorScheme.secondaryContainer,
+                  foregroundColor: Theme.of(
+                    context,
+                  ).colorScheme.onSecondaryContainer,
                   onPressed: () {
-                    // push the add order page
                     context.pushNamed(AppConsts().addNewOrderPage);
                   },
-                  child: Image.asset(
+                  icon: Image.asset(
                     'lib/core/assets/icons/delivery_box.png',
+                    width: 24,
                     color: Theme.of(context).colorScheme.onSecondaryContainer,
-                    width: 30,
                   ),
+                  label: const Text('طلب جديد'),
                 )
               : null,
         );

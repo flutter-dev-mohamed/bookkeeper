@@ -144,7 +144,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                       product.isArchived ? 'منتج مؤرشف' : 'منتج نشط',
                       style: TextStyle(
                         color: product.isArchived
-                            ? colors.error
+                            ? Colors.orangeAccent
                             : Colors.lightGreenAccent,
                         fontWeight: FontWeight.w600,
                         fontSize: 12,
@@ -204,7 +204,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                     style: TextStyle(
                       fontSize: 40,
                       fontWeight: FontWeight.bold,
-                      color: colors.primary,
+                      color: (stock == 0) ? colors.error : colors.primary,
                     ),
                   ),
 
