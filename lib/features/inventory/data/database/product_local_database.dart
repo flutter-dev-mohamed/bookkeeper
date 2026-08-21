@@ -86,31 +86,12 @@ class ProductLocalDatabase {
     });
   }
 
-  // Future<ProductModel> updateProduct({
-  //   required ProductModel productModel,
-  // }) async {
-  //   return tryDB<ProductModel>(() async {
-  //     final updateRes = await localDB.update(
-  //       productsTable,
-  //       productModel.toMap(update: true),
-  //       where: 'id = ?',
-  //       whereArgs: [productModel.id],
-  //     );
-  //     final fetchRes = await localDB.query(
-  //       productsTable,
-  //       where: "id = ?",
-  //       whereArgs: [productModel.id],
-  //     );
-  //
-  //     return ProductModel.fromMap(fetchRes.first);
-  //   });
-  // }
-
   // deleteProduct
-  Future<void> deleteProduct({required int productId}) async {
+  Future<void> archiveProduct({required int productId}) async {
     return tryDB<void>(() async {
-      final res = await localDB.delete(
+      final res = await localDB.update(
         productsTable,
+        {"is_archived": 1},
         where: 'id = ?',
         whereArgs: [productId],
       );

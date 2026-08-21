@@ -4,7 +4,7 @@ import 'package:shagaf_ledger/core/common/colored_prints.dart';
 import 'package:shagaf_ledger/core/common/use_cases/use_cases.dart';
 import 'package:shagaf_ledger/core/common/entities/product.dart';
 import 'package:shagaf_ledger/features/inventory/domain/use_cases/add_product.dart';
-import 'package:shagaf_ledger/features/inventory/domain/use_cases/delete_product.dart';
+import 'package:shagaf_ledger/features/inventory/domain/use_cases/archive_product.dart';
 import 'package:shagaf_ledger/features/inventory/domain/use_cases/get_product_by_id.dart';
 import 'package:shagaf_ledger/features/inventory/domain/use_cases/get_products.dart';
 import 'package:shagaf_ledger/features/inventory/domain/use_cases/update_product.dart';
@@ -17,22 +17,18 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
   final GetProducts _getProducts;
   final AddProduct _addProduct;
   final UpdateProduct _updateProduct;
-  final DeleteProduct _deleteProduct;
+  final ArchiveProduct _archiveProduct;
   final GetProductById _getProductById;
 
   InventoryBloc({
-    required GetProducts getProducts,
-    required AddProduct addProduct,
-    required GetProductById getProductById,
-    required UpdateProduct updateProduct,
-    required DeleteProduct deleteProduct,
-  }) : _getProducts = getProducts,
-       _addProduct = addProduct,
-       _updateProduct = updateProduct,
-       _deleteProduct = deleteProduct,
-       _getProductById = getProductById,
-       super(InventoryInitial()) {
+    required this._getProducts,
+    required this._addProduct,
+    required this._getProductById,
+    required this._updateProduct,
+    required this._archiveProduct,
+  }) : super(InventoryInitial()) {
     on<InventoryEvent>((event, emit) {
+      emit(InventoryLoading());
       OPrint.bg(event.toString());
     });
 
@@ -42,11 +38,9 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
 
     on<GetProductByIdEvent>(_onGetProductByIdEvent);
 
-    on<EditProductEvent>(_onEditProductEvent);
-
     on<UpdateProductEvent>(_onUpdateProductEvent);
 
-    on<DeleteProductEvent>(_onDeleteProductEvent);
+    on<ArchiveProductEvent>(_onArchiveProductEvent);
   }
 
   void _onInventoryLoadProducts(
@@ -66,13 +60,11 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
     AddProductEvent event,
     Emitter<InventoryState> emit,
   ) async {
-    emit(InventoryLoading());
-
     final product = await _addProduct(event.product);
 
     product.fold(
       (error) => InventoryFailure(message: error.message),
-      (productId) => emit(InventoryProductAdded(productId: productId)),
+      (productId) => emit(InventorySuccess()),
     );
   }
 
@@ -80,8 +72,6 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
     GetProductByIdEvent event,
     Emitter<InventoryState> emit,
   ) async {
-    emit(InventoryLoading());
-
     OPrint.b('Getting Product...');
     final res = await _getProductById(event.productId);
 
@@ -89,15 +79,6 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
       (error) => emit(InventoryFailure(message: error.message)),
       (product) => emit(InventoryGotProductById(product: product)),
     );
-  }
-
-  // this method is used to put the app in the editing sate
-  void _onEditProductEvent(
-    EditProductEvent event,
-    Emitter<InventoryState> emit,
-  ) async {
-    emit(InventoryEditProduct(product: event.product));
-    OPrint.c('App in editing state!');
   }
 
   void _onUpdateProductEvent(
@@ -110,15 +91,14 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
       updatedProduct,
     ) {
       emit(InventorySuccess());
-      emit(InventoryGotProductById(product: updatedProduct));
     });
   }
 
-  void _onDeleteProductEvent(
-    DeleteProductEvent event,
+  void _onArchiveProductEvent(
+    ArchiveProductEvent event,
     Emitter<InventoryState> emit,
   ) async {
-    final res = await _deleteProduct(event.product.id);
+    final res = await _archiveProduct(event.product.id);
 
     res.fold(
       (error) => emit(InventoryFailure(message: error.message)),

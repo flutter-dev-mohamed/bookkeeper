@@ -7,6 +7,7 @@ Future<void> createTables(Database db) async {
       CREATE TABLE products (
       id INTEGER PRIMARY KEY,
       name TEXT NOT NULL,
+      is_archived INTEGER,
       note TEXT,
       selling_price REAL,
       purchase_price REAL,

@@ -48,10 +48,10 @@ class InventoryRepositoryImp implements InventoryRepository {
   }
 
   @override
-  Future<Either<Failure, void>> deleteProduct({required int productId}) async {
+  Future<Either<Failure, void>> archiveProduct({required int productId}) async {
     return await tryRepo<void>(
       () async =>
-          await productLocalDatabase.deleteProduct(productId: productId),
+          await productLocalDatabase.archiveProduct(productId: productId),
     );
   }
 }

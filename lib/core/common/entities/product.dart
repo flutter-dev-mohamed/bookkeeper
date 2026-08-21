@@ -6,6 +6,7 @@ class Product {
   double purchasePrice;
   int currentInventory;
   DateTime createdAt;
+  bool isArchived;
 
   Product({
     required this.id,
@@ -15,6 +16,7 @@ class Product {
     required this.purchasePrice,
     required this.sellingPrice,
     this.note = "",
+    this.isArchived = false,
   });
 
   @override
@@ -23,6 +25,7 @@ class Product {
     return 'Product: '
         'id: $id, '
         'name: "$name", '
+        'isArchived: $isArchived, '
         'note: "$note"'
         'currentInventory: $currentInventory, '
         'purchasePrice: $purchasePrice, '

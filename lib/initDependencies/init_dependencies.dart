@@ -3,7 +3,7 @@ import 'package:shagaf_ledger/features/inventory/data/database/product_local_dat
 import 'package:shagaf_ledger/features/inventory/data/repository/inventory_repository_imp.dart';
 import 'package:shagaf_ledger/features/inventory/domain/repository/inventory_repository.dart';
 import 'package:shagaf_ledger/features/inventory/domain/use_cases/add_product.dart';
-import 'package:shagaf_ledger/features/inventory/domain/use_cases/delete_product.dart';
+import 'package:shagaf_ledger/features/inventory/domain/use_cases/archive_product.dart';
 import 'package:shagaf_ledger/features/inventory/domain/use_cases/get_product_by_id.dart';
 import 'package:shagaf_ledger/features/inventory/domain/use_cases/get_products.dart';
 import 'package:shagaf_ledger/features/inventory/domain/use_cases/update_product.dart';
@@ -39,7 +39,7 @@ void _initInventoryBloc({required Database db}) {
       addProduct: serviceLocator<AddProduct>(),
       getProductById: serviceLocator<GetProductById>(),
       updateProduct: serviceLocator<UpdateProduct>(),
-      deleteProduct: serviceLocator<DeleteProduct>(),
+      archiveProduct: serviceLocator<ArchiveProduct>(),
     ),
   );
 
@@ -81,8 +81,8 @@ void _initInventoryBloc({required Database db}) {
   );
 
   // init deleteProduct
-  serviceLocator.registerFactory<DeleteProduct>(
-    () => DeleteProduct(
+  serviceLocator.registerFactory<ArchiveProduct>(
+    () => ArchiveProduct(
       inventoryRepository: serviceLocator<InventoryRepository>(),
     ),
   );

@@ -9,6 +9,7 @@ class ProductModel extends Product {
     required super.purchasePrice,
     required super.sellingPrice,
     super.note = '',
+    super.isArchived,
   });
 
   // id INTEGER PRIMARY KEY,
@@ -27,6 +28,7 @@ class ProductModel extends Product {
       "selling_price": sellingPrice,
       "purchase_price": purchasePrice,
       "current_inventory": currentInventory,
+      "is_archived": isArchived ? 1 : 0,
       // don't add the created_at in when updating
       if (!update) "created_at": createdAt.toIso8601String(),
     };
@@ -36,6 +38,7 @@ class ProductModel extends Product {
     return ProductModel(
       id: productMap['id'],
       name: productMap['name'],
+      isArchived: productMap["is_archived"] == 1,
       note: productMap['note'],
       sellingPrice: productMap['selling_price'],
       purchasePrice: productMap['purchase_price'],
@@ -49,6 +52,7 @@ class ProductModel extends Product {
     return ProductModel(
       id: product.id,
       name: product.name,
+      isArchived: product.isArchived,
       note: product.note,
       createdAt: product.createdAt,
       currentInventory: product.currentInventory,
@@ -62,6 +66,7 @@ class ProductModel extends Product {
     return 'ProductModel('
         'id: $id, '
         'name: "$name", '
+        'isArchived: $isArchived, '
         'note: "$note"'
         'currentInventory: $currentInventory, '
         'purchasePrice: $purchasePrice, '

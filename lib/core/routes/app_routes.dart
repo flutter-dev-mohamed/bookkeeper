@@ -6,6 +6,7 @@ import 'package:shagaf_ledger/core/common/widgets/shell_route_widget.dart';
 import 'package:shagaf_ledger/core/common/entities/product.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/pages/add_product_page.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/pages/inventory_page.dart';
+import 'package:shagaf_ledger/features/inventory/presentation/widgets/edit_product_page.dart';
 import 'package:shagaf_ledger/features/orders/presentation/pages/add_order_page.dart';
 import 'package:shagaf_ledger/features/orders/presentation/pages/order_details_page.dart';
 import 'package:shagaf_ledger/features/orders/presentation/pages/orders_page.dart';
@@ -60,9 +61,19 @@ class AppRoutes {
         path: "/inventory/:productId",
         name: AppConsts().productDetailsPage,
         builder: (context, state) {
-          final id = state.pathParameters['productId'];
-          return ProductDetailsPage(productId: int.parse(id ?? ''));
+          final id = state.pathParameters['productId']!;
+          return ProductDetailsPage(productId: int.parse(id));
         },
+        routes: [
+          GoRoute(
+            path: "edit_product",
+            name: AppConsts().editProductPage,
+            builder: (context, state) {
+              final id = state.pathParameters['productId']!;
+              return EditProductPage(productId: int.parse(id));
+            },
+          ),
+        ],
       ),
 
       // add order

@@ -72,7 +72,7 @@ class _AddProductPageState extends State<AddProductPage> {
                   Expanded(
                     child: BlocConsumer<InventoryBloc, InventoryState>(
                       listener: (context, state) {
-                        if (state is InventoryProductAdded) {
+                        if (state is InventorySuccess) {
                           context.pop();
                         }
                       },

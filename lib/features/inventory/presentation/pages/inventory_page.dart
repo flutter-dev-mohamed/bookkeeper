@@ -42,9 +42,10 @@ class _InventoryPageState extends State<InventoryPage> {
         // -----------------------------------------------------------------------body
         body: BlocConsumer<InventoryBloc, InventoryState>(
           listener: (context, state) {
+            OPrint.line(' Inventory Page Listener state: $state ');
             if (state is InventorySuccess) {
-              // I only emit InventorySuccess if we deleted a product so reload!
-              OPrint.g('InventoryPage: Should reload products list!.');
+              // InventorySuccess state is emitted on:
+              // -  Add product
               context.read<InventoryBloc>().add(LoadProductsEvent());
             }
             if (state is InventoryProductsLoaded) {
