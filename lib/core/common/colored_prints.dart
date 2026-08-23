@@ -12,7 +12,43 @@ class OPrint {
   static void by(Object m) => print('\x1B[93m$m$reset'); // Bright Yellow
   static void bb(Object m) => print('\x1B[94m$m$reset'); // Bright Blue
 
-  static void line(String title) => c(
-    '———————————————${title}——————————————————————————————————————————————————',
+  static void lineC(String title) => c(
+    '——————————————— ${title} ——————————————————————————————————————————————————',
+  );
+
+  static void lineR(String title) => r(
+    '——————————————— ${title} ——————————————————————————————————————————————————',
+  );
+
+  static void lineG(String title) => g(
+    '——————————————— ${title} ——————————————————————————————————————————————————',
+  );
+
+  static void lineY(String title) => y(
+    '——————————————— ${title} ——————————————————————————————————————————————————',
+  );
+
+  static void lineB(String title) => b(
+    '——————————————— ${title} ——————————————————————————————————————————————————',
+  );
+
+  static void lineM(String title) => m(
+    '——————————————— ${title} ——————————————————————————————————————————————————',
+  );
+
+  static void lineBr(String title) => br(
+    '——————————————— ${title} ——————————————————————————————————————————————————',
+  );
+
+  static void lineBg(String title) => bg(
+    '——————————————— ${title} ——————————————————————————————————————————————————',
+  );
+
+  static void lineBy(String title) => by(
+    '——————————————— ${title} ——————————————————————————————————————————————————',
+  );
+
+  static void lineBb(String title) => bb(
+    '——————————————— ${title} ——————————————————————————————————————————————————',
   );
 }
