@@ -2,12 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shagaf_ledger/core/common/app_consts.dart';
-import 'package:shagaf_ledger/core/common/colored_prints.dart';
 import 'package:shagaf_ledger/core/common/entities/product.dart';
 import 'package:shagaf_ledger/core/common/errors/UI/error_page.dart';
-import 'package:shagaf_ledger/core/common/widgets/custom_primary_button.dart';
-import 'package:shagaf_ledger/features/inventory/presentation/bloc/inventory_bloc.dart';
-import 'package:shagaf_ledger/features/inventory/presentation/widgets/archive_product_button.dart';
+import 'package:shagaf_ledger/core/common/pages/loading_page.dart';
+import 'package:shagaf_ledger/features/inventory/presentation/cubit/product_cubit/product_cubit.dart';
 
 class ProductDetailsPage extends StatefulWidget {
   final int productId;
@@ -19,12 +17,13 @@ class ProductDetailsPage extends StatefulWidget {
 }
 
 class _ProductDetailsPageState extends State<ProductDetailsPage> {
+  // didChanged is a flag set to true if the product was changed(updated/archived)
+  Object? didChanged;
+
   @override
   void initState() {
     // fetch the product
-    context.read<InventoryBloc>().add(
-      GetProductByIdEvent(productId: widget.productId),
-    );
+    context.read<ProductCubit>().getProductDetails(productId: widget.productId);
     super.initState();
   }
 
@@ -32,56 +31,57 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
 
-    return BlocConsumer<InventoryBloc, InventoryState>(
-      listener: (context, state) {
-        // in case of update or archive
-        // in some cases we are in the details page but after editing or archiving a product
-        // we emit InventorySuccess which will trigger a InventoryLoadProducts event
-        // so we need to get the new product info from DB
-        if (state is InventoryProductsLoaded) {
-          context.read<InventoryBloc>().add(
-            GetProductByIdEvent(productId: widget.productId),
-          );
-        }
-      },
+    return BlocConsumer<ProductCubit, ProductState>(
+      listener: (context, state) {},
       builder: (context, state) {
-        if (state is InventoryLoading) {
-          return Center(
-            child: CircularProgressIndicator(),
-          ); // loading indicator
+        if (state is ProductLoading) {
+          return LoadingPage(); // loading indicator
         }
 
-        if (state is InventoryGotProductById) {
-          return Directionality(
-            textDirection: TextDirection.rtl,
-            child: Scaffold(
-              appBar: AppBar(
-                title: const Text('تفاصيل المنتج'),
-                centerTitle: true,
-              ),
-              body: ListView(
-                padding: const EdgeInsets.all(16),
-                children: [
-                  _headerCard(context, state.product, colors),
-                  const SizedBox(height: 16),
+        if (state is GotProductDetails) {
+          //  ——————————————————————————————————————————————————————————————————  Page UI
+          return PopScope(
+            onPopInvokedWithResult: (didPop, result) {
+              if (didPop) return;
 
-                  _inventoryCard(context, state.product, colors),
-                  const SizedBox(height: 16),
+              // on popping this page this will return true if the product has changed else return false
+              if (didChanged == true) {
+                context.pop(true);
+              } else {
+                context.pop();
+              }
+            },
+            child: Directionality(
+              textDirection: TextDirection.rtl,
+              child: Scaffold(
+                appBar: AppBar(
+                  title: const Text('تفاصيل المنتج'),
+                  centerTitle: true,
+                ),
+                body: ListView(
+                  padding: const EdgeInsets.all(16),
+                  children: [
+                    _headerCard(context, state.product, colors),
+                    const SizedBox(height: 16),
 
-                  _pricingCard(context, state.product, colors),
-                  const SizedBox(height: 16),
+                    _inventoryCard(context, state.product, colors),
+                    const SizedBox(height: 16),
 
-                  _noteCard(context, state.product, colors),
+                    _pricingCard(context, state.product, colors),
+                    const SizedBox(height: 16),
 
-                  const SizedBox(height: 16),
+                    _noteCard(context, state.product, colors),
 
-                  _createdAtCard(context, state.product, colors),
+                    const SizedBox(height: 16),
 
-                  const SizedBox(height: 24),
+                    _createdAtCard(context, state.product, colors),
 
-                  _editButton(context, state.product),
-                  const SizedBox(height: 40),
-                ],
+                    const SizedBox(height: 24),
+
+                    _editButton(context, state.product),
+                    const SizedBox(height: 40),
+                  ],
+                ),
               ),
             ),
           );
@@ -395,10 +395,11 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
     return SizedBox(
       width: double.infinity,
       child: FilledButton.icon(
-        onPressed: () {
-          context.pushNamed(
+        onPressed: () async {
+          // this will return true if any thing changes
+          didChanged = await context.pushNamed(
             AppConsts().editProductPage,
-            pathParameters: {"productId": product.id.toString()},
+            extra: product,
           );
         },
         icon: const Icon(Icons.edit_outlined),

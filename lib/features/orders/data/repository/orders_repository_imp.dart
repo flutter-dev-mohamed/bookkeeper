@@ -1,5 +1,4 @@
 import 'package:fpdart/src/either.dart';
-import 'package:shagaf_ledger/core/common/colored_prints.dart';
 import 'package:shagaf_ledger/core/common/errors/failure.dart';
 import 'package:shagaf_ledger/core/common/functions/try_repo.dart';
 import 'package:shagaf_ledger/features/inventory/data/database/product_local_database.dart';
@@ -38,7 +37,6 @@ class OrdersRepositoryImp implements OrdersRepository {
     required OrderEntity order,
     required List<OrderItem> items,
   }) async {
-    OPrint.b('Repository: createOrder called with ${items.length} items');
     return await tryRepo<void>(() async {
       // convert entity to model
       final OrderEntityModel orderModel = OrderEntityModel.fromOrderEntity(
@@ -47,15 +45,11 @@ class OrdersRepositoryImp implements OrdersRepository {
 
       // make a transaction
       await localDB.transaction((txn) async {
-        OPrint.c('Repository: Inserting order header...');
         // insert the order and get the order id
         final int orderId = await ordersDatabase.createOrder(
           orderMap: orderModel.toMap(),
           executor: txn,
         );
-        OPrint.g('Repository: Order inserted successfully with ID: $orderId');
-
-        OPrint.c('Repository: Inserting order items...');
 
         // loop over all items decrement the product inventory and insert to DB
         for (final item in items) {
@@ -64,22 +58,17 @@ class OrdersRepositoryImp implements OrdersRepository {
 
           final map = itemModel.toMap(orderId: orderId);
 
-          OPrint.y('Decrementing item $item Inventory');
           await productLocalDatabase.decrementProductInventory(
             productId: item.productId,
             quantity: item.quantity,
             executor: txn,
           );
 
-          OPrint.y('Inserting order item map: $map');
           await orderItemsDatabase.insertOrderItem(
             orderMap: map,
             executor: txn,
           );
         }
-        OPrint.g(
-          'Repository: All ${items.length} items inserted successfully for order ID: $orderId',
-        );
       });
     });
   }
@@ -88,23 +77,17 @@ class OrdersRepositoryImp implements OrdersRepository {
   Future<Either<Failure, List<OrderEntity>>> getOrders({
     required String date,
   }) async {
-    OPrint.b('Repository: getOrders called with date: $date');
     return await tryRepo<List<OrderEntityModel>>(() async {
       final ordersMapList = await ordersDatabase.getOrders(date: date);
-      OPrint.c(
-        'Repository: Fetched ${ordersMapList.length} raw order maps for date: $date',
-      );
 
       final ordersList = ordersMapList.map((ordersMao) {
         try {
           return OrderEntityModel.fromMap(map: ordersMao);
         } catch (e) {
-          OPrint.r('Error mapping order map: $e\nData: $ordersMao');
           rethrow;
         }
       }).toList();
 
-      OPrint.g('Repository: Successfully mapped ${ordersList.length} orders');
       return ordersList;
     });
   }

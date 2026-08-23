@@ -8,6 +8,7 @@ import 'package:shagaf_ledger/features/inventory/domain/use_cases/get_product_by
 import 'package:shagaf_ledger/features/inventory/domain/use_cases/get_products.dart';
 import 'package:shagaf_ledger/features/inventory/domain/use_cases/update_product.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/bloc/inventory_bloc.dart';
+import 'package:shagaf_ledger/features/inventory/presentation/cubit/product_cubit/product_cubit.dart';
 import 'package:shagaf_ledger/features/orders/data/database/order_items_database.dart';
 import 'package:shagaf_ledger/features/orders/data/database/orders_database.dart';
 import 'package:shagaf_ledger/features/orders/data/repository/orders_repository_imp.dart';
@@ -16,7 +17,8 @@ import 'package:shagaf_ledger/features/orders/domain/use_cases/create_order.dart
 import 'package:shagaf_ledger/features/orders/domain/use_cases/cancel_order.dart';
 import 'package:shagaf_ledger/features/orders/domain/use_cases/get_order_details.dart';
 import 'package:shagaf_ledger/features/orders/domain/use_cases/get_orders.dart';
-import 'package:shagaf_ledger/features/orders/presentation/bloc/orders_bloc.dart';
+import 'package:shagaf_ledger/features/orders/presentation/add_order_cubit/add_order_cubit.dart';
+import 'package:shagaf_ledger/features/orders/presentation/orders_bloc/orders_bloc.dart';
 import 'package:shagaf_ledger/features/orders/presentation/order_details_cubit/order_details_cubit.dart';
 import 'package:shagaf_ledger/initDependencies/init_local_database.dart';
 import 'package:sqflite/sqflite.dart';
@@ -32,6 +34,8 @@ Future<void> initDependencies() async {
   _initInventoryBloc(db: localDatabase);
   _initOrdersBloc(db: localDatabase);
   _initOrderDetailsCubit();
+  _initProductCubit();
+  _initAddOrderCubit();
 }
 
 void _initInventoryBloc({required Database db}) {
@@ -39,9 +43,6 @@ void _initInventoryBloc({required Database db}) {
     () => InventoryBloc(
       getProducts: serviceLocator<GetProducts>(),
       addProduct: serviceLocator<AddProduct>(),
-      getProductById: serviceLocator<GetProductById>(),
-      updateProduct: serviceLocator<UpdateProduct>(),
-      archiveProduct: serviceLocator<ArchiveProduct>(),
     ),
   );
 
@@ -67,35 +68,11 @@ void _initInventoryBloc({required Database db}) {
     () =>
         AddProduct(inventoryRepository: serviceLocator<InventoryRepository>()),
   );
-
-  // init getProductById
-  serviceLocator.registerFactory<GetProductById>(
-    () => GetProductById(
-      inventoryRepository: serviceLocator<InventoryRepository>(),
-    ),
-  );
-
-  // init updateProduct
-  serviceLocator.registerFactory<UpdateProduct>(
-    () => UpdateProduct(
-      inventoryRepository: serviceLocator<InventoryRepository>(),
-    ),
-  );
-
-  // init deleteProduct
-  serviceLocator.registerFactory<ArchiveProduct>(
-    () => ArchiveProduct(
-      inventoryRepository: serviceLocator<InventoryRepository>(),
-    ),
-  );
 }
 
 void _initOrdersBloc({required Database db}) {
   serviceLocator.registerLazySingleton<OrdersBloc>(
-    () => OrdersBloc(
-      createOrder: serviceLocator<CreateOrder>(),
-      getOrders: serviceLocator<GetOrders>(),
-    ),
+    () => OrdersBloc(getOrders: serviceLocator<GetOrders>()),
   );
 
   serviceLocator.registerFactory<CancelOrder>(
@@ -107,10 +84,6 @@ void _initOrdersBloc({required Database db}) {
 
   serviceLocator.registerFactory<GetOrders>(
     () => GetOrders(ordersRepository: serviceLocator<OrdersRepository>()),
-  );
-
-  serviceLocator.registerFactory<CreateOrder>(
-    () => CreateOrder(ordersRepository: serviceLocator<OrdersRepository>()),
   );
 
   serviceLocator.registerFactory<OrdersRepository>(
@@ -137,5 +110,46 @@ void _initOrderDetailsCubit() {
       getOrderDetails: serviceLocator<GetOrderDetails>(),
       cancelOrder: serviceLocator<CancelOrder>(),
     ),
+  );
+}
+
+void _initProductCubit() {
+  serviceLocator.registerFactory<ProductCubit>(
+    () => ProductCubit(
+      getProductById: serviceLocator<GetProductById>(),
+      updateProduct: serviceLocator<UpdateProduct>(),
+      archiveProduct: serviceLocator<ArchiveProduct>(),
+    ),
+  );
+
+  // init getProductById
+  serviceLocator.registerFactory<GetProductById>(
+    () => GetProductById(
+      inventoryRepository: serviceLocator<InventoryRepository>(),
+    ),
+  );
+
+  // init updateProduct
+  serviceLocator.registerFactory<UpdateProduct>(
+    () => UpdateProduct(
+      inventoryRepository: serviceLocator<InventoryRepository>(),
+    ),
+  );
+
+  // init deleteProduct
+  serviceLocator.registerFactory<ArchiveProduct>(
+    () => ArchiveProduct(
+      inventoryRepository: serviceLocator<InventoryRepository>(),
+    ),
+  );
+}
+
+void _initAddOrderCubit() {
+  serviceLocator.registerFactory<AddOrderCubit>(
+    () => AddOrderCubit(createOrder: serviceLocator<CreateOrder>()),
+  );
+
+  serviceLocator.registerFactory<CreateOrder>(
+    () => CreateOrder(ordersRepository: serviceLocator<OrdersRepository>()),
   );
 }

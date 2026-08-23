@@ -4,11 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:shagaf_ledger/core/common/errors/UI/error_page.dart';
 import 'package:shagaf_ledger/core/common/pages/loading_page.dart';
 import 'package:shagaf_ledger/core/common/widgets/custom_primary_button.dart';
-import 'package:shagaf_ledger/core/common/widgets/custom_text_field.dart';
-import 'package:shagaf_ledger/features/orders/domain/entities/Order_details.dart';
 import 'package:shagaf_ledger/features/orders/domain/entities/order_entity.dart';
 import 'package:shagaf_ledger/features/orders/domain/entities/order_item.dart';
-import 'package:shagaf_ledger/features/orders/presentation/bloc/orders_bloc.dart';
 import 'package:shagaf_ledger/features/orders/presentation/order_details_cubit/order_details_cubit.dart';
 
 class OrderDetailsPage extends StatefulWidget {
@@ -241,7 +238,6 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
 
   //  ——————————————————————————————————————————————————————————————————————————  Cancel order dialog
   void _showCancelDialog(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
     showDialog(
       context: context,
       builder: (BuildContext context) {

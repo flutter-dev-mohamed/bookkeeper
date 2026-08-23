@@ -14,14 +14,13 @@ final class OrdersLoaded extends OrdersState {
   OrdersLoaded({required this.orders, required this.dateFilter});
 }
 
-// this is only used when an orders is created
-final class OrdersSuccess extends OrdersState {}
-
 // TODO: MAKE IT SO THAT WHEN AN ERROR OCCURS THIS SHOWS AN ALERT DIALECT
 final class OrdersFailer extends OrdersState {
   final String message;
 
   OrdersFailer({required this.message}) {
+    OPrint.lineC("OrdersFailer");
     OPrint.br(message);
+    OPrint.lineC("OrdersFailer");
   }
 }

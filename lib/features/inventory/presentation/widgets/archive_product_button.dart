@@ -3,32 +3,49 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shagaf_ledger/core/common/colored_prints.dart';
 import 'package:shagaf_ledger/core/common/widgets/custom_primary_button.dart';
-import 'package:shagaf_ledger/core/common/entities/product.dart';
-import 'package:shagaf_ledger/features/inventory/presentation/bloc/inventory_bloc.dart';
+import 'package:shagaf_ledger/features/inventory/presentation/cubit/product_cubit/product_cubit.dart';
 
 class ArchiveProductButton extends StatelessWidget {
-  final Product product;
+  final int productId;
 
-  const ArchiveProductButton({super.key, required this.product});
+  ArchiveProductButton({super.key, required this.productId});
+
+  bool thisOne = false;
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: MediaQuery.of(context).size.width,
-      child: CustomPrimaryButton(
-        text: 'ارشفة المنتج',
-        onPressed: () {
-          _showCancelDialog(context);
-        },
-        backgroundColor: Colors.redAccent.shade200,
-        foregroundColor: Colors.white,
-      ),
+    return BlocConsumer<ProductCubit, ProductState>(
+      listener: (context, state) {
+        //  this will pop the edite product page
+        if (state is ProductArchived) context.pop(true);
+
+        // in case of an error cancel loading
+        if (state is ProductFailure) thisOne = false;
+      },
+
+      builder: (context, state) {
+        return SizedBox(
+          width: MediaQuery.of(context).size.width,
+          child: CustomPrimaryButton(
+            text: 'ارشفة المنتج',
+            onPressed: () {
+              thisOne = true;
+              _showArchiveProductDialog(context);
+            },
+            backgroundColor: Colors.redAccent.shade200,
+            foregroundColor: Colors.white,
+            child: (state is ProductLoading && thisOne)
+                //  this will check for loading and if the button is thisOne
+                ? CircularProgressIndicator()
+                : null,
+          ),
+        );
+      },
     );
   }
 
-  //  ——————————————————————————————————————————————————————————————————————————  Cancel order dialog
-  void _showCancelDialog(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+  //  ——————————————————————————————————————————————————————————————————————————  archive product dialog
+  void _showArchiveProductDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -68,10 +85,11 @@ class ArchiveProductButton extends StatelessWidget {
               //  ——————————————————————————————————————————————————————————————  cancel order
               MaterialButton(
                 onPressed: () {
-                  context.read<InventoryBloc>().add(
-                    ArchiveProductEvent(product: product),
-                  );
+                  // pop the dialog
                   context.pop();
+                  context.read<ProductCubit>().archiveProduct(
+                    productId: productId,
+                  );
                 },
                 color: colorScheme.errorContainer,
                 elevation: 0,

@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shagaf_ledger/core/common/colored_prints.dart';
-import 'package:shagaf_ledger/features/orders/presentation/bloc/orders_bloc.dart';
+import 'package:shagaf_ledger/features/orders/presentation/orders_bloc/orders_bloc.dart';
 
 class DateFilterWidget extends StatefulWidget {
   const DateFilterWidget({super.key});
@@ -30,9 +30,7 @@ class _DateFilterWidgetState extends State<DateFilterWidget> {
         'Selected Date: ${pickedDate.toLocal().toString().split(' ')[0]}',
       );
       if (context.mounted) {
-        context.read<OrdersBloc>().add(
-          GetOrdersEvent(day: pickedDate.toIso8601String().split('T')[0]),
-        );
+        context.read<OrdersBloc>().add(GetOrdersEvent(day: pickedDate));
       }
     }
   }

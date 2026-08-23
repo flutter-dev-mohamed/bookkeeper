@@ -1,9 +1,6 @@
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:flutter/material.dart';
-import 'package:shagaf_ledger/core/common/colored_prints.dart';
 import 'package:shagaf_ledger/core/common/entities/product.dart';
-import 'package:shagaf_ledger/core/common/product_list.dart';
-import 'package:shagaf_ledger/features/orders/domain/entities/order_item.dart';
 
 class OrderItemDropdownMenu extends StatelessWidget {
   final Function(Product?) onChanged;

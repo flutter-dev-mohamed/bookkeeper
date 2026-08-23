@@ -3,9 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shagaf_ledger/core/common/app_consts.dart';
 import 'package:shagaf_ledger/core/common/colored_prints.dart';
-import 'package:shagaf_ledger/core/common/product_list.dart';
-import 'package:shagaf_ledger/core/common/entities/product.dart';
-import 'package:shagaf_ledger/core/common/widgets/custom_primary_button.dart';
+import 'package:shagaf_ledger/core/common/errors/UI/error_page.dart';
+import 'package:shagaf_ledger/core/common/pages/loading_page.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/bloc/inventory_bloc.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/widgets/product_tile.dart';
 
@@ -27,62 +26,76 @@ class _InventoryPageState extends State<InventoryPage> {
     });
   }
 
+  void _navigateToArchivedProductsPage(BuildContext context) async {
+    OPrint.br('ADD THE ARCHIVED PRODUCTS PAGE ROUTE!');
+    // final changed = await context.pushNamed(AppConsts().archivedProductsPage);
+    //
+    // if (changed == true && context.mounted) {
+    //   context.read<InventoryBloc>().add(LoadProductsEvent());
+    // }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'المخزن',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 28),
-        ),
-        centerTitle: true,
-        leading: IconButton.filledTonal(
-          tooltip: 'Add product',
-          onPressed: () {
-            context.pushNamed(AppConsts().addProductPage).then((value) {
-              if (context.mounted) {
-                context.read<InventoryBloc>().add(LoadProductsEvent());
-              }
-            });
-          },
-          icon: const Icon(
-            Icons.add_rounded,
-            size: 30,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        actions: [
-          IconButton(
-            onPressed: () {
-              context.pushNamed(AppConsts().archivedProductsPage);
-            },
-            icon: Icon(Icons.archive_rounded, size: 30),
-          ),
-        ],
-      ),
+    return BlocConsumer<InventoryBloc, InventoryState>(
+      listener: (context, state) {
+        OPrint.lineC(' Inventory Page Listener state: $state ');
+        if (state is InventorySuccess) {
+          // InventorySuccess state is emitted on:
+          // -  Add product
+          context.read<InventoryBloc>().add(LoadProductsEvent());
+        }
+      },
+      builder: (context, state) {
+        if (state is InventoryLoading) {
+          return LoadingPage();
+        }
 
-      // -----------------------------------------------------------------------body
-      body: BlocConsumer<InventoryBloc, InventoryState>(
-        listener: (context, state) {
-          OPrint.line(' Inventory Page Listener state: $state ');
-          if (state is InventorySuccess) {
-            // InventorySuccess state is emitted on:
-            // -  Add product
-            context.read<InventoryBloc>().add(LoadProductsEvent());
-          }
-          if (state is InventoryProductsLoaded) {
-            products = state.products;
-          }
-        },
-        builder: (context, state) {
-          return ListView.builder(
-            padding: const EdgeInsets.only(bottom: 24),
-            itemCount: products.length,
-            itemBuilder: (context, index) =>
-                ProductTile(product: products[index]),
+        //  ————————————————————————————————————————————————————————————————————  Page UI
+        if (state is InventoryProductsLoaded) {
+          final products = state.products;
+          return Scaffold(
+            appBar: AppBar(
+              title: Text(
+                'المخزن',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 28),
+              ),
+              centerTitle: true,
+              leading: IconButton.filledTonal(
+                tooltip: 'Add product',
+                onPressed: () {
+                  context.pushNamed(AppConsts().addProductPage).then((value) {
+                    if (context.mounted) {
+                      context.read<InventoryBloc>().add(LoadProductsEvent());
+                    }
+                  });
+                },
+                icon: const Icon(
+                  Icons.add_rounded,
+                  size: 30,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              actions: [
+                IconButton(
+                  onPressed: () => _navigateToArchivedProductsPage,
+                  icon: Icon(Icons.archive_rounded, size: 30),
+                ),
+              ],
+            ),
+
+            body: ListView.builder(
+              padding: const EdgeInsets.only(bottom: 24),
+              itemCount: products.length,
+              itemBuilder: (context, index) =>
+                  ProductTile(product: products[index]),
+            ),
           );
-        },
-      ),
+        }
+
+        // if state isn't: Loading or ProductsLoaded than we have an error
+        return ErrorPage();
+      },
     );
   }
 }

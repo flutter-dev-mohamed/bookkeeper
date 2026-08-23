@@ -23,9 +23,9 @@ class OrderEntityModel extends OrderEntity {
       'discount_value': discountValue,
       'status': status.index,
     };
-    OPrint.line('toMap Order Entity');
+    OPrint.lineC('toMap Order Entity');
     OPrint.c('Mapping order toMap: $map');
-    OPrint.line('toMap Order Entity');
+    OPrint.lineC('toMap Order Entity');
     return map;
   }
 

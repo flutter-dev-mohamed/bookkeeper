@@ -56,9 +56,9 @@ class OrdersDatabase {
         where: 'id = ?',
         whereArgs: [orderId],
       );
-      OPrint.line('cancel Order');
+      OPrint.lineC('cancel Order');
       OPrint.br(res.toString());
-      OPrint.line('cancel Order');
+      OPrint.lineC('cancel Order');
     });
   }
 }

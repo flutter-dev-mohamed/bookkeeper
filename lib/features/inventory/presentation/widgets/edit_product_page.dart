@@ -1,17 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
-import 'package:shagaf_ledger/core/common/colored_prints.dart';
 import 'package:shagaf_ledger/core/common/entities/product.dart';
-import 'package:shagaf_ledger/core/common/errors/UI/error_page.dart';
-import 'package:shagaf_ledger/features/inventory/presentation/bloc/inventory_bloc.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/widgets/archive_product_button.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/widgets/save_edit_button.dart';
 
 class EditProductPage extends StatefulWidget {
-  final int productId;
+  final Product product;
 
-  const EditProductPage({super.key, required this.productId});
+  const EditProductPage({super.key, required this.product});
 
   @override
   State<EditProductPage> createState() => _EditProductPageState();
@@ -26,14 +21,17 @@ class _EditProductPageState extends State<EditProductPage> {
   @override
   void initState() {
     super.initState();
-    // fetch the product from DB
-    context.read<InventoryBloc>().add(
-      GetProductByIdEvent(productId: widget.productId),
+
+    final product = widget.product;
+
+    _nameController = TextEditingController(text: product.name);
+    _noteController = TextEditingController(text: product.note ?? '');
+    _costController = TextEditingController(
+      text: product.purchasePrice.toString(),
     );
-    _nameController = TextEditingController();
-    _noteController = TextEditingController();
-    _costController = TextEditingController();
-    _priceController = TextEditingController();
+    _priceController = TextEditingController(
+      text: product.sellingPrice.toString(),
+    );
   }
 
   @override
@@ -47,67 +45,34 @@ class _EditProductPageState extends State<EditProductPage> {
 
   @override
   Widget build(BuildContext context) {
+    final product = widget.product;
     final colors = Theme.of(context).colorScheme;
 
-    return BlocConsumer<InventoryBloc, InventoryState>(
-      listener: (context, state) {
-        OPrint.line('Edit Product Page State: $state');
-        // populate the controllers
-        if (state is InventoryGotProductById) {
-          final product = state.product;
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
+        appBar: AppBar(title: const Text('تعديل المنتج'), centerTitle: true),
+        body: ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            _productInfoCard(colors, product),
+            const SizedBox(height: 16),
 
-          _nameController.text = product.name;
-          _noteController.text = product.note ?? '';
-          _costController.text = product.purchasePrice.toString();
-          _priceController.text = product.sellingPrice.toString();
-        }
+            _inventoryCard(colors, product),
+            const SizedBox(height: 24),
 
-        if (state is InventorySuccess) {
-          context.pop();
-        }
-      },
-      builder: (context, state) {
-        // —————————————————————————————————————————————————————————————————————  Loading
-        if (state is InventoryLoading) {
-          return Center(child: CircularProgressIndicator());
-        }
-
-        // —————————————————————————————————————————————————————————————————————  page UI
-        if (state is InventoryGotProductById) {
-          return Directionality(
-            textDirection: TextDirection.rtl,
-            child: Scaffold(
-              appBar: AppBar(
-                title: const Text('تعديل المنتج'),
-                centerTitle: true,
-              ),
-              body: ListView(
-                padding: const EdgeInsets.all(16),
-                children: [
-                  _productInfoCard(colors, state.product),
-                  const SizedBox(height: 16),
-
-                  _inventoryCard(colors, state.product),
-                  const SizedBox(height: 24),
-
-                  SaveEditButton(
-                    getProduct: () {
-                      return getNewProduct(oldProduct: state.product);
-                    },
-                  ),
-
-                  const SizedBox(height: 10),
-
-                  ArchiveProductButton(product: state.product),
-                ],
-              ),
+            SaveEditButton(
+              getProduct: () {
+                return getNewProduct(oldProduct: product);
+              },
             ),
-          );
-        }
 
-        // —————————————————————————————————————————————————————————————————————  in case of an error
-        return ErrorPage();
-      },
+            const SizedBox(height: 10),
+
+            ArchiveProductButton(productId: product.id),
+          ],
+        ),
+      ),
     );
   }
 

@@ -6,6 +6,7 @@ class LoadingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // TODO: MAKE THIS LOOK GOOD!
     return Center(child: CircularProgressIndicator());
   }
 }

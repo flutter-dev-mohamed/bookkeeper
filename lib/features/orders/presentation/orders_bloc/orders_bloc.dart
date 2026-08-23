@@ -14,45 +14,29 @@ part 'orders_event.dart';
 part 'orders_state.dart';
 
 class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
-  final CreateOrder _createOrder;
   final GetOrders _getOrders;
 
-  OrdersBloc({required this._createOrder, required this._getOrders})
-    : super(OrdersInitial()) {
+  OrdersBloc({required this._getOrders}) : super(OrdersInitial()) {
     on<OrdersEvent>((event, emit) {
-      OPrint.m(event.toString());
+      OPrint.lineC('OrdersEvent: ${event.toString()}');
       emit(OrdersLoading());
     });
 
     on<GetOrdersEvent>(_onGetOrdersEvent);
-
-    on<CreateOrderEvent>(_onCreateOrderEvent);
-  }
-
-  void _onCreateOrderEvent(
-    CreateOrderEvent event,
-    Emitter<OrdersState> emit,
-  ) async {
-    final res = await _createOrder(
-      CreateOrderParams(order: event.order, items: event.items),
-    );
-
-    res.fold(
-      (error) => emit(OrdersFailer(message: error.message)),
-      (r) => emit(OrdersSuccess()),
-    );
   }
 
   void _onGetOrdersEvent(
     GetOrdersEvent event,
     Emitter<OrdersState> emit,
   ) async {
-    final orders = await _getOrders(event.day);
+    final dateString = event.day.toIso8601String().split('T')[0];
+
+    final orders = await _getOrders(dateString);
 
     orders.fold(
       (error) => emit(OrdersFailer(message: error.message)),
       (orders) => emit(
-        OrdersLoaded(orders: orders, dateFilter: DateTime.parse(event.day)),
+        OrdersLoaded(orders: orders, dateFilter: DateTime.parse(dateString)),
       ),
     );
   }

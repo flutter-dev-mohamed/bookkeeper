@@ -1,13 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shagaf_ledger/core/common/app_consts.dart';
 import 'package:shagaf_ledger/core/common/colored_prints.dart';
 import 'package:shagaf_ledger/core/common/entities/product.dart';
+import 'package:shagaf_ledger/features/inventory/presentation/bloc/inventory_bloc.dart';
 
 class ProductTile extends StatelessWidget {
   final Product product;
 
   const ProductTile({super.key, required this.product});
+
+  void _navigateToProductDetailsPage(BuildContext context) async {
+    final changed = await context.pushNamed(
+      AppConsts().productDetailsPage,
+      pathParameters: {"productId": product.id.toString()},
+    );
+
+    if (changed == true && context.mounted) {
+      context.read<InventoryBloc>().add(LoadProductsEvent());
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,12 +40,7 @@ class ProductTile extends StatelessWidget {
       ),
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
-        onTap: () {
-          context.pushNamed(
-            AppConsts().productDetailsPage,
-            pathParameters: {"productId": product.id.toString()},
-          );
-        },
+        onTap: () => _navigateToProductDetailsPage,
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Row(
