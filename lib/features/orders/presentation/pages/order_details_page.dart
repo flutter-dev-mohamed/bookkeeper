@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shagaf_ledger/core/common/colored_prints.dart';
 import 'package:shagaf_ledger/core/common/errors/UI/error_page.dart';
 import 'package:shagaf_ledger/core/common/pages/loading_page.dart';
 import 'package:shagaf_ledger/core/common/widgets/custom_primary_button.dart';
@@ -50,142 +51,166 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
         // —————————————————————————————————————————————————————————————————————  indicate loading
         if (state is OrderDetailsLoading) {
           return LoadingPage();
-        }
-
-        // —————————————————————————————————————————————————————————————————————  indicate error
-        if (state is OrderDetailsFailure) {
-          return ErrorPage();
-        }
-
+        } else
         // —————————————————————————————————————————————————————————————————————  Page UI
-        return Directionality(
-          textDirection: TextDirection.rtl,
+        if (state is GotOrderDetails) {
+          return PopScope(
+            canPop: false,
+            onPopInvokedWithResult: (didPop, result) {
+              if (didPop) return;
 
-          child: Scaffold(
-            appBar: AppBar(),
+              context.pop(state.didCancelOrder);
+            },
+            child: Directionality(
+              textDirection: TextDirection.rtl,
 
-            //
-            body: Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: ListView(
-                shrinkWrap: true,
-                children: [
-                  // order No. date and status
-                  Text(
-                    'الطلب رقم ${order.id}',
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    order.createdAt,
-                    style: TextStyle(color: colorScheme.secondary),
-                  ),
+              child: Scaffold(
+                appBar: AppBar(),
 
-                  Text(
-                    order.status == OrderStatus.completed ? "مكتمل" : "ملغي",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                      color: order.status == OrderStatus.completed
-                          ? Colors.green
-                          : colorScheme.error,
-                    ),
-                  ),
-
-                  SizedBox(height: 12),
-
-                  // items list
-                  _itemsListBuilder(colorScheme),
-
-                  //  ——————————————————————————————————————————————————————————  note
-                  if (order.note.isNotEmpty)
-                    Padding(
-                      padding: EdgeInsetsGeometry.all(12),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          //
-                          Text(
-                            'ملاحظة',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
-                            ),
-                          ),
-                          Text(
-                            order.note,
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: Divider(height: 5, color: colorScheme.secondary),
-                  ),
-                  //  ——————————————————————————————————————————————————————————  total
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //
+                body: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: ListView(
+                    shrinkWrap: true,
                     children: [
-                      Text.rich(
-                        TextSpan(
-                          children: [
-                            TextSpan(
-                              //
-                              text: order.totalPrice.toString(),
-                              style: TextStyle(
-                                color: Theme.of(context).colorScheme.primary,
-                                fontSize: 30,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-
-                            TextSpan(text: " "),
-
-                            if (order.discountValue > 0)
-                              TextSpan(
-                                text: order.originalPrice.toString(),
-                                style: TextStyle(
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.secondary,
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 24,
-                                  decoration: TextDecoration.lineThrough,
-                                ),
-                              ),
-                          ],
+                      // order No. date and status
+                      Text(
+                        'الطلب رقم ${order.id}',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                      //  ——————————————————————————————————————————————————————  discount
-                      if (order.discountValue > 0)
-                        Text(
-                          (order.discountType == DiscountType.percentage)
-                              ? '-${order.discountValue}%'
-                              : '-${order.discountValue}',
+                      Text(
+                        order.createdAt,
+                        style: TextStyle(color: colorScheme.secondary),
+                      ),
+
+                      Text(
+                        order.status == OrderStatus.completed
+                            ? "مكتمل"
+                            : "ملغي",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                          color: order.status == OrderStatus.completed
+                              ? Colors.green
+                              : colorScheme.error,
+                        ),
+                      ),
+
+                      SizedBox(height: 12),
+
+                      // items list
+                      _itemsListBuilder(colorScheme),
+
+                      //  ——————————————————————————————————————————————————————————  note
+                      if (order.note.isNotEmpty)
+                        Padding(
+                          padding: EdgeInsetsGeometry.all(12),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              //
+                              Text(
+                                'ملاحظة',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                ),
+                              ),
+                              Text(
+                                order.note,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: Divider(height: 5, color: colorScheme.secondary),
+                      ),
+                      //  ——————————————————————————————————————————————————————————  total
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text.rich(
+                            TextSpan(
+                              children: [
+                                TextSpan(
+                                  //
+                                  text: order.totalPrice.toString(),
+                                  style: TextStyle(
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.primary,
+                                    fontSize: 30,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+
+                                TextSpan(text: " "),
+
+                                if (order.discountValue > 0)
+                                  TextSpan(
+                                    text: order.originalPrice.toString(),
+                                    style: TextStyle(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.secondary,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 24,
+                                      decoration: TextDecoration.lineThrough,
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ),
+                          //  ——————————————————————————————————————————————————————  discount
+                          if (order.discountValue > 0)
+                            Text(
+                              (order.discountType == DiscountType.percentage)
+                                  ? '-${order.discountValue}%'
+                                  : '-${order.discountValue}',
+                            ),
+                        ],
+                      ),
+                      //  ——————————————————————————————————————————————————————————  cancel order button
+                      SizedBox(height: 24),
+                      if (order.status == OrderStatus.completed)
+                        CustomPrimaryButton(
+                          text: 'إلغاء الطلب',
+                          onPressed: () {
+                            // show dialog to worn the user
+                            _showCancelDialog(
+                              context,
+                              onCancelOrder: () {
+                                OPrint.lineR('cancel order');
+                                context.read<OrderDetailsCubit>().cancelOrder(
+                                  orderId: order.id,
+                                  items: items,
+                                );
+                                context.pop();
+                              },
+                            );
+                          },
+                          backgroundColor: colorScheme.error,
+                          foregroundColor: colorScheme.onError,
                         ),
                     ],
                   ),
-                  //  ——————————————————————————————————————————————————————————  cancel order button
-                  SizedBox(height: 24),
-                  if (order.status == OrderStatus.completed)
-                    CustomPrimaryButton(
-                      text: 'إلغاء الطلب',
-                      onPressed: () {
-                        // show dialog to worn the user
-                        _showCancelDialog(context);
-                      },
-                      backgroundColor: colorScheme.error,
-                      foregroundColor: colorScheme.onError,
-                    ),
-                ],
+                ),
               ),
             ),
-          ),
-        );
+          );
+        }
+
+        // —————————————————————————————————————————————————————————————————————  indicate error
+        return ErrorPage();
       },
     );
   }
@@ -237,7 +262,10 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
   }
 
   //  ——————————————————————————————————————————————————————————————————————————  Cancel order dialog
-  void _showCancelDialog(BuildContext context) {
+  void _showCancelDialog(
+    BuildContext context, {
+    required VoidCallback onCancelOrder,
+  }) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -264,13 +292,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
 
               //  ——————————————————————————————————————————————————————————————  cancel order
               MaterialButton(
-                onPressed: () {
-                  context.read<OrderDetailsCubit>().cancelOrder(
-                    orderId: order.id,
-                    items: items,
-                  );
-                  context.pop();
-                },
+                onPressed: onCancelOrder,
                 color: colorScheme.errorContainer,
                 elevation: 0,
 

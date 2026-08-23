@@ -63,8 +63,16 @@ class _OrdersPageState extends State<OrdersPage> {
                 : ListView.builder(
                     padding: const EdgeInsets.only(bottom: 100),
                     itemCount: orders.length,
-                    itemBuilder: (context, index) =>
-                        OrderTile(order: orders[index]),
+                    itemBuilder: (context, index) => OrderTile(
+                      order: orders[index],
+                      updateOrdersList: () {
+                        if (context.mounted) {
+                          context.read<OrdersBloc>().add(
+                            GetOrdersEvent(day: state.dateFilter),
+                          );
+                        }
+                      },
+                    ),
                   ),
 
             floatingActionButtonLocation:

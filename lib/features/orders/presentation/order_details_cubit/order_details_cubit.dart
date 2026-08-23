@@ -17,15 +17,20 @@ class OrderDetailsCubit extends Cubit<OrderDetailsState> {
     required this._cancelOrder,
   }) : super(OrderDetailsInitial());
 
-  void getOrder({required int orderId}) async {
+  void getOrder({required int orderId, bool didCancelOrder = false}) async {
     emit(OrderDetailsLoading());
 
     final orderDetails = await _getOrderDetails(orderId);
 
     orderDetails.fold(
       (error) => emit(OrderDetailsFailure(message: error.message)),
-      (details) =>
-          emit(GotOrderDetails(order: details.order, items: details.items)),
+      (details) => emit(
+        GotOrderDetails(
+          order: details.order,
+          items: details.items,
+          didCancelOrder: didCancelOrder,
+        ),
+      ),
     );
   }
 
@@ -41,7 +46,7 @@ class OrderDetailsCubit extends Cubit<OrderDetailsState> {
 
     res.fold(
       (error) => emit(OrderDetailsFailure(message: error.message)),
-      (_) => getOrder(orderId: orderId),
+      (_) => getOrder(orderId: orderId, didCancelOrder: true),
     );
   }
 }

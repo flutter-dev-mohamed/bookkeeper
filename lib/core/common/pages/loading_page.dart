@@ -7,6 +7,12 @@ class LoadingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // TODO: MAKE THIS LOOK GOOD!
-    return Center(child: CircularProgressIndicator());
+    return Directionality(
+      textDirection: TextDirection.rtl,
+      child: Scaffold(
+        appBar: AppBar(),
+        body: Center(child: CircularProgressIndicator()),
+      ),
+    );
   }
 }
