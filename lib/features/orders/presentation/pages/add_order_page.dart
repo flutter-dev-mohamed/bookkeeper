@@ -21,6 +21,15 @@ class AddOrderPage extends StatefulWidget {
 }
 
 class _AddOrderPageState extends State<AddOrderPage> {
+  @override
+  void initState() {
+    if (context.mounted) {
+      context.read<AddOrderCubit>().getActiveProducts();
+    }
+
+    super.initState();
+  }
+
   //  ==========================================================================
 
   @override
@@ -42,6 +51,10 @@ class _AddOrderPageState extends State<AddOrderPage> {
         OPrint.lineR("AddOrderPage State: ${state.toString()}");
         //  ————————————————————————————————————————————————————————————————————  indicate loading
         if (state is AddOrderLoading) {
+          return LoadingPage();
+        }
+
+        if (state is NewOrderAdded) {
           return LoadingPage();
         }
 

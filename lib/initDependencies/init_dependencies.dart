@@ -5,7 +5,7 @@ import 'package:shagaf_ledger/features/inventory/domain/repository/inventory_rep
 import 'package:shagaf_ledger/features/inventory/domain/use_cases/add_product.dart';
 import 'package:shagaf_ledger/features/inventory/domain/use_cases/archive_product.dart';
 import 'package:shagaf_ledger/features/inventory/domain/use_cases/get_product_by_id.dart';
-import 'package:shagaf_ledger/features/inventory/domain/use_cases/get_products.dart';
+import 'package:shagaf_ledger/features/inventory/domain/use_cases/get_active_products.dart';
 import 'package:shagaf_ledger/features/inventory/domain/use_cases/update_product.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/bloc/inventory_bloc.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/cubit/product_cubit/product_cubit.dart';
@@ -41,7 +41,7 @@ Future<void> initDependencies() async {
 void _initInventoryBloc({required Database db}) {
   serviceLocator.registerLazySingleton<InventoryBloc>(
     () => InventoryBloc(
-      getProducts: serviceLocator<GetProducts>(),
+      getActiveProducts: serviceLocator<GetActiveProducts>(),
       addProduct: serviceLocator<AddProduct>(),
     ),
   );
@@ -58,9 +58,10 @@ void _initInventoryBloc({required Database db}) {
     () => ProductLocalDatabase(localDB: db),
   );
   // init getProducts
-  serviceLocator.registerFactory<GetProducts>(
-    () =>
-        GetProducts(inventoryRepository: serviceLocator<InventoryRepository>()),
+  serviceLocator.registerFactory<GetActiveProducts>(
+    () => GetActiveProducts(
+      inventoryRepository: serviceLocator<InventoryRepository>(),
+    ),
   );
 
   // init addProduct
@@ -146,7 +147,13 @@ void _initProductCubit() {
 
 void _initAddOrderCubit() {
   serviceLocator.registerFactory<AddOrderCubit>(
-    () => AddOrderCubit(createOrder: serviceLocator<CreateOrder>()),
+    () => AddOrderCubit(
+      createOrder: serviceLocator<CreateOrder>(),
+      getActiveProducts:
+          serviceLocator<
+            GetActiveProducts
+          >(), //  already declared in with inventory bloc
+    ),
   );
 
   serviceLocator.registerFactory<CreateOrder>(

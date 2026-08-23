@@ -41,7 +41,7 @@ class ProductCubit extends Cubit<ProductState> {
     res.fold((error) => emit(ProductFailure(message: error.message)), (
       updatedProduct,
     ) {
-      emit(ProductUpdated(product: updatedProduct));
+      emit(ProductUpdated());
     });
   }
 

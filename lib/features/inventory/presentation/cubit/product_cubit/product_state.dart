@@ -19,11 +19,7 @@ final class GotProductDetails extends ProductState {
   GotProductDetails({required this.product});
 }
 
-final class ProductUpdated extends ProductState {
-  final Product product;
-
-  ProductUpdated({required this.product});
-}
+final class ProductUpdated extends ProductState {}
 
 // emitted when a product is archived
 final class ProductArchived extends ProductState {}

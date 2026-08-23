@@ -401,6 +401,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
             AppConsts().editProductPage,
             extra: product,
           );
+          // TODO: I think you should update the page if didChanged!!
         },
         icon: const Icon(Icons.edit_outlined),
         label: const Text('تعديل المنتج'),

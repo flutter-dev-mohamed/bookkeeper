@@ -2,6 +2,8 @@ import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:shagaf_ledger/core/common/colored_prints.dart';
 import 'package:shagaf_ledger/core/common/entities/product.dart';
+import 'package:shagaf_ledger/core/common/use_cases/use_cases.dart';
+import 'package:shagaf_ledger/features/inventory/domain/use_cases/get_active_products.dart';
 import 'package:shagaf_ledger/features/orders/domain/entities/order_entity.dart';
 import 'package:shagaf_ledger/features/orders/domain/entities/order_item.dart';
 import 'package:shagaf_ledger/features/orders/domain/use_cases/create_order.dart';
@@ -10,16 +12,27 @@ part 'add_order_state.dart';
 
 class AddOrderCubit extends Cubit<AddOrderState> {
   final CreateOrder _createOrder;
+  final GetActiveProducts _getActiveProducts;
 
-  AddOrderCubit({required this._createOrder}) : super(AddOrderInitial());
+  AddOrderCubit({required this._createOrder, required this._getActiveProducts})
+    : super(AddOrderInitial());
 
-  void getAvailableProducts() {
+  void getActiveProducts() async {
     emit(AddOrderLoading());
 
-    // TODO: make the use case
-    // I will add this don't make is
-    // all you need to know is it will emit AvailableProductsLoaded
-    throw UnimplementedError();
+    final res = await _getActiveProducts(NoParams());
+
+    res.fold(
+      (error) => emit(AddOrderLoaded(productsInStock: [], orderItems: [])),
+      (productsList) => emit(
+        AddOrderLoaded(
+          productsInStock: productsList
+              .where((product) => product.currentInventory > 0)
+              .toList(),
+          orderItems: [],
+        ),
+      ),
+    );
   }
 
   void addOrder({
