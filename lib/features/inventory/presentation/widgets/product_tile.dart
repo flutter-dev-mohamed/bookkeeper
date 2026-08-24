@@ -40,7 +40,7 @@ class ProductTile extends StatelessWidget {
       ),
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
-        onTap: () => _navigateToProductDetailsPage,
+        onTap: () => _navigateToProductDetailsPage(context),
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Row(

@@ -8,6 +8,7 @@ import 'package:shagaf_ledger/features/inventory/domain/use_cases/get_product_by
 import 'package:shagaf_ledger/features/inventory/domain/use_cases/get_active_products.dart';
 import 'package:shagaf_ledger/features/inventory/domain/use_cases/update_product.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/bloc/inventory_bloc.dart';
+import 'package:shagaf_ledger/features/inventory/presentation/cubit/edit_product_cubit/edit_product_cubit.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/cubit/product_cubit/product_cubit.dart';
 import 'package:shagaf_ledger/features/orders/data/database/order_items_database.dart';
 import 'package:shagaf_ledger/features/orders/data/database/orders_database.dart';
@@ -36,6 +37,7 @@ Future<void> initDependencies() async {
   _initOrderDetailsCubit();
   _initProductCubit();
   _initAddOrderCubit();
+  _initEditProductCubit();
 }
 
 void _initInventoryBloc({required Database db}) {
@@ -116,30 +118,12 @@ void _initOrderDetailsCubit() {
 
 void _initProductCubit() {
   serviceLocator.registerFactory<ProductCubit>(
-    () => ProductCubit(
-      getProductById: serviceLocator<GetProductById>(),
-      updateProduct: serviceLocator<UpdateProduct>(),
-      archiveProduct: serviceLocator<ArchiveProduct>(),
-    ),
+    () => ProductCubit(getProductById: serviceLocator<GetProductById>()),
   );
 
   // init getProductById
   serviceLocator.registerFactory<GetProductById>(
     () => GetProductById(
-      inventoryRepository: serviceLocator<InventoryRepository>(),
-    ),
-  );
-
-  // init updateProduct
-  serviceLocator.registerFactory<UpdateProduct>(
-    () => UpdateProduct(
-      inventoryRepository: serviceLocator<InventoryRepository>(),
-    ),
-  );
-
-  // init deleteProduct
-  serviceLocator.registerFactory<ArchiveProduct>(
-    () => ArchiveProduct(
       inventoryRepository: serviceLocator<InventoryRepository>(),
     ),
   );
@@ -158,5 +142,28 @@ void _initAddOrderCubit() {
 
   serviceLocator.registerFactory<CreateOrder>(
     () => CreateOrder(ordersRepository: serviceLocator<OrdersRepository>()),
+  );
+}
+
+void _initEditProductCubit() {
+  serviceLocator.registerFactory<EditProductCubit>(
+    () => EditProductCubit(
+      updateProduct: serviceLocator<UpdateProduct>(),
+      archiveProduct: serviceLocator<ArchiveProduct>(),
+    ),
+  );
+
+  // init updateProduct
+  serviceLocator.registerFactory<UpdateProduct>(
+    () => UpdateProduct(
+      inventoryRepository: serviceLocator<InventoryRepository>(),
+    ),
+  );
+
+  // init deleteProduct
+  serviceLocator.registerFactory<ArchiveProduct>(
+    () => ArchiveProduct(
+      inventoryRepository: serviceLocator<InventoryRepository>(),
+    ),
   );
 }

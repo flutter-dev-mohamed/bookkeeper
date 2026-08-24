@@ -15,8 +15,9 @@ final class ProductFailure extends ProductState {
 
 final class GotProductDetails extends ProductState {
   final Product product;
+  final didChange;
 
-  GotProductDetails({required this.product});
+  GotProductDetails({required this.product, required this.didChange});
 }
 
 final class ProductUpdated extends ProductState {}

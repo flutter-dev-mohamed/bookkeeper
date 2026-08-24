@@ -6,6 +6,7 @@ import 'package:shagaf_ledger/core/common/errors/UI/error_page.dart';
 import 'package:shagaf_ledger/core/common/widgets/shell_route_widget.dart';
 import 'package:shagaf_ledger/core/common/entities/product.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/bloc/inventory_bloc.dart';
+import 'package:shagaf_ledger/features/inventory/presentation/cubit/edit_product_cubit/edit_product_cubit.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/cubit/product_cubit/product_cubit.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/pages/add_product_page.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/pages/inventory_page.dart';
@@ -94,7 +95,10 @@ class AppRoutes {
             builder: (context, state) {
               final product = state.extra! as Product;
 
-              return EditProductPage(product: product);
+              return BlocProvider(
+                create: (context) => serviceLocator<EditProductCubit>(),
+                child: EditProductPage(product: product),
+              );
             },
           ),
         ],

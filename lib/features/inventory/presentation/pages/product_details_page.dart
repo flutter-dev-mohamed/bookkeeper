@@ -17,9 +17,6 @@ class ProductDetailsPage extends StatefulWidget {
 }
 
 class _ProductDetailsPageState extends State<ProductDetailsPage> {
-  // didChanged is a flag set to true if the product was changed(updated/archived)
-  Object? didChanged;
-
   @override
   void initState() {
     // fetch the product
@@ -41,11 +38,12 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
         if (state is GotProductDetails) {
           //  ——————————————————————————————————————————————————————————————————  Page UI
           return PopScope(
+            canPop: false,
             onPopInvokedWithResult: (didPop, result) {
               if (didPop) return;
 
               // on popping this page this will return true if the product has changed else return false
-              if (didChanged == true) {
+              if (state.didChange == true) {
                 context.pop(true);
               } else {
                 context.pop();
@@ -396,12 +394,18 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
       width: double.infinity,
       child: FilledButton.icon(
         onPressed: () async {
-          // this will return true if any thing changes
-          didChanged = await context.pushNamed(
+          final didChange = await context.pushNamed(
             AppConsts().editProductPage,
             extra: product,
+            pathParameters: {"productId": product.id.toString()},
           );
-          // TODO: I think you should update the page if didChanged!!
+
+          if (didChange == true && context.mounted) {
+            context.read<ProductCubit>().getProductDetails(
+              productId: product.id,
+              didChange: true,
+            );
+          }
         },
         icon: const Icon(Icons.edit_outlined),
         label: const Text('تعديل المنتج'),

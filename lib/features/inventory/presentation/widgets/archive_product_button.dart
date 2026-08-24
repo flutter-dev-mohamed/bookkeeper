@@ -3,39 +3,25 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shagaf_ledger/core/common/colored_prints.dart';
 import 'package:shagaf_ledger/core/common/widgets/custom_primary_button.dart';
-import 'package:shagaf_ledger/features/inventory/presentation/cubit/product_cubit/product_cubit.dart';
+import 'package:shagaf_ledger/features/inventory/presentation/cubit/edit_product_cubit/edit_product_cubit.dart';
 
 class ArchiveProductButton extends StatelessWidget {
-  final int productId;
-
-  ArchiveProductButton({super.key, required this.productId});
-
-  bool thisOne = false;
+  ArchiveProductButton({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<ProductCubit, ProductState>(
-      listener: (context, state) {
-        //  this will pop the edite product page
-        if (state is ProductArchived) context.pop(true);
-
-        // in case of an error cancel loading
-        if (state is ProductFailure) thisOne = false;
-      },
-
+    return BlocBuilder<EditProductCubit, EditProductState>(
       builder: (context, state) {
         return SizedBox(
           width: MediaQuery.of(context).size.width,
           child: CustomPrimaryButton(
             text: 'ارشفة المنتج',
             onPressed: () {
-              thisOne = true;
               _showArchiveProductDialog(context);
             },
             backgroundColor: Colors.redAccent.shade200,
             foregroundColor: Colors.white,
-            child: (state is ProductLoading && thisOne)
-                //  this will check for loading and if the button is thisOne
+            child: (state is EditingProduct && state.isArchiving)
                 ? CircularProgressIndicator()
                 : null,
           ),
@@ -87,9 +73,7 @@ class ArchiveProductButton extends StatelessWidget {
                 onPressed: () {
                   // pop the dialog
                   context.pop();
-                  context.read<ProductCubit>().archiveProduct(
-                    productId: productId,
-                  );
+                  context.read<EditProductCubit>().archiveProduct();
                 },
                 color: colorScheme.errorContainer,
                 elevation: 0,

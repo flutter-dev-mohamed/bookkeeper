@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:shagaf_ledger/core/common/entities/product.dart';
+import 'package:shagaf_ledger/core/common/errors/UI/error_page.dart';
+import 'package:shagaf_ledger/core/common/pages/loading_page.dart';
+import 'package:shagaf_ledger/features/inventory/presentation/cubit/edit_product_cubit/edit_product_cubit.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/widgets/archive_product_button.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/widgets/save_edit_button.dart';
 
@@ -22,16 +27,16 @@ class _EditProductPageState extends State<EditProductPage> {
   void initState() {
     super.initState();
 
-    final product = widget.product;
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => context.read<EditProductCubit>().initEditingState(
+        product: widget.product,
+      ),
+    );
 
-    _nameController = TextEditingController(text: product.name);
-    _noteController = TextEditingController(text: product.note ?? '');
-    _costController = TextEditingController(
-      text: product.purchasePrice.toString(),
-    );
-    _priceController = TextEditingController(
-      text: product.sellingPrice.toString(),
-    );
+    _nameController = TextEditingController();
+    _noteController = TextEditingController();
+    _costController = TextEditingController();
+    _priceController = TextEditingController();
   }
 
   @override
@@ -43,36 +48,83 @@ class _EditProductPageState extends State<EditProductPage> {
     super.dispose();
   }
 
+  void _updateStateProduct(BuildContext context, {required Product product}) {
+    final Product updatedProduct = product.copyWith(
+      name: _nameController.text.trim(),
+      note: _noteController.text.trim(),
+      purchasePrice: double.parse(_costController.text.trim()),
+      sellingPrice: double.parse(_priceController.text.trim()),
+    );
+    context.read<EditProductCubit>().updateStateProduct(
+      product: updatedProduct,
+    );
+    // add the text from controllers
+  }
+
   @override
   Widget build(BuildContext context) {
-    final product = widget.product;
     final colors = Theme.of(context).colorScheme;
 
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(
-        appBar: AppBar(title: const Text('تعديل المنتج'), centerTitle: true),
-        body: ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            _productInfoCard(colors, product),
-            const SizedBox(height: 16),
+    return BlocConsumer<EditProductCubit, EditProductState>(
+      //  ——————————————————————————————————————————————————————————————————————  listener
+      listener: (context, state) {
+        // populate  the controllers
+        if (state is EditingProduct) {
+          final product = state.product;
 
-            _inventoryCard(colors, product),
-            const SizedBox(height: 24),
+          _nameController.text = product.name;
+          _noteController.text = product.note ?? '';
+          _costController.text = product.purchasePrice.toString();
+          _priceController.text = product.sellingPrice.toString();
+        }
 
-            SaveEditButton(
-              getProduct: () {
-                return getNewProduct(oldProduct: product);
-              },
+        if (state is EditProductSaved || state is EditProductArchived) {
+          context.pop(true);
+        }
+      },
+
+      //  ——————————————————————————————————————————————————————————————————————  builder
+      builder: (context, state) {
+        if (state is EditProductInitial ||
+            state is EditProductSaved ||
+            state is EditProductArchived) {
+          return LoadingPage();
+        }
+
+        //  ————————————————————————————————————————————————————————————————————  page UI
+        if (state is EditingProduct) {
+          final product = state.product;
+
+          return Directionality(
+            textDirection: TextDirection.rtl,
+            child: Scaffold(
+              appBar: AppBar(
+                title: const Text('تعديل المنتج'),
+                centerTitle: true,
+              ),
+              body: ListView(
+                padding: const EdgeInsets.all(16),
+                children: [
+                  _productInfoCard(colors, product),
+                  const SizedBox(height: 16),
+
+                  _inventoryCard(colors, product),
+                  const SizedBox(height: 24),
+
+                  SaveEditButton(),
+
+                  const SizedBox(height: 10),
+
+                  ArchiveProductButton(),
+                ],
+              ),
             ),
+          );
+        }
 
-            const SizedBox(height: 10),
-
-            ArchiveProductButton(productId: product.id),
-          ],
-        ),
-      ),
+        //  ————————————————————————————————————————————————————————————————————  in case of an error
+        return ErrorPage();
+      },
     );
   }
 
@@ -99,6 +151,8 @@ class _EditProductPageState extends State<EditProductPage> {
                 labelText: 'اسم المنتج',
                 prefixIcon: Icon(Icons.inventory_2_outlined),
               ),
+              onSubmitted: (_) =>
+                  _updateStateProduct(context, product: product),
             ),
 
             const SizedBox(height: 12),
@@ -112,6 +166,8 @@ class _EditProductPageState extends State<EditProductPage> {
                 prefixIcon: Icon(Icons.notes_outlined),
                 alignLabelWithHint: true,
               ),
+              onTapOutside: (_) =>
+                  _updateStateProduct(context, product: product),
             ),
 
             const SizedBox(height: 16),
@@ -123,6 +179,8 @@ class _EditProductPageState extends State<EditProductPage> {
                     controller: _priceController,
                     label: 'سعر البيع',
                     icon: Icons.sell_outlined,
+                    onSubmitted: (_) =>
+                        _updateStateProduct(context, product: product),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -131,6 +189,8 @@ class _EditProductPageState extends State<EditProductPage> {
                     controller: _costController,
                     label: 'سعر الشراء',
                     icon: Icons.shopping_cart_outlined,
+                    onSubmitted: (_) =>
+                        _updateStateProduct(context, product: product),
                   ),
                 ),
               ],
@@ -239,6 +299,7 @@ class _EditProductPageState extends State<EditProductPage> {
     required TextEditingController controller,
     required String label,
     required IconData icon,
+    required void Function(String)? onSubmitted,
   }) {
     return TextField(
       controller: controller,
@@ -248,6 +309,14 @@ class _EditProductPageState extends State<EditProductPage> {
         prefixIcon: Icon(icon),
         suffixText: 'IQD',
       ),
+      onSubmitted: onSubmitted,
+      onTap: () {
+        // Select all text when tapped
+        controller.selection = TextSelection(
+          baseOffset: 0,
+          extentOffset: controller.text.length,
+        );
+      },
     );
   }
 
