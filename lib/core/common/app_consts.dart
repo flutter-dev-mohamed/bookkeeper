@@ -1,5 +1,5 @@
 class AppConsts {
-  // inventory
+  // products
   final String ordersPage = "ordersPage";
   final String inventoryPage = "inventoryPage";
   final String productDetailsPage = "productDetailsPage";

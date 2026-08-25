@@ -5,7 +5,6 @@ import 'package:shagaf_ledger/core/common/colored_prints.dart';
 import 'package:shagaf_ledger/core/common/entities/product.dart';
 import 'package:shagaf_ledger/core/common/errors/UI/error_page.dart';
 import 'package:shagaf_ledger/core/common/pages/loading_page.dart';
-import 'package:shagaf_ledger/features/inventory/presentation/bloc/inventory_bloc.dart';
 import 'package:shagaf_ledger/features/orders/domain/entities/order_entity.dart';
 import 'package:shagaf_ledger/features/orders/domain/entities/order_item.dart';
 import 'package:shagaf_ledger/features/orders/presentation/add_order_cubit/add_order_cubit.dart';

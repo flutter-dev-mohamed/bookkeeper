@@ -1,18 +1,18 @@
 import 'package:get_it/get_it.dart';
-import 'package:shagaf_ledger/features/inventory/data/database/product_local_database.dart';
-import 'package:shagaf_ledger/features/inventory/data/repository/inventory_repository_imp.dart';
-import 'package:shagaf_ledger/features/inventory/domain/repository/inventory_repository.dart';
-import 'package:shagaf_ledger/features/inventory/domain/use_cases/add_product.dart';
-import 'package:shagaf_ledger/features/inventory/domain/use_cases/archive_product.dart';
-import 'package:shagaf_ledger/features/inventory/domain/use_cases/get_archived_products.dart';
-import 'package:shagaf_ledger/features/inventory/domain/use_cases/get_product_by_id.dart';
-import 'package:shagaf_ledger/features/inventory/domain/use_cases/get_active_products.dart';
-import 'package:shagaf_ledger/features/inventory/domain/use_cases/remove_product_from_archive.dart';
-import 'package:shagaf_ledger/features/inventory/domain/use_cases/update_product.dart';
-import 'package:shagaf_ledger/features/inventory/presentation/bloc/inventory_bloc.dart';
-import 'package:shagaf_ledger/features/inventory/presentation/cubit/archived_products_cubit/archived_products_cubit.dart';
-import 'package:shagaf_ledger/features/inventory/presentation/cubit/edit_product_cubit/edit_product_cubit.dart';
-import 'package:shagaf_ledger/features/inventory/presentation/cubit/product_cubit/product_cubit.dart';
+import 'package:shagaf_ledger/features/products/data/database/product_local_database.dart';
+import 'package:shagaf_ledger/features/products/data/repository/products_repository_imp.dart';
+import 'package:shagaf_ledger/features/products/domain/repository/products_repository.dart';
+import 'package:shagaf_ledger/features/products/domain/use_cases/add_product.dart';
+import 'package:shagaf_ledger/features/products/domain/use_cases/archive_product.dart';
+import 'package:shagaf_ledger/features/products/domain/use_cases/get_archived_products.dart';
+import 'package:shagaf_ledger/features/products/domain/use_cases/get_product_by_id.dart';
+import 'package:shagaf_ledger/features/products/domain/use_cases/get_active_products.dart';
+import 'package:shagaf_ledger/features/products/domain/use_cases/remove_product_from_archive.dart';
+import 'package:shagaf_ledger/features/products/domain/use_cases/update_product.dart';
+import 'package:shagaf_ledger/features/products/presentation/bloc/products_bloc.dart';
+import 'package:shagaf_ledger/features/products/presentation/cubit/archived_products_cubit/archived_products_cubit.dart';
+import 'package:shagaf_ledger/features/products/presentation/cubit/edit_product_cubit/edit_product_cubit.dart';
+import 'package:shagaf_ledger/features/products/presentation/cubit/product_cubit/product_cubit.dart';
 import 'package:shagaf_ledger/features/orders/data/database/order_items_database.dart';
 import 'package:shagaf_ledger/features/orders/data/database/orders_database.dart';
 import 'package:shagaf_ledger/features/orders/data/repository/orders_repository_imp.dart';
@@ -45,16 +45,16 @@ Future<void> initDependencies() async {
 }
 
 void _initInventoryBloc({required Database db}) {
-  serviceLocator.registerLazySingleton<InventoryBloc>(
-    () => InventoryBloc(
+  serviceLocator.registerLazySingleton<ProductsBloc>(
+    () => ProductsBloc(
       getActiveProducts: serviceLocator<GetActiveProducts>(),
       addProduct: serviceLocator<AddProduct>(),
     ),
   );
 
   // init inventoryRepository
-  serviceLocator.registerFactory<InventoryRepository>(
-    () => InventoryRepositoryImp(
+  serviceLocator.registerFactory<ProductsRepository>(
+    () => ProductsRepositoryImp(
       productLocalDatabase: serviceLocator<ProductLocalDatabase>(),
     ),
   );
@@ -66,14 +66,13 @@ void _initInventoryBloc({required Database db}) {
   // init getProducts
   serviceLocator.registerFactory<GetActiveProducts>(
     () => GetActiveProducts(
-      inventoryRepository: serviceLocator<InventoryRepository>(),
+      productsRepository: serviceLocator<ProductsRepository>(),
     ),
   );
 
   // init addProduct
   serviceLocator.registerFactory<AddProduct>(
-    () =>
-        AddProduct(inventoryRepository: serviceLocator<InventoryRepository>()),
+    () => AddProduct(productsRepository: serviceLocator<ProductsRepository>()),
   );
 }
 
@@ -130,14 +129,14 @@ void _initProductCubit() {
 
   serviceLocator.registerFactory<RemoveProductFromArchive>(
     () => RemoveProductFromArchive(
-      inventoryRepository: serviceLocator<InventoryRepository>(),
+      productsRepository: serviceLocator<ProductsRepository>(),
     ),
   );
 
   // init getProductById
   serviceLocator.registerFactory<GetProductById>(
     () => GetProductById(
-      inventoryRepository: serviceLocator<InventoryRepository>(),
+      productsRepository: serviceLocator<ProductsRepository>(),
     ),
   );
 }
@@ -149,7 +148,7 @@ void _initAddOrderCubit() {
       getActiveProducts:
           serviceLocator<
             GetActiveProducts
-          >(), //  already declared in with inventory bloc
+          >(), //  already declared in with products bloc
     ),
   );
 
@@ -168,15 +167,14 @@ void _initEditProductCubit() {
 
   // init updateProduct
   serviceLocator.registerFactory<UpdateProduct>(
-    () => UpdateProduct(
-      inventoryRepository: serviceLocator<InventoryRepository>(),
-    ),
+    () =>
+        UpdateProduct(productsRepository: serviceLocator<ProductsRepository>()),
   );
 
   // init deleteProduct
   serviceLocator.registerFactory<ArchiveProduct>(
     () => ArchiveProduct(
-      inventoryRepository: serviceLocator<InventoryRepository>(),
+      productsRepository: serviceLocator<ProductsRepository>(),
     ),
   );
 }
@@ -190,7 +188,7 @@ void _initArchivedProductsCubit() {
 
   serviceLocator.registerFactory<GetArchivedProducts>(
     () => GetArchivedProducts(
-      inventoryRepository: serviceLocator<InventoryRepository>(),
+      productsRepository: serviceLocator<ProductsRepository>(),
     ),
   );
 }

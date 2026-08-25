@@ -1,7 +1,7 @@
 import 'package:fpdart/src/either.dart';
 import 'package:shagaf_ledger/core/common/errors/failure.dart';
 import 'package:shagaf_ledger/core/common/functions/try_repo.dart';
-import 'package:shagaf_ledger/features/inventory/data/database/product_local_database.dart';
+import 'package:shagaf_ledger/features/products/data/database/product_local_database.dart';
 import 'package:shagaf_ledger/features/orders/data/database/order_items_database.dart';
 import 'package:shagaf_ledger/features/orders/data/database/orders_database.dart';
 import 'package:shagaf_ledger/features/orders/data/models/order_details_model.dart';
@@ -31,7 +31,7 @@ class OrdersRepositoryImp implements OrdersRepository {
   // insert the order
   // insert will return the id
   // use the id to insert the order items using map to map all items
-  // use productId to decrement the inventory
+  // use productId to decrement the products
   @override
   Future<Either<Failure, void>> createOrder({
     required OrderEntity order,
@@ -51,7 +51,7 @@ class OrdersRepositoryImp implements OrdersRepository {
           executor: txn,
         );
 
-        // loop over all items decrement the product inventory and insert to DB
+        // loop over all items decrement the product products and insert to DB
         for (final item in items) {
           // convert from entity to model
           final itemModel = OrderItemModel.fromEntity(item);
@@ -133,7 +133,7 @@ class OrdersRepositoryImp implements OrdersRepository {
           statusNo: OrderStatus.canceled.index,
         );
 
-        // loop over the items and increase their product inventory
+        // loop over the items and increase their product products
         for (final item in items) {
           await productLocalDatabase.incrementProductInventory(
             productId: item.productId,

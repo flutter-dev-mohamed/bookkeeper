@@ -2,24 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shagaf_ledger/core/common/app_consts.dart';
+import 'package:shagaf_ledger/core/common/colored_prints.dart';
 import 'package:shagaf_ledger/core/common/errors/UI/error_page.dart';
 import 'package:shagaf_ledger/core/common/widgets/shell_route_widget.dart';
 import 'package:shagaf_ledger/core/common/entities/product.dart';
-import 'package:shagaf_ledger/features/inventory/presentation/bloc/inventory_bloc.dart';
-import 'package:shagaf_ledger/features/inventory/presentation/cubit/archived_products_cubit/archived_products_cubit.dart';
-import 'package:shagaf_ledger/features/inventory/presentation/cubit/edit_product_cubit/edit_product_cubit.dart';
-import 'package:shagaf_ledger/features/inventory/presentation/cubit/product_cubit/product_cubit.dart';
-import 'package:shagaf_ledger/features/inventory/presentation/pages/add_product_page.dart';
-import 'package:shagaf_ledger/features/inventory/presentation/pages/archived_products_page.dart';
-import 'package:shagaf_ledger/features/inventory/presentation/pages/inventory_page.dart';
-import 'package:shagaf_ledger/features/inventory/presentation/widgets/edit_product_page.dart';
+import 'package:shagaf_ledger/features/products/presentation/bloc/products_bloc.dart';
+import 'package:shagaf_ledger/features/products/presentation/cubit/archived_products_cubit/archived_products_cubit.dart';
+import 'package:shagaf_ledger/features/products/presentation/cubit/edit_product_cubit/edit_product_cubit.dart';
+import 'package:shagaf_ledger/features/products/presentation/cubit/product_cubit/product_cubit.dart';
+import 'package:shagaf_ledger/features/products/presentation/pages/add_product_page.dart';
+import 'package:shagaf_ledger/features/products/presentation/pages/archived_products_page.dart';
+import 'package:shagaf_ledger/features/products/presentation/pages/products_page.dart';
+import 'package:shagaf_ledger/features/products/presentation/widgets/edit_product_page.dart';
 import 'package:shagaf_ledger/features/orders/presentation/add_order_cubit/add_order_cubit.dart';
 import 'package:shagaf_ledger/features/orders/presentation/orders_bloc/orders_bloc.dart';
 import 'package:shagaf_ledger/features/orders/presentation/order_details_cubit/order_details_cubit.dart';
 import 'package:shagaf_ledger/features/orders/presentation/pages/add_order_page.dart';
 import 'package:shagaf_ledger/features/orders/presentation/pages/order_details_page.dart';
 import 'package:shagaf_ledger/features/orders/presentation/pages/orders_page.dart';
-import 'package:shagaf_ledger/features/inventory/presentation/pages/product_details_page.dart';
+import 'package:shagaf_ledger/features/products/presentation/pages/product_details_page.dart';
 import 'package:shagaf_ledger/initDependencies/init_dependencies.dart';
 
 class AppRoutes {
@@ -31,6 +32,9 @@ class AppRoutes {
 
   GoRouter goRouter = GoRouter(
     initialLocation: "/orders",
+    redirect: (context, state) {
+      OPrint.lineBy('Path: ${state.uri}');
+    },
     routes: [
       // you should have:
       // in a shell route
@@ -40,9 +44,7 @@ class AppRoutes {
 
           return MultiBlocProvider(
             providers: [
-              BlocProvider(
-                create: (context) => serviceLocator<InventoryBloc>(),
-              ),
+              BlocProvider(create: (context) => serviceLocator<ProductsBloc>()),
               BlocProvider(create: (context) => serviceLocator<OrdersBloc>()),
             ],
             child: ShellRouteWidget(index: index, child: child),
@@ -58,15 +60,15 @@ class AppRoutes {
 
           // inventory page
           GoRoute(
-            path: '/inventory',
+            path: '/products',
             name: AppConsts().inventoryPage,
-            builder: (context, state) => InventoryPage(),
+            builder: (context, state) => ProductsPage(),
           ),
         ],
       ),
 
       GoRoute(
-        path: '/inventory/archived_products',
+        path: '/products/archived_products',
         name: AppConsts().archivedProductsPage,
         builder: (context, state) {
           return BlocProvider(
@@ -78,9 +80,12 @@ class AppRoutes {
 
       // add product page
       GoRoute(
-        path: "/inventory/add_product",
+        path: "/products/add_product",
         name: AppConsts().addProductPage,
-        builder: (context, state) => AddProductPage(),
+        builder: (context, state) => BlocProvider(
+          create: (context) => serviceLocator<ProductsBloc>(),
+          child: AddProductPage(),
+        ),
       ),
 
       // - product details page

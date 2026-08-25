@@ -3,7 +3,7 @@ import 'package:meta/meta.dart';
 import 'package:shagaf_ledger/core/common/colored_prints.dart';
 import 'package:shagaf_ledger/core/common/entities/product.dart';
 import 'package:shagaf_ledger/core/common/use_cases/use_cases.dart';
-import 'package:shagaf_ledger/features/inventory/domain/use_cases/get_active_products.dart';
+import 'package:shagaf_ledger/features/products/domain/use_cases/get_active_products.dart';
 import 'package:shagaf_ledger/features/orders/domain/entities/order_entity.dart';
 import 'package:shagaf_ledger/features/orders/domain/entities/order_item.dart';
 import 'package:shagaf_ledger/features/orders/domain/use_cases/create_order.dart';
