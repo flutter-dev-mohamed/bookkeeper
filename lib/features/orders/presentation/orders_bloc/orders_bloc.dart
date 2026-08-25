@@ -17,12 +17,16 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
   final GetOrders _getOrders;
 
   OrdersBloc({required this._getOrders}) : super(OrdersInitial()) {
+    OPrint.lineG('OrdersBloc init');
+
     on<OrdersEvent>((event, emit) {
       OPrint.lineC('OrdersEvent: ${event.toString()}');
       emit(OrdersLoading());
     });
 
     on<GetOrdersEvent>(_onGetOrdersEvent);
+
+    add(GetOrdersEvent(day: DateTime.now()));
   }
 
   void _onGetOrdersEvent(

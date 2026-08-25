@@ -24,6 +24,8 @@ class InventoryBloc extends Bloc<InventoryEvent, InventoryState> {
     on<LoadProductsEvent>(_onInventoryLoadProducts);
 
     on<AddProductEvent>(_onInventoryAddProduct);
+
+    add(LoadProductsEvent());
   }
 
   void _onInventoryLoadProducts(

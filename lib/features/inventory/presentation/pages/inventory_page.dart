@@ -8,23 +8,8 @@ import 'package:shagaf_ledger/core/common/pages/loading_page.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/bloc/inventory_bloc.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/widgets/product_tile.dart';
 
-class InventoryPage extends StatefulWidget {
+class InventoryPage extends StatelessWidget {
   const InventoryPage({super.key});
-
-  @override
-  State<InventoryPage> createState() => _InventoryPageState();
-}
-
-class _InventoryPageState extends State<InventoryPage> {
-  @override
-  void initState() {
-    super.initState();
-
-    // triggers the event after first frame is rendered
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      loadProductsList(context);
-    });
-  }
 
   void loadProductsList(BuildContext context) =>
       context.read<InventoryBloc>().add(LoadProductsEvent());

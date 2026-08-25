@@ -12,19 +12,8 @@ import 'package:shagaf_ledger/features/orders/presentation/orders_bloc/orders_bl
 import 'package:shagaf_ledger/features/orders/presentation/widgets/order_tile.dart';
 import 'package:shagaf_ledger/features/orders/presentation/widgets/date_filter_widget.dart';
 
-class OrdersPage extends StatefulWidget {
+class OrdersPage extends StatelessWidget {
   const OrdersPage({super.key});
-
-  @override
-  State<OrdersPage> createState() => _OrdersPageState();
-}
-
-class _OrdersPageState extends State<OrdersPage> {
-  @override
-  void initState() {
-    context.read<OrdersBloc>().add(GetOrdersEvent(day: DateTime.now()));
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
