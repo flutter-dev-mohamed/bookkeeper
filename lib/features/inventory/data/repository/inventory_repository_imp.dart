@@ -84,4 +84,15 @@ class InventoryRepositoryImp implements InventoryRepository {
 
         return productsList;
       });
+
+  @override
+  Future<Either<Failure, void>> removeProductFromArchive({
+    required int productId,
+  }) async {
+    return await tryRepo<void>(
+      () async => await productLocalDatabase.removeProductFromArchive(
+        productId: productId,
+      ),
+    );
+  }
 }

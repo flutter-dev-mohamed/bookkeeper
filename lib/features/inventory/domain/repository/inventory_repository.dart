@@ -14,4 +14,8 @@ abstract interface class InventoryRepository {
   Future<Either<Failure, void>> archiveProduct({required int productId});
 
   Future<Either<Failure, List<Product>>> getArchivedProducts();
+
+  Future<Either<Failure, void>> removeProductFromArchive({
+    required int productId,
+  });
 }

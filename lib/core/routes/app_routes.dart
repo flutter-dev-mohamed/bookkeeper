@@ -6,9 +6,11 @@ import 'package:shagaf_ledger/core/common/errors/UI/error_page.dart';
 import 'package:shagaf_ledger/core/common/widgets/shell_route_widget.dart';
 import 'package:shagaf_ledger/core/common/entities/product.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/bloc/inventory_bloc.dart';
+import 'package:shagaf_ledger/features/inventory/presentation/cubit/archived_products_cubit/archived_products_cubit.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/cubit/edit_product_cubit/edit_product_cubit.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/cubit/product_cubit/product_cubit.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/pages/add_product_page.dart';
+import 'package:shagaf_ledger/features/inventory/presentation/pages/archived_products_page.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/pages/inventory_page.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/widgets/edit_product_page.dart';
 import 'package:shagaf_ledger/features/orders/presentation/add_order_cubit/add_order_cubit.dart';
@@ -63,11 +65,16 @@ class AppRoutes {
         ],
       ),
 
-      // GoRoute(
-      //   path: '/inventory/archived_products',
-      //   name: AppConsts().archivedProductsPage,
-      //   builder: (context, state) => ArchivedProductsPage(),
-      // ),
+      GoRoute(
+        path: '/inventory/archived_products',
+        name: AppConsts().archivedProductsPage,
+        builder: (context, state) {
+          return BlocProvider(
+            create: (context) => serviceLocator<ArchivedProductsCubit>(),
+            child: ArchivedProductsPage(),
+          );
+        },
+      ),
 
       // add product page
       GoRoute(
@@ -78,7 +85,7 @@ class AppRoutes {
 
       // - product details page
       GoRoute(
-        path: "/inventory/:productId",
+        path: "/:productId",
         name: AppConsts().productDetailsPage,
         builder: (context, state) {
           final productId = int.parse(state.pathParameters['productId']!);

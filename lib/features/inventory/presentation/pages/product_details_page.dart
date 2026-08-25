@@ -10,6 +10,7 @@ import 'package:shagaf_ledger/features/inventory/presentation/widgets/product_de
 import 'package:shagaf_ledger/features/inventory/presentation/widgets/product_details_page_widgets/inventory_card.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/widgets/product_details_page_widgets/note_card.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/widgets/product_details_page_widgets/pricing_card.dart';
+import 'package:shagaf_ledger/features/inventory/presentation/widgets/product_details_page_widgets/unarchive_product_button.dart';
 
 class ProductDetailsPage extends StatefulWidget {
   final int productId;
@@ -33,9 +34,14 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
     final colors = Theme.of(context).colorScheme;
 
     return BlocConsumer<ProductCubit, ProductState>(
-      listener: (context, state) {},
+      listener: (context, state) {
+        if (state is ProductUnarchived) {
+          context.pop(true);
+        }
+      },
+
       builder: (context, state) {
-        if (state is ProductLoading) {
+        if (state is ProductLoading || state is ProductUnarchived) {
           return LoadingPage(); // loading indicator
         }
 
@@ -49,17 +55,16 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
               if (didPop) return;
 
               // on popping this page this will return true if the product has changed else return false
-              if (state.didChange == true) {
-                context.pop(true);
-              } else {
-                context.pop();
-              }
+              context.pop(state.didChange);
             },
             child: Directionality(
               textDirection: TextDirection.rtl,
               child: Scaffold(
                 appBar: AppBar(
-                  title: const Text('تفاصيل المنتج'),
+                  title: const Text(
+                    'تفاصيل المنتج',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 28),
+                  ),
                   centerTitle: true,
                 ),
                 body: ListView(
@@ -82,7 +87,9 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
 
                     const SizedBox(height: 24),
 
-                    EditButton(product: product),
+                    if (!product.isArchived) EditButton(product: product),
+                    if (product.isArchived)
+                      UnarchiveProductButton(productId: product.id),
                     const SizedBox(height: 40),
                   ],
                 ),

@@ -135,4 +135,16 @@ class ProductLocalDatabase {
       return productsMapList;
     });
   }
+
+  /// This method takes the Product id and sets the "is_archived" column to (0).
+  Future<void> removeProductFromArchive({required int productId}) async {
+    return await tryDB<void>(() async {
+      final res = await localDB.update(
+        productsTable,
+        {"is_archived": 0},
+        where: 'id = ?',
+        whereArgs: [productId],
+      );
+    });
+  }
 }

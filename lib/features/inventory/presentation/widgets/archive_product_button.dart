@@ -17,7 +17,10 @@ class ArchiveProductButton extends StatelessWidget {
           child: CustomPrimaryButton(
             text: 'ارشفة المنتج',
             onPressed: () {
-              _showArchiveProductDialog(context);
+              _showArchiveProductDialog(
+                context,
+                () => context.read<EditProductCubit>().archiveProduct(),
+              );
             },
             backgroundColor: Colors.redAccent.shade200,
             foregroundColor: Colors.white,
@@ -31,7 +34,10 @@ class ArchiveProductButton extends StatelessWidget {
   }
 
   //  ——————————————————————————————————————————————————————————————————————————  archive product dialog
-  void _showArchiveProductDialog(BuildContext context) {
+  void _showArchiveProductDialog(
+    BuildContext context,
+    VoidCallback archiveProduct,
+  ) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -73,7 +79,7 @@ class ArchiveProductButton extends StatelessWidget {
                 onPressed: () {
                   // pop the dialog
                   context.pop();
-                  context.read<EditProductCubit>().archiveProduct();
+                  archiveProduct();
                 },
                 color: colorScheme.errorContainer,
                 elevation: 0,

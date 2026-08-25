@@ -16,13 +16,13 @@ final class ProductFailure extends ProductState {
 final class GotProductDetails extends ProductState {
   final Product product;
   final didChange;
+  final bool isSubmitting;
 
-  GotProductDetails({required this.product, required this.didChange});
+  GotProductDetails({
+    required this.product,
+    required this.didChange,
+    this.isSubmitting = false,
+  });
 }
 
-final class ProductUpdated extends ProductState {}
-
-// emitted when a product is archived
-final class ProductArchived extends ProductState {}
-
-// final class Product extends ProductState {}
+final class ProductUnarchived extends ProductState {}

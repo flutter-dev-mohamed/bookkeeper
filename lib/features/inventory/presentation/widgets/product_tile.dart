@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shagaf_ledger/core/common/app_consts.dart';
-import 'package:shagaf_ledger/core/common/colored_prints.dart';
 import 'package:shagaf_ledger/core/common/entities/product.dart';
-import 'package:shagaf_ledger/features/inventory/presentation/bloc/inventory_bloc.dart';
 
 class ProductTile extends StatelessWidget {
   final Product product;
+  final VoidCallback onProductDetailsChange;
 
-  const ProductTile({super.key, required this.product});
+  const ProductTile({
+    super.key,
+    required this.product,
+    required this.onProductDetailsChange,
+  });
 
   void _navigateToProductDetailsPage(BuildContext context) async {
     final changed = await context.pushNamed(
@@ -18,7 +20,7 @@ class ProductTile extends StatelessWidget {
     );
 
     if (changed == true && context.mounted) {
-      context.read<InventoryBloc>().add(LoadProductsEvent());
+      onProductDetailsChange();
     }
   }
 
@@ -98,13 +100,7 @@ class ProductTile extends StatelessWidget {
 
               const SizedBox(width: 12),
 
-              // Inventory status
-              if (product.isArchived)
-                _InventoryStatus(
-                  label: 'منتج مؤرشف',
-                  color: Colors.orangeAccent,
-                )
-              else if (isOutOfStock)
+              if (isOutOfStock)
                 _InventoryStatus(
                   label: 'Out of stock',
                   color: colorScheme.error,

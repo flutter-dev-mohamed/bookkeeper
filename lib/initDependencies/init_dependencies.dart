@@ -4,10 +4,13 @@ import 'package:shagaf_ledger/features/inventory/data/repository/inventory_repos
 import 'package:shagaf_ledger/features/inventory/domain/repository/inventory_repository.dart';
 import 'package:shagaf_ledger/features/inventory/domain/use_cases/add_product.dart';
 import 'package:shagaf_ledger/features/inventory/domain/use_cases/archive_product.dart';
+import 'package:shagaf_ledger/features/inventory/domain/use_cases/get_archived_products.dart';
 import 'package:shagaf_ledger/features/inventory/domain/use_cases/get_product_by_id.dart';
 import 'package:shagaf_ledger/features/inventory/domain/use_cases/get_active_products.dart';
+import 'package:shagaf_ledger/features/inventory/domain/use_cases/remove_product_from_archive.dart';
 import 'package:shagaf_ledger/features/inventory/domain/use_cases/update_product.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/bloc/inventory_bloc.dart';
+import 'package:shagaf_ledger/features/inventory/presentation/cubit/archived_products_cubit/archived_products_cubit.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/cubit/edit_product_cubit/edit_product_cubit.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/cubit/product_cubit/product_cubit.dart';
 import 'package:shagaf_ledger/features/orders/data/database/order_items_database.dart';
@@ -38,6 +41,7 @@ Future<void> initDependencies() async {
   _initProductCubit();
   _initAddOrderCubit();
   _initEditProductCubit();
+  _initArchivedProductsCubit();
 }
 
 void _initInventoryBloc({required Database db}) {
@@ -118,7 +122,16 @@ void _initOrderDetailsCubit() {
 
 void _initProductCubit() {
   serviceLocator.registerFactory<ProductCubit>(
-    () => ProductCubit(getProductById: serviceLocator<GetProductById>()),
+    () => ProductCubit(
+      getProductById: serviceLocator<GetProductById>(),
+      removeProductFromArchive: serviceLocator<RemoveProductFromArchive>(),
+    ),
+  );
+
+  serviceLocator.registerFactory<RemoveProductFromArchive>(
+    () => RemoveProductFromArchive(
+      inventoryRepository: serviceLocator<InventoryRepository>(),
+    ),
   );
 
   // init getProductById
@@ -163,6 +176,20 @@ void _initEditProductCubit() {
   // init deleteProduct
   serviceLocator.registerFactory<ArchiveProduct>(
     () => ArchiveProduct(
+      inventoryRepository: serviceLocator<InventoryRepository>(),
+    ),
+  );
+}
+
+void _initArchivedProductsCubit() {
+  serviceLocator.registerFactory<ArchivedProductsCubit>(
+    () => ArchivedProductsCubit(
+      getArchivedProducts: serviceLocator<GetArchivedProducts>(),
+    ),
+  );
+
+  serviceLocator.registerFactory<GetArchivedProducts>(
+    () => GetArchivedProducts(
       inventoryRepository: serviceLocator<InventoryRepository>(),
     ),
   );

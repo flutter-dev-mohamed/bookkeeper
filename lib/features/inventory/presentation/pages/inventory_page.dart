@@ -22,17 +22,19 @@ class _InventoryPageState extends State<InventoryPage> {
 
     // triggers the event after first frame is rendered
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<InventoryBloc>().add(LoadProductsEvent());
+      loadProductsList(context);
     });
   }
 
+  void loadProductsList(BuildContext context) =>
+      context.read<InventoryBloc>().add(LoadProductsEvent());
+
   void _navigateToArchivedProductsPage(BuildContext context) async {
-    OPrint.br('ADD THE ARCHIVED PRODUCTS PAGE ROUTE!');
-    // final changed = await context.pushNamed(AppConsts().archivedProductsPage);
-    //
-    // if (changed == true && context.mounted) {
-    //   context.read<InventoryBloc>().add(LoadProductsEvent());
-    // }
+    final changed = await context.pushNamed(AppConsts().archivedProductsPage);
+
+    if (changed == true && context.mounted) {
+      loadProductsList(context);
+    }
   }
 
   @override
@@ -43,7 +45,7 @@ class _InventoryPageState extends State<InventoryPage> {
         if (state is InventorySuccess) {
           // InventorySuccess state is emitted on:
           // -  Add product
-          context.read<InventoryBloc>().add(LoadProductsEvent());
+          loadProductsList(context);
         }
       },
       builder: (context, state) {
@@ -66,7 +68,7 @@ class _InventoryPageState extends State<InventoryPage> {
                 onPressed: () {
                   context.pushNamed(AppConsts().addProductPage).then((value) {
                     if (context.mounted) {
-                      context.read<InventoryBloc>().add(LoadProductsEvent());
+                      loadProductsList(context);
                     }
                   });
                 },
@@ -78,7 +80,7 @@ class _InventoryPageState extends State<InventoryPage> {
               ),
               actions: [
                 IconButton(
-                  onPressed: () => _navigateToArchivedProductsPage,
+                  onPressed: () => _navigateToArchivedProductsPage(context),
                   icon: Icon(Icons.archive_rounded, size: 30),
                 ),
               ],
@@ -87,8 +89,10 @@ class _InventoryPageState extends State<InventoryPage> {
             body: ListView.builder(
               padding: const EdgeInsets.only(bottom: 24),
               itemCount: products.length,
-              itemBuilder: (context, index) =>
-                  ProductTile(product: products[index]),
+              itemBuilder: (context, index) => ProductTile(
+                product: products[index],
+                onProductDetailsChange: () => loadProductsList(context),
+              ),
             ),
           );
         }
