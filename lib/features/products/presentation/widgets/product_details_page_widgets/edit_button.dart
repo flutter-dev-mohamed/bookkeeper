@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:shagaf_ledger/core/common/app_consts.dart';
 import 'package:shagaf_ledger/core/common/entities/product.dart';
 import 'package:shagaf_ledger/features/products/presentation/cubit/product_cubit/product_cubit.dart';
+import 'package:shagaf_ledger/features/products/presentation/navigation_return.dart';
 
 class EditButton extends StatelessWidget {
   final Product product;
@@ -14,17 +15,17 @@ class EditButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return IconButton(
       onPressed: () async {
-        final didChange = await context.pushNamed(
+        final respond = await context.pushNamed(
           AppConsts().editProductPage,
           extra: product,
           pathParameters: {"productId": product.id.toString()},
         );
 
-        if (didChange == true && context.mounted) {
-          context.read<ProductCubit>().getProductDetails(
-            productId: product.id,
-            didChange: true,
-          );
+        if (respond == NavigationReturn.productUpdated && context.mounted) {
+          context.read<ProductCubit>().getProductDetails(productId: product.id);
+        }
+        if (respond == NavigationReturn.productArchived && context.mounted) {
+          context.pop(true);
         }
       },
       icon: const Icon(Icons.edit_outlined),

@@ -5,6 +5,7 @@ import 'package:shagaf_ledger/core/common/entities/product.dart';
 import 'package:shagaf_ledger/core/common/errors/UI/error_page.dart';
 import 'package:shagaf_ledger/core/common/pages/loading_page.dart';
 import 'package:shagaf_ledger/features/products/presentation/cubit/edit_product_cubit/edit_product_cubit.dart';
+import 'package:shagaf_ledger/features/products/presentation/navigation_return.dart';
 import 'package:shagaf_ledger/features/products/presentation/widgets/archive_product_button.dart';
 import 'package:shagaf_ledger/features/products/presentation/widgets/save_edit_button.dart';
 
@@ -78,8 +79,11 @@ class _EditProductPageState extends State<EditProductPage> {
           _priceController.text = product.sellingPrice.toString();
         }
 
-        if (state is EditProductSaved || state is EditProductArchived) {
-          context.pop(true);
+        if (state is EditProductSaved) {
+          context.pop(NavigationReturn.productUpdated);
+        }
+        if (state is EditProductArchived) {
+          context.pop(NavigationReturn.productArchived);
         }
       },
 
@@ -176,9 +180,9 @@ class _EditProductPageState extends State<EditProductPage> {
               children: [
                 Expanded(
                   child: _priceField(
-                    controller: _priceController,
-                    label: 'سعر البيع',
-                    icon: Icons.sell_outlined,
+                    controller: _costController,
+                    label: 'سعر الشراء',
+                    icon: Icons.shopping_cart_outlined,
                     onSubmitted: (_) =>
                         _updateStateProduct(context, product: product),
                   ),
@@ -186,9 +190,9 @@ class _EditProductPageState extends State<EditProductPage> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: _priceField(
-                    controller: _costController,
-                    label: 'سعر الشراء',
-                    icon: Icons.shopping_cart_outlined,
+                    controller: _priceController,
+                    label: 'سعر البيع',
+                    icon: Icons.sell_outlined,
                     onSubmitted: (_) =>
                         _updateStateProduct(context, product: product),
                   ),

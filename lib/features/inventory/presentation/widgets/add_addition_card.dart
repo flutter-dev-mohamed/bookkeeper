@@ -1,30 +1,31 @@
 import 'package:flutter/material.dart';
-import 'package:shagaf_ledger/core/common/widgets/custom_text_field.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shagaf_ledger/features/inventory/domain/entities/inventory_addition.dart';
+import 'package:shagaf_ledger/features/inventory/presentation/state/add_inventory_addition_cubit/add_inventory_addition_cubit.dart';
 
 class AddAdditionCard extends StatefulWidget {
-  final void Function(
-    int stock,
-    double unitPurchasePrice,
-    double unitSellingPrice,
-    String note,
-  )
-  onUpdateSate;
+  final int productId;
+  final GlobalKey<FormState> formKey;
 
-  const AddAdditionCard({super.key, required this.onUpdateSate});
+  const AddAdditionCard({
+    super.key,
+    required this.productId,
+    required this.formKey,
+  });
 
   @override
   State<AddAdditionCard> createState() => _AddAdditionCardState();
 }
 
 class _AddAdditionCardState extends State<AddAdditionCard> {
-  late final TextEditingController _stockController;
+  late final TextEditingController _quantityController;
   late final TextEditingController _noteController;
   late final TextEditingController _costController;
   late final TextEditingController _priceController;
 
   @override
   void initState() {
-    _stockController = TextEditingController();
+    _quantityController = TextEditingController();
     _noteController = TextEditingController();
     _costController = TextEditingController();
     _priceController = TextEditingController();
@@ -34,7 +35,7 @@ class _AddAdditionCardState extends State<AddAdditionCard> {
 
   @override
   void dispose() {
-    _stockController.dispose();
+    _quantityController.dispose();
     _noteController.dispose();
     _costController.dispose();
     _priceController.dispose();
@@ -42,116 +43,202 @@ class _AddAdditionCardState extends State<AddAdditionCard> {
     super.dispose();
   }
 
-  void _onTextSubmit() => widget.onUpdateSate(
-    int.parse(_stockController.text),
-    double.parse(_costController.text),
-    double.parse(_priceController.text),
-    _noteController.text,
-  );
+  void _onTextSubmit(BuildContext context) {
+    context.read<AddInventoryAdditionCubit>().updateState(
+      inventoryAddition: InventoryAddition(
+        id: 0,
+        productId: widget.productId,
+        quantity: int.tryParse(_quantityController.text) ?? 0,
+        unitPurchasePrice: double.tryParse(_costController.text) ?? 0,
+        unitSellingPrice: double.tryParse(_priceController.text) ?? 0,
+        note: _noteController.text,
+        createdAt: DateTime.now().toIso8601String().split('T')[0],
+      ),
+    );
+  }
+
+  String? _validateStock(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'يرجى إدخال كمية المخزون';
+    }
+
+    final stock = int.tryParse(value);
+
+    if (stock == null) {
+      return 'يرجى إدخال رقم صحيح';
+    }
+
+    if (stock <= 0) {
+      return 'يجب أن تكون الكمية أكبر من صفر';
+    }
+
+    return null;
+  }
+
+  String? _validatePrice(String? value, String fieldName) {
+    if (value == null || value.trim().isEmpty) {
+      return 'يرجى إدخال $fieldName';
+    }
+
+    final price = double.tryParse(value);
+
+    if (price == null) {
+      return 'يرجى إدخال رقم صحيح';
+    }
+
+    if (price <= 0) {
+      return 'يجب أن يكون السعر أكبر من صفر';
+    }
+
+    return null;
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
 
     return ConstrainedBox(
-      constraints: BoxConstraints(minWidth: 300, maxWidth: 500, maxHeight: 350),
+      constraints: const BoxConstraints(
+        minWidth: 300,
+        maxWidth: 500,
+        maxHeight: 350,
+      ),
       child: Card(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            spacing: 8,
-            children: [
-              Text(
-                'المخزون',
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
+          child: Form(
+            key: widget.formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              spacing: 8,
+              children: [
+                Text(
+                  'المخزون',
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-              CustomTextField(
-                label: 'المخزون الإضافي',
-                controller: _stockController,
-                textInputAction: TextInputAction.done,
-                keyboardType: TextInputType.number,
-                maxLines: 1,
-                onSubmitted: (_) => _onTextSubmit(),
-                onTapOutside: (_) => _onTextSubmit(),
-                onTap: () => _stockController.selection = TextSelection(
-                  baseOffset: 0,
-                  extentOffset: _stockController.text.length,
-                ),
-              ),
 
-              // —————————————————————————————————————————————————————————————————  prices
-              Text(
-                'التسعير',
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
+                _formField(
+                  context,
+                  controller: _quantityController,
+                  label: 'المخزون الإضافي',
+                  validator: _validateStock,
                 ),
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: CustomTextField(
-                      label: 'تكلفة المنتج',
-                      controller: _costController,
-                      textInputAction: TextInputAction.next,
-                      maxLines: 1,
-                      keyboardType: const TextInputType.numberWithOptions(
-                        decimal: true,
+
+                // ————————————————————— prices
+                Text(
+                  'التسعير',
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+
+                Row(
+                  children: [
+                    Expanded(
+                      child: _formField(
+                        context,
+                        controller: _costController,
+                        label: 'تكلفة المنتج',
+                        validator: (value) =>
+                            _validatePrice(value, 'تكلفة المنتج'),
                       ),
-                      onSubmitted: (_) => _onTextSubmit(),
-                      onTapOutside: (_) => _onTextSubmit(),
-                      onTap: () => _costController.selection = TextSelection(
-                        baseOffset: 0,
-                        extentOffset: _costController.text.length,
+                    ),
+
+                    const SizedBox(width: 12),
+
+                    Expanded(
+                      child: _formField(
+                        context,
+                        controller: _priceController,
+                        label: 'سعر البيع',
+                        validator: (value) =>
+                            _validatePrice(value, 'سعر البيع'),
+                      ),
+                    ),
+                  ],
+                ),
+
+                // ————————————————————————————————————————————————————————————— note
+                TextFormField(
+                  controller: _noteController,
+                  decoration: InputDecoration(
+                    labelText: 'ملاحظة',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: const BorderSide(color: Colors.grey),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide(
+                        width: 1,
+                        color: Theme.of(context).colorScheme.primary,
                       ),
                     ),
                   ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: CustomTextField(
-                      label: 'سعر البيع',
-                      controller: _priceController,
-                      textInputAction: TextInputAction.next,
-                      maxLines: 1,
-                      keyboardType: const TextInputType.numberWithOptions(
-                        decimal: true,
-                      ),
-                      onSubmitted: (_) => _onTextSubmit(),
-                      onTapOutside: (_) => _onTextSubmit(),
-                      onTap: () => _priceController.selection = TextSelection(
-                        baseOffset: 0,
-                        extentOffset: _priceController.text.length,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-
-              // —————————————————————————————————————————————————————————————————  note
-              CustomTextField(
-                label: 'ملاحظة',
-                controller: _noteController,
-                keyboardType: TextInputType.multiline,
-                textInputAction: TextInputAction.done,
-                maxLines: 4,
-                minLines: 1,
-                onSubmitted: (_) => _onTextSubmit(),
-                onTapOutside: (_) => _onTextSubmit(),
-                onTap: () => _noteController.selection = TextSelection(
-                  baseOffset: 0,
-                  extentOffset: _noteController.text.length,
+                  keyboardType: TextInputType.multiline,
+                  textInputAction: TextInputAction.done,
+                  maxLines: 4,
+                  minLines: 1,
+                  onFieldSubmitted: (_) => _onTextSubmit(context),
+                  onTapOutside: (_) => _onTextSubmit(context),
+                  onTap: () {
+                    _noteController.selection = TextSelection(
+                      baseOffset: 0,
+                      extentOffset: _noteController.text.length,
+                    );
+                  },
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget _formField(
+    BuildContext context, {
+    required TextEditingController controller,
+    required String label,
+    String? Function(String?)? validator,
+  }) {
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: const BorderSide(color: Colors.grey),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide(
+            width: 1,
+            color: Theme.of(context).colorScheme.primary,
+          ),
+        ),
+      ),
+      textInputAction: TextInputAction.next,
+      maxLines: 1,
+      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+      validator: validator,
+      onFieldSubmitted: (_) => _onTextSubmit(context),
+      onTapOutside: (_) => _onTextSubmit(context),
+      onTap: () {
+        controller.selection = TextSelection(
+          baseOffset: 0,
+          extentOffset: controller.text.length,
+        );
+      },
+      // onChanged: (value) => widget.formKey.currentState?.validate(),
     );
   }
 }

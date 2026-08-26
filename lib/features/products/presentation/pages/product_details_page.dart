@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:shagaf_ledger/core/common/colored_prints.dart';
 import 'package:shagaf_ledger/core/common/errors/UI/error_page.dart';
 import 'package:shagaf_ledger/core/common/pages/loading_page.dart';
+import 'package:shagaf_ledger/features/inventory/presentation/state/inventory_history_cubit/inventory_history_cubit.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/widgets/add_inventory_addition_button.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/widgets/product_additions_history_card.dart';
 import 'package:shagaf_ledger/features/products/presentation/cubit/product_cubit/product_cubit.dart';
@@ -34,15 +35,11 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme
-        .of(context)
-        .colorScheme;
+    final colors = Theme.of(context).colorScheme;
 
     return BlocConsumer<ProductCubit, ProductState>(
       listener: (context, state) {
         if (state is ProductUnarchived) {
-          OPrint.bg('POP PRODUCT DETAILS PAGE');
-          // todo:  THIS DOESN'T WORK FIX IT!
           context.pop(true);
         }
       },
@@ -100,11 +97,15 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                     if (!product.isArchived)
                       AddInventoryAdditionButton(
                         productId: product.id,
-                        onInventoryAdditionAdded: () =>
-                            context.read<ProductCubit>().getProductDetails(
-                              productId: product.id,
-                              didChange: true,
-                            ),
+                        onInventoryAdditionAdded: () {
+                          context.read<ProductCubit>().getProductDetails(
+                            productId: product.id,
+                            didChange: true,
+                          );
+                          context
+                              .read<InventoryHistoryCubit>()
+                              .getProductAdditions(productId: product.id);
+                        },
                       ),
 
                     if (product.isArchived)

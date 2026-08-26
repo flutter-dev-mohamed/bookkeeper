@@ -23,6 +23,8 @@ class AddInventoryAdditionButton extends StatefulWidget {
 
 class _AddInventoryAdditionButtonState
     extends State<AddInventoryAdditionButton> {
+  final _formKey = GlobalKey<FormState>();
+
   @override
   void initState() {
     final InventoryAddition inventoryAddition = InventoryAddition(
@@ -56,89 +58,74 @@ class _AddInventoryAdditionButtonState
           return CustomPrimaryButton(
             text: 'إضافة',
             onPressed: () {},
-            child: Center(child: CircularProgressIndicator()),
+            child: const Center(child: CircularProgressIndicator()),
           );
         }
 
+        final cubit = context.read<AddInventoryAdditionCubit>();
+
         return CustomPrimaryButton(
           text: 'إضافة',
-          onPressed: () => _showAddAdditionDialog(
-            context,
-            onUpdateSate: (stock, unitPurchasePrice, unitSellingPrice, note) {
-              context.read<AddInventoryAdditionCubit>().updateState(
-                inventoryAddition: InventoryAddition(
-                  id: 0,
-                  productId: widget.productId,
-                  quantity: stock,
-                  unitPurchasePrice: unitPurchasePrice,
-                  unitSellingPrice: unitSellingPrice,
-                  createdAt: DateTime.now().toIso8601String().split('T')[0],
+          onPressed: () => showDialog(
+            context: context,
+            builder: (dialogContext) {
+              return BlocProvider.value(
+                value: cubit,
+                child: Directionality(
+                  textDirection: TextDirection.rtl,
+                  child: AlertDialog(
+                    title: const Text(
+                      'تسجيل إضافة للمخزون ',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    content: AddAdditionCard(
+                      productId: widget.productId,
+                      formKey: _formKey,
+                    ),
+                    contentPadding: const EdgeInsets.all(8),
+                    actions: [
+                      TextButton(
+                        onPressed: () => dialogContext.pop(),
+                        child: const Text(
+                          'إلغاء',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      ),
+                      // Use a Builder here to get a context under the BlocProvider.value
+                      Builder(
+                        builder: (buttonContext) {
+                          return MaterialButton(
+                            onPressed: () {
+                              final bool isValid =
+                                  _formKey.currentState?.validate() ?? false;
+
+                              if (!isValid) return;
+
+                              buttonContext
+                                  .read<AddInventoryAdditionCubit>()
+                                  .addInventoryAddition();
+                              buttonContext.pop();
+                            },
+                            color: Colors.green.shade100,
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: Text(
+                              'إضافة',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               );
             },
-            onAddAddition: () => context
-                .read<AddInventoryAdditionCubit>()
-                .addInventoryAddition(),
-          ),
-        );
-      },
-    );
-  }
-
-  void _showAddAdditionDialog(
-    BuildContext context, {
-    required VoidCallback onAddAddition,
-    required void Function(
-      int stock,
-      double unitPurchasePrice,
-      double unitSellingPrice,
-      String note,
-    )
-    onUpdateSate,
-  }) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        final colorScheme = Theme.of(context).colorScheme;
-
-        return Directionality(
-          textDirection: TextDirection.rtl,
-          child: AlertDialog(
-            //  ————————————————————————————————————————————————————————————————  title
-            title: Text(
-              'تسجيل إضافة للمخزون ',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-
-            //  ————————————————————————————————————————————————————————————————  content
-            content: AddAdditionCard(onUpdateSate: onUpdateSate),
-            contentPadding: EdgeInsets.all(8),
-            //  ————————————————————————————————————————————————————————————————  actions
-            actions: [
-              TextButton(
-                onPressed: () => context.pop(),
-
-                child: const Text('إلغاء', style: TextStyle(fontSize: 16)),
-              ),
-
-              MaterialButton(
-                onPressed: () {
-                  // pop the dialog
-                  context.pop(true);
-                  onAddAddition();
-                },
-                color: Colors.green.shade100,
-                elevation: 0,
-
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadiusGeometry.circular(16),
-                ),
-                child: Text(
-                  'إضافة',
-                  style: TextStyle(fontSize: 16, color: colorScheme.primary),
-                ),
-              ),
-            ],
           ),
         );
       },
