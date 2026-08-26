@@ -21,10 +21,13 @@ class ProductLocalDatabase {
   }
 
   // addProduct
-  Future<int> addProduct({required Map<String, dynamic> productMap}) async {
+  Future<int> addProduct({
+    required Map<String, dynamic> productMap,
+    required DatabaseExecutor executor,
+  }) async {
     return await tryDB<int>(() async {
       // this returns the raw id or the  new productId
-      return await localDB.insert(productsTable, productMap);
+      return await executor.insert(productsTable, productMap);
     });
   }
 
@@ -142,6 +145,34 @@ class ProductLocalDatabase {
       final res = await localDB.update(
         productsTable,
         {"is_archived": 0},
+        where: 'id = ?',
+        whereArgs: [productId],
+      );
+    });
+  }
+
+  /// This function is used to add Inventory Addition:
+  /// It increases the product inventory, updates the purchase and selling prices
+  Future<void> updateProductInventory({
+    required DatabaseExecutor executor,
+    required int productId,
+    required int quantity,
+    required double purchasePrice,
+    required double sellingPrice,
+  }) async {
+    return await tryDB<void>(() async {
+      final map = {
+        "selling_price": sellingPrice,
+        "purchase_price": purchasePrice,
+      };
+      final res1 = await incrementProductInventory(
+        productId: productId,
+        quantity: quantity,
+        executor: executor,
+      );
+      final res2 = await executor.update(
+        productsTable,
+        map,
         where: 'id = ?',
         whereArgs: [productId],
       );

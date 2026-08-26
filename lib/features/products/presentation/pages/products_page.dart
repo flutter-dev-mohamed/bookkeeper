@@ -68,6 +68,11 @@ class ProductsPage extends StatelessWidget {
                   onPressed: () => _navigateToArchivedProductsPage(context),
                   icon: Icon(Icons.archive_rounded, size: 30),
                 ),
+                IconButton(
+                  onPressed: () =>
+                      context.pushNamed(AppConsts().inventoryHistoryPage),
+                  icon: Icon(Icons.history_edu_rounded, size: 30),
+                ),
               ],
             ),
 

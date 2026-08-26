@@ -6,6 +6,12 @@ import 'package:shagaf_ledger/core/common/colored_prints.dart';
 import 'package:shagaf_ledger/core/common/errors/UI/error_page.dart';
 import 'package:shagaf_ledger/core/common/widgets/shell_route_widget.dart';
 import 'package:shagaf_ledger/core/common/entities/product.dart';
+import 'package:shagaf_ledger/features/inventory/domain/entities/inventory_addition.dart';
+import 'package:shagaf_ledger/features/inventory/domain/repository/inventory_history_repository.dart';
+import 'package:shagaf_ledger/features/inventory/domain/use_cases/add_inventory_addition.dart';
+import 'package:shagaf_ledger/features/inventory/presentation/pages/inventory_history_page.dart';
+import 'package:shagaf_ledger/features/inventory/presentation/state/add_inventory_addition_cubit/add_inventory_addition_cubit.dart';
+import 'package:shagaf_ledger/features/inventory/presentation/state/inventory_history_cubit/inventory_history_cubit.dart';
 import 'package:shagaf_ledger/features/products/presentation/bloc/products_bloc.dart';
 import 'package:shagaf_ledger/features/products/presentation/cubit/archived_products_cubit/archived_products_cubit.dart';
 import 'package:shagaf_ledger/features/products/presentation/cubit/edit_product_cubit/edit_product_cubit.dart';
@@ -32,9 +38,6 @@ class AppRoutes {
 
   GoRouter goRouter = GoRouter(
     initialLocation: "/orders",
-    redirect: (context, state) {
-      OPrint.lineBy('Path: ${state.uri}');
-    },
     routes: [
       // you should have:
       // in a shell route
@@ -61,7 +64,7 @@ class AppRoutes {
           // inventory page
           GoRoute(
             path: '/products',
-            name: AppConsts().inventoryPage,
+            name: AppConsts().productsPage,
             builder: (context, state) => ProductsPage(),
           ),
         ],
@@ -95,8 +98,17 @@ class AppRoutes {
         builder: (context, state) {
           final productId = int.parse(state.pathParameters['productId']!);
 
-          return BlocProvider(
-            create: (context) => serviceLocator<ProductCubit>(),
+          return MultiBlocProvider(
+            providers: [
+              BlocProvider(create: (context) => serviceLocator<ProductCubit>()),
+              BlocProvider(
+                create: (context) => serviceLocator<InventoryHistoryCubit>(),
+              ),
+              BlocProvider(
+                create: (context) =>
+                    serviceLocator<AddInventoryAdditionCubit>(),
+              ),
+            ],
             child: ProductDetailsPage(productId: productId),
           );
         },
@@ -140,6 +152,17 @@ class AppRoutes {
           return BlocProvider(
             create: (context) => serviceLocator<OrderDetailsCubit>(),
             child: OrderDetailsPage(orderId: orderId),
+          );
+        },
+      ),
+
+      GoRoute(
+        path: '/products/inventoryHistory',
+        name: AppConsts().inventoryHistoryPage,
+        builder: (context, state) {
+          return BlocProvider(
+            create: (context) => serviceLocator<InventoryHistoryCubit>(),
+            child: InventoryHistoryPage(),
           );
         },
       ),

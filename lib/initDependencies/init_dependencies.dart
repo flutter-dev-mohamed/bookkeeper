@@ -1,4 +1,12 @@
 import 'package:get_it/get_it.dart';
+import 'package:shagaf_ledger/features/inventory/data/database/inventory_history_database.dart';
+import 'package:shagaf_ledger/features/inventory/data/repository/inventory_history_repository_imp.dart';
+import 'package:shagaf_ledger/features/inventory/domain/repository/inventory_history_repository.dart';
+import 'package:shagaf_ledger/features/inventory/domain/use_cases/add_inventory_addition.dart';
+import 'package:shagaf_ledger/features/inventory/domain/use_cases/get_inventory_additions.dart';
+import 'package:shagaf_ledger/features/inventory/domain/use_cases/get_product_additions.dart';
+import 'package:shagaf_ledger/features/inventory/presentation/state/add_inventory_addition_cubit/add_inventory_addition_cubit.dart';
+import 'package:shagaf_ledger/features/inventory/presentation/state/inventory_history_cubit/inventory_history_cubit.dart';
 import 'package:shagaf_ledger/features/products/data/database/product_local_database.dart';
 import 'package:shagaf_ledger/features/products/data/repository/products_repository_imp.dart';
 import 'package:shagaf_ledger/features/products/domain/repository/products_repository.dart';
@@ -42,6 +50,8 @@ Future<void> initDependencies() async {
   _initAddOrderCubit();
   _initEditProductCubit();
   _initArchivedProductsCubit();
+  _initInventoryHistoryCubit(db: localDatabase);
+  _initAddInventoryAdditionCubit();
 }
 
 void _initInventoryBloc({required Database db}) {
@@ -56,6 +66,8 @@ void _initInventoryBloc({required Database db}) {
   serviceLocator.registerFactory<ProductsRepository>(
     () => ProductsRepositoryImp(
       productLocalDatabase: serviceLocator<ProductLocalDatabase>(),
+      inventoryHistoryDatabase: serviceLocator<InventoryHistoryDatabase>(),
+      database: db,
     ),
   );
 
@@ -189,6 +201,51 @@ void _initArchivedProductsCubit() {
   serviceLocator.registerFactory<GetArchivedProducts>(
     () => GetArchivedProducts(
       productsRepository: serviceLocator<ProductsRepository>(),
+    ),
+  );
+}
+
+void _initInventoryHistoryCubit({required Database db}) {
+  serviceLocator.registerFactory<InventoryHistoryCubit>(
+    () => InventoryHistoryCubit(
+      getInventoryAdditions: serviceLocator<GetInventoryAdditions>(),
+      getProductAdditions: serviceLocator<GetProductAdditions>(),
+    ),
+  );
+
+  serviceLocator.registerFactory<GetProductAdditions>(
+    () => GetProductAdditions(
+      inventoryHistoryRepository: serviceLocator<InventoryHistoryRepository>(),
+    ),
+  );
+
+  serviceLocator.registerFactory<GetInventoryAdditions>(
+    () => GetInventoryAdditions(
+      inventoryHistoryRepository: serviceLocator<InventoryHistoryRepository>(),
+    ),
+  );
+  serviceLocator.registerFactory<InventoryHistoryRepository>(
+    () => InventoryHistoryRepositoryImp(
+      inventoryHistoryDatabase: serviceLocator<InventoryHistoryDatabase>(),
+      productsDatabase: serviceLocator<ProductLocalDatabase>(),
+      database: db,
+    ),
+  );
+  serviceLocator.registerLazySingleton<InventoryHistoryDatabase>(
+    () => InventoryHistoryDatabase(database: db),
+  );
+}
+
+void _initAddInventoryAdditionCubit() {
+  serviceLocator.registerFactory<AddInventoryAdditionCubit>(
+    () => AddInventoryAdditionCubit(
+      addInventoryAddition: serviceLocator<AddInventoryAddition>(),
+    ),
+  );
+
+  serviceLocator.registerFactory<AddInventoryAddition>(
+    () => AddInventoryAddition(
+      inventoryHistoryRepository: serviceLocator<InventoryHistoryRepository>(),
     ),
   );
 }

@@ -128,8 +128,8 @@ class _AddProductPageState extends State<AddProductPage> {
                               children: [
                                 Expanded(
                                   child: CustomTextField(
-                                    label: 'سعر البيع',
-                                    controller: _priceController,
+                                    label: 'تكلفة المنتج',
+                                    controller: _costController,
                                     textInputAction: TextInputAction.next,
                                     keyboardType:
                                         const TextInputType.numberWithOptions(
@@ -140,8 +140,8 @@ class _AddProductPageState extends State<AddProductPage> {
                                 const SizedBox(width: 12),
                                 Expanded(
                                   child: CustomTextField(
-                                    label: 'تكلفة المنتج',
-                                    controller: _costController,
+                                    label: 'سعر البيع',
+                                    controller: _priceController,
                                     textInputAction: TextInputAction.next,
                                     keyboardType:
                                         const TextInputType.numberWithOptions(

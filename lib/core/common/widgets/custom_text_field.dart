@@ -16,9 +16,12 @@ class CustomTextField extends StatefulWidget {
   final Widget? suffix;
   final TextInputAction? textInputAction;
   final int? maxLines;
+  final int? minLines;
   final bool unfocusOnTapOutSide;
   final void Function(PointerDownEvent)? onTapOutside;
   final String? suffixText;
+  final void Function(String)? onSubmitted;
+  final void Function()? onTap;
 
   const CustomTextField({
     super.key,
@@ -36,9 +39,12 @@ class CustomTextField extends StatefulWidget {
     this.suffix,
     this.textInputAction,
     this.maxLines,
+    this.minLines,
     this.onTapOutside,
     this.unfocusOnTapOutSide = false,
     this.suffixText,
+    this.onSubmitted,
+    this.onTap,
   });
 
   @override
@@ -65,11 +71,14 @@ class _CustomTextFieldState extends State<CustomTextField> {
     return TextField(
       focusNode: _focusNode,
       maxLines: widget.maxLines,
+      minLines: widget.minLines,
       textInputAction: widget.textInputAction,
       controller: widget.controller,
       obscureText: widget.isObscure,
       keyboardType: widget.keyboardType,
       onChanged: widget.onChanged,
+      onSubmitted: widget.onSubmitted,
+      onTap: widget.onTap,
       enabled: widget.enabled,
       onTapOutside:
           widget.onTapOutside ??

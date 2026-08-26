@@ -12,31 +12,25 @@ class EditButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: FilledButton.icon(
-        onPressed: () async {
-          final didChange = await context.pushNamed(
-            AppConsts().editProductPage,
-            extra: product,
-            pathParameters: {"productId": product.id.toString()},
-          );
+    return IconButton(
+      onPressed: () async {
+        final didChange = await context.pushNamed(
+          AppConsts().editProductPage,
+          extra: product,
+          pathParameters: {"productId": product.id.toString()},
+        );
 
-          if (didChange == true && context.mounted) {
-            context.read<ProductCubit>().getProductDetails(
-              productId: product.id,
-              didChange: true,
-            );
-          }
-        },
-        icon: const Icon(Icons.edit_outlined),
-        label: const Text('تعديل المنتج'),
-        style: FilledButton.styleFrom(
-          padding: const EdgeInsets.symmetric(vertical: 15),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
-          ),
-        ),
+        if (didChange == true && context.mounted) {
+          context.read<ProductCubit>().getProductDetails(
+            productId: product.id,
+            didChange: true,
+          );
+        }
+      },
+      icon: const Icon(Icons.edit_outlined),
+      style: FilledButton.styleFrom(
+        padding: const EdgeInsets.symmetric(vertical: 15),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       ),
     );
   }

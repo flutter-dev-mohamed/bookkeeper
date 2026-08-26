@@ -42,5 +42,17 @@ Future<void> createTables(Database db) async {
   )''');
   //      FOREIGN KEY (product_id) REFERENCES products (id) ON DELETE RESTRICT
 
+  await db.execute('''
+  CREATE TABLE inventory_additions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    product_id INTEGER NOT NULL,
+    quantity INTEGER NOT NULL CHECK (quantity >= 1),
+    purchase_price REAL NOT NULL,
+    unit_selling_price REAL NOT NULL,
+    total_cost REAL NOT NULL,
+    note TEXT,
+    created_at TEXT NOT NULL
+  )''');
+
   OPrint.g('===========———————— db tables created ————————===========');
 }
