@@ -18,6 +18,7 @@ import 'package:shagaf_ledger/features/inventory/domain/use_cases/add_inventory_
 import 'package:shagaf_ledger/features/inventory/presentation/pages/inventory_history_page.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/state/add_inventory_addition_cubit/add_inventory_addition_cubit.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/state/inventory_history_cubit/inventory_history_cubit.dart';
+import 'package:shagaf_ledger/features/orders/presentation/client_orders_cubit/client_orders_cubit.dart';
 import 'package:shagaf_ledger/features/products/presentation/bloc/products_bloc.dart';
 import 'package:shagaf_ledger/features/products/presentation/cubit/archived_products_cubit/archived_products_cubit.dart';
 import 'package:shagaf_ledger/features/products/presentation/cubit/edit_product_cubit/edit_product_cubit.dart';
@@ -95,7 +96,11 @@ class AppRoutes {
         builder: (context, state) {
           final client = state.extra as ClientEntity;
 
-          return ClientDetailsPage(client: client);
+          return BlocProvider(
+            create: (context) =>
+                serviceLocator<ClientOrdersCubit>(param1: client.id),
+            child: ClientDetailsPage(client: client),
+          );
         },
       ),
 
@@ -175,8 +180,13 @@ class AppRoutes {
         path: "/orders/addNewOrder",
         name: AppConsts().addNewOrderPage,
         builder: (context, state) {
-          return BlocProvider(
-            create: (context) => serviceLocator<AddOrderCubit>(),
+          return MultiBlocProvider(
+            providers: [
+              BlocProvider(
+                create: (context) => serviceLocator<AddOrderCubit>(),
+              ),
+              BlocProvider(create: (context) => serviceLocator<ClientsCubit>()),
+            ],
             child: AddOrderPage(),
           );
         },

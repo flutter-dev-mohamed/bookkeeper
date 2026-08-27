@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shagaf_ledger/core/common/widgets/custom_text_field.dart';
+import 'package:shagaf_ledger/features/clients/presentation/widgets/clients_dropdown_menu.dart';
 import 'package:shagaf_ledger/features/orders/domain/entities/order_entity.dart';
 import 'package:shagaf_ledger/features/orders/domain/entities/order_item.dart';
 import 'package:shagaf_ledger/features/orders/presentation/widgets/discount_input.dart';
@@ -11,6 +12,7 @@ class OrderSummarySheet extends StatefulWidget {
     required double discountValue,
     required double totalPrice,
     required double originalPrice,
+    int? clientId,
   })
   onContinue;
   final List<OrderItem> orderItems;
@@ -33,6 +35,7 @@ class _OrderSummarySheetState extends State<OrderSummarySheet> {
   double _discountValue = 0;
   double originalPrice = 0;
   double totalPrice = 0;
+  int _clientId = 0;
 
   @override
   void initState() {
@@ -84,7 +87,7 @@ class _OrderSummarySheetState extends State<OrderSummarySheet> {
     return DraggableScrollableSheet(
       initialChildSize: 0.13,
       minChildSize: 0.13,
-      maxChildSize: 0.85,
+      maxChildSize: 0.95,
       snap: true,
       snapSizes: const [0.13, 0.85],
 
@@ -169,6 +172,7 @@ class _OrderSummarySheetState extends State<OrderSummarySheet> {
                         discountType: _discountType,
                         discountValue: _discountValue,
                         noteText: _noteController.text.trim(),
+                        clientId: _clientId,
                       ),
                       child: SizedBox(
                         width: 52,
@@ -219,6 +223,15 @@ class _OrderSummarySheetState extends State<OrderSummarySheet> {
                     color: Theme.of(context).colorScheme.tertiary,
                   ),
                 ),
+              ),
+
+              const SizedBox(height: 10),
+
+              ClientsDropdownMenu(
+                onSelectClient: (clientId) {
+                  // TODO: ADD THE CLIENT ID TO THE ORDER
+                  _clientId = clientId;
+                },
               ),
             ],
           ),

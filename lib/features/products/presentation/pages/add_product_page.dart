@@ -36,6 +36,7 @@ class _AddProductPageState extends State<AddProductPage> {
         _costController.text.trim().isEmpty ||
         _priceController.text.trim().isEmpty ||
         _stockController.text.trim().isEmpty) {
+      // TODO: MAKE THIS PAGE A FORM AND RETURN AN ERROR MESSAGE!
       OPrint.br('============================');
       return;
     }

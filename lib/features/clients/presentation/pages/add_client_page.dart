@@ -47,6 +47,9 @@ class _AddClientPageState extends State<AddClientPage> {
           id: 0,
           name: _nameController.text.trim(),
           createdAt: DateTime.now().toIso8601String().split('T')[0],
+          phoneNumber: _phoneNumberController.text.trim(),
+          whatsApp: _whatsAppController.text.trim(),
+          instagram: _instagramController.text.trim(),
         ),
       );
 

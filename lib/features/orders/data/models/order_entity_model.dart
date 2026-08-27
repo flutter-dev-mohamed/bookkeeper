@@ -11,6 +11,7 @@ class OrderEntityModel extends OrderEntity {
     required super.discountType,
     required super.discountValue,
     super.status,
+    super.clientId,
   });
 
   Map<String, dynamic> toMap() {
@@ -19,6 +20,7 @@ class OrderEntityModel extends OrderEntity {
       'original_price': originalPrice,
       'created_at': createdAt,
       'note': note,
+      'client_id': clientId,
       'discount_type': discountType.index,
       'discount_value': discountValue,
       'status': status.index,
@@ -30,7 +32,6 @@ class OrderEntityModel extends OrderEntity {
   }
 
   factory OrderEntityModel.fromMap({required Map<String, dynamic> map}) {
-    OPrint.y(map);
     return OrderEntityModel(
       id: map['id'] as int,
       totalPrice: map['total_price'],
@@ -40,6 +41,7 @@ class OrderEntityModel extends OrderEntity {
       discountType: DiscountType.values[map['discount_type'] as int],
       discountValue: map['discount_value'],
       status: OrderStatus.values[map['status'] as int],
+      clientId: map['client_id'],
     );
   }
 
@@ -53,6 +55,7 @@ class OrderEntityModel extends OrderEntity {
       discountType: entity.discountType,
       discountValue: entity.discountValue,
       status: entity.status,
+      clientId: entity.clientId,
     );
   }
 }

@@ -47,7 +47,6 @@ class _AddOrderPageState extends State<AddOrderPage> {
         }
       },
       builder: (context, state) {
-        OPrint.lineR("AddOrderPage State: ${state.toString()}");
         //  ————————————————————————————————————————————————————————————————————  indicate loading
         if (state is AddOrderLoading) {
           return LoadingPage();
@@ -133,10 +132,12 @@ class _AddOrderPageState extends State<AddOrderPage> {
                                 required discountType,
                                 required discountValue,
                                 required noteText,
+                                clientId,
                               }) {
                                 context.read<AddOrderCubit>().addOrder(
                                   order: OrderEntity(
                                     id: 0,
+                                    clientId: clientId,
                                     note: noteText,
                                     discountType: discountType,
                                     discountValue: discountValue,
