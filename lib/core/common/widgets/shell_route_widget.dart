@@ -27,8 +27,13 @@ class _ShellRouteWidgetState extends State<ShellRouteWidget> {
               label: 'Inventory',
             ),
             NavigationDestination(icon: Icon(Icons.list), label: 'Orders'),
+            NavigationDestination(icon: Icon(Icons.person), label: 'Clients'),
           ],
           onDestinationSelected: (index) {
+            if (index == 2) {
+              context.go('/clients');
+            }
+
             if (index == 1) {
               context.go('/orders');
             }

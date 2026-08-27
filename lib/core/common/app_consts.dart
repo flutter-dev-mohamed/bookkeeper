@@ -1,3 +1,5 @@
+import 'package:shagaf_ledger/features/clients/domain/entities/client_entity.dart';
+
 class AppConsts {
   // products
   final String ordersPage = "ordersPage";
@@ -11,4 +13,12 @@ class AppConsts {
   // orders
   final String addNewOrderPage = "addNewOrderPage";
   final String orderDetails = "orderDetails";
+
+  // clients
+
+  final String clientsPage = 'clientsPage';
+
+  /// This path need: `ClientEntity` as extra
+  final String clientDetailsPage = 'clientDetailsPage';
+  final String addClientPage = 'addClientPage';
 }

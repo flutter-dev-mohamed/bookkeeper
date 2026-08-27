@@ -20,12 +20,17 @@ Future<void> createTables(Database db) async {
   CREATE TABLE orders (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     created_at TEXT NOT NULL DEFAULT (DATETIME('now')),
+    client_id INTEGER,
     total_price REAL NOT NULL,
     original_price REAL NOT NULL,
     discount_type INTEGER NOT NULL,
     discount_value REAL NOT NULL,
     status INTEGER NOT NULL,
-    note TEXT
+    note TEXT,
+    
+    FOREIGN KEY (client_id)
+        REFERENCES clients(id)
+        ON DELETE SET NULL
   )''');
 
   // create the order_item table
@@ -52,6 +57,32 @@ Future<void> createTables(Database db) async {
     total_cost REAL NOT NULL,
     note TEXT,
     created_at TEXT NOT NULL
+  )''');
+
+  await db.execute('''
+  CREATE TABLE clients (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    phone_number TEXT,
+    whatsApp TEXT,
+    instagram TEXT,
+    created_at TEXT NOT NULL DEFAULT (DATETIME('now'))
+  )''');
+
+  await db.execute('''
+  CREATE TABLE client_interested_products (
+    client_id INTEGER NOT NULL,
+    product_id INTEGER NOT NULL,
+
+    PRIMARY KEY (client_id, product_id),
+
+    FOREIGN KEY (client_id)
+        REFERENCES clients(id)
+        ON DELETE CASCADE,
+
+    FOREIGN KEY (product_id)
+        REFERENCES products(id)
+        ON DELETE CASCADE
   )''');
 
   OPrint.g('===========———————— db tables created ————————===========');

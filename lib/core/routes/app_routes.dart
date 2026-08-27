@@ -6,6 +6,12 @@ import 'package:shagaf_ledger/core/common/colored_prints.dart';
 import 'package:shagaf_ledger/core/common/errors/UI/error_page.dart';
 import 'package:shagaf_ledger/core/common/widgets/shell_route_widget.dart';
 import 'package:shagaf_ledger/core/common/entities/product.dart';
+import 'package:shagaf_ledger/features/clients/domain/entities/client_entity.dart';
+import 'package:shagaf_ledger/features/clients/presentation/pages/add_client_page.dart';
+import 'package:shagaf_ledger/features/clients/presentation/pages/clients_details_page.dart';
+import 'package:shagaf_ledger/features/clients/presentation/pages/clients_page.dart';
+import 'package:shagaf_ledger/features/clients/presentation/state_management/add_client_cubit/add_client_cubit.dart';
+import 'package:shagaf_ledger/features/clients/presentation/state_management/clients_cubit/clients_cubit.dart';
 import 'package:shagaf_ledger/features/inventory/domain/entities/inventory_addition.dart';
 import 'package:shagaf_ledger/features/inventory/domain/repository/inventory_history_repository.dart';
 import 'package:shagaf_ledger/features/inventory/domain/use_cases/add_inventory_addition.dart';
@@ -43,12 +49,17 @@ class AppRoutes {
       // in a shell route
       ShellRoute(
         builder: (context, state, child) {
-          final int index = state.matchedLocation.startsWith('/orders') ? 1 : 0;
+          final int index = state.matchedLocation.startsWith('/orders')
+              ? 1
+              : state.matchedLocation.startsWith('/products')
+              ? 0
+              : 2;
 
           return MultiBlocProvider(
             providers: [
               BlocProvider(create: (context) => serviceLocator<ProductsBloc>()),
               BlocProvider(create: (context) => serviceLocator<OrdersBloc>()),
+              BlocProvider(create: (context) => serviceLocator<ClientsCubit>()),
             ],
             child: ShellRouteWidget(index: index, child: child),
           );
@@ -67,9 +78,40 @@ class AppRoutes {
             name: AppConsts().productsPage,
             builder: (context, state) => ProductsPage(),
           ),
+
+          // clients page
+          GoRoute(
+            path: '/clients',
+            name: AppConsts().clientsPage,
+            builder: (context, state) => ClientsPage(),
+          ),
         ],
       ),
 
+      // clients page
+      GoRoute(
+        path: '/clients/client_details_page',
+        name: AppConsts().clientDetailsPage,
+        builder: (context, state) {
+          final client = state.extra as ClientEntity;
+
+          return ClientDetailsPage(client: client);
+        },
+      ),
+
+      // add client page
+      GoRoute(
+        path: '/clients/add_client_page',
+        name: AppConsts().addClientPage,
+        builder: (context, state) {
+          return BlocProvider(
+            create: (context) => serviceLocator<AddClientCubit>(),
+            child: AddClientPage(),
+          );
+        },
+      ),
+
+      // archived products page
       GoRoute(
         path: '/products/archived_products',
         name: AppConsts().archivedProductsPage,

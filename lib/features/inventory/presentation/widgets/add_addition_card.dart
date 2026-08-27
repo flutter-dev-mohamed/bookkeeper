@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shagaf_ledger/core/common/widgets/custom_form_filed.dart';
 import 'package:shagaf_ledger/features/inventory/domain/entities/inventory_addition.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/state/add_inventory_addition_cubit/add_inventory_addition_cubit.dart';
 
@@ -122,7 +123,6 @@ class _AddAdditionCardState extends State<AddAdditionCard> {
                 ),
 
                 _formField(
-                  context,
                   controller: _quantityController,
                   label: 'المخزون الإضافي',
                   validator: _validateStock,
@@ -140,7 +140,6 @@ class _AddAdditionCardState extends State<AddAdditionCard> {
                   children: [
                     Expanded(
                       child: _formField(
-                        context,
                         controller: _costController,
                         label: 'تكلفة المنتج',
                         validator: (value) =>
@@ -152,7 +151,6 @@ class _AddAdditionCardState extends State<AddAdditionCard> {
 
                     Expanded(
                       child: _formField(
-                        context,
                         controller: _priceController,
                         label: 'سعر البيع',
                         validator: (value) =>
@@ -203,42 +201,19 @@ class _AddAdditionCardState extends State<AddAdditionCard> {
     );
   }
 
-  Widget _formField(
-    BuildContext context, {
+  Widget _formField({
     required TextEditingController controller,
     required String label,
     String? Function(String?)? validator,
   }) {
-    return TextFormField(
+    return CustomFormFiled(
       controller: controller,
-      decoration: InputDecoration(
-        labelText: label,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: Colors.grey),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(
-            width: 1,
-            color: Theme.of(context).colorScheme.primary,
-          ),
-        ),
-      ),
-      textInputAction: TextInputAction.next,
-      maxLines: 1,
-      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+      label: label,
       validator: validator,
-      onFieldSubmitted: (_) => _onTextSubmit(context),
+      textInputAction: TextInputAction.next,
+      keyboardType: const TextInputType.numberWithOptions(decimal: true),
       onTapOutside: (_) => _onTextSubmit(context),
-      onTap: () {
-        controller.selection = TextSelection(
-          baseOffset: 0,
-          extentOffset: controller.text.length,
-        );
-      },
-      // onChanged: (value) => widget.formKey.currentState?.validate(),
+      onFieldSubmitted: (_) => _onTextSubmit(context),
     );
   }
 }
