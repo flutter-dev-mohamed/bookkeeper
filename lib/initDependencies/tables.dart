@@ -66,6 +66,7 @@ Future<void> createTables(Database db) async {
     phone_number TEXT,
     whatsApp TEXT,
     instagram TEXT,
+    note TEXT,
     created_at TEXT NOT NULL DEFAULT (DATETIME('now'))
   )''');
 

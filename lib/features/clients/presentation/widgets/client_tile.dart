@@ -14,8 +14,10 @@ class ClientTile extends StatelessWidget {
       child: ListTile(
         onTap: onTap,
         leading: CircleAvatar(
+          backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
           child: Text(
             client.name.isNotEmpty ? client.name[0].toUpperCase() : '?',
+            style: TextStyle(color: Theme.of(context).colorScheme.primary),
           ),
         ),
         title: Text(client.name),

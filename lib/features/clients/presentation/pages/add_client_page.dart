@@ -22,6 +22,7 @@ class _AddClientPageState extends State<AddClientPage> {
   late final TextEditingController _phoneNumberController;
   late final TextEditingController _whatsAppController;
   late final TextEditingController _instagramController;
+  late final TextEditingController _noteController;
 
   @override
   void initState() {
@@ -29,6 +30,7 @@ class _AddClientPageState extends State<AddClientPage> {
     _phoneNumberController = TextEditingController();
     _whatsAppController = TextEditingController();
     _instagramController = TextEditingController();
+    _noteController = TextEditingController();
     super.initState();
   }
 
@@ -38,6 +40,7 @@ class _AddClientPageState extends State<AddClientPage> {
     _phoneNumberController.dispose();
     _whatsAppController.dispose();
     _instagramController.dispose();
+    _noteController.dispose();
     super.dispose();
   }
 
@@ -50,6 +53,7 @@ class _AddClientPageState extends State<AddClientPage> {
           phoneNumber: _phoneNumberController.text.trim(),
           whatsApp: _whatsAppController.text.trim(),
           instagram: _instagramController.text.trim(),
+          note: _noteController.text.trim(),
         ),
       );
 
@@ -131,6 +135,16 @@ class _AddClientPageState extends State<AddClientPage> {
                       'lib/core/assets/icons/instagram.png',
                       width: 28,
                     ),
+                    onTapOutside: (p0) => _updateState(context),
+                    onFieldSubmitted: (p0) => _updateState(context),
+                  ),
+
+                  SizedBox(height: 12),
+                  CustomFormFiled(
+                    //
+                    controller: _noteController,
+                    label: 'ملاحظة',
+                    icon: Icon(Icons.sticky_note_2_rounded),
                     onTapOutside: (p0) => _updateState(context),
                     onFieldSubmitted: (p0) => _updateState(context),
                   ),

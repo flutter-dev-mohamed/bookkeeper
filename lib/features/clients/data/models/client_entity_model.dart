@@ -9,6 +9,7 @@ class ClientModel extends ClientEntity {
     super.phoneNumber,
     super.whatsApp,
     super.instagram,
+    super.note,
   });
 
   /// Creates a [ClientModel] from a Map (e.g., SQLite database or JSON response).
@@ -20,6 +21,7 @@ class ClientModel extends ClientEntity {
       whatsApp: map['whatsApp'],
       instagram: map['instagram'],
       createdAt: map['created_at'],
+      note: map['note'],
     );
   }
 
@@ -31,6 +33,7 @@ class ClientModel extends ClientEntity {
       'whatsApp': whatsApp,
       'instagram': instagram,
       'created_at': createdAt,
+      'note': note,
     };
   }
 
@@ -43,6 +46,7 @@ class ClientModel extends ClientEntity {
       whatsApp: entity.whatsApp,
       instagram: entity.instagram,
       createdAt: entity.createdAt,
+      note: entity.note,
     );
   }
 
@@ -54,6 +58,7 @@ class ClientModel extends ClientEntity {
         'phoneNumber: $phoneNumber, '
         'whatsApp: $whatsApp, '
         'instagram: $instagram, '
+        'note: $note, '
         ')';
   }
 }

@@ -13,6 +13,7 @@ class ClientDetailsPage extends StatelessWidget {
     final phone = client.phoneNumber;
     final whatsApp = client.whatsApp;
     final instagram = client.instagram;
+    final note = client.note;
 
     OPrint.lineBy('ClientDetailsPage: \nclient phone: ${client.phoneNumber}');
 
@@ -47,6 +48,14 @@ class ClientDetailsPage extends StatelessWidget {
                 leading: const Icon(Icons.camera_alt),
                 title: const Text('Instagram'),
                 subtitle: Text(client.instagram!),
+              ),
+
+            if (note != null && note.isNotEmpty)
+              ListTile(
+                leading: const Icon(Icons.sticky_note_2_rounded),
+                title: Text(note),
+                // title: const Text('ملاحظة'),
+                // subtitle: Text(note),
               ),
 
             const SizedBox(height: 24),
