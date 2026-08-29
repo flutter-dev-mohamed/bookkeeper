@@ -36,6 +36,11 @@ class AddInventoryAdditionCubit extends Cubit<AddInventoryAdditionState> {
     OPrint.lineG('addInventoryAddition: Emitting loading state...');
     emit(AddInventoryAdditionLoading());
 
+    final inventoryAddition = currentState.inventoryAddition;
+    OPrint.c(
+      'inventoryAddition -> id: ${inventoryAddition.id}, productId: ${inventoryAddition.productId}, quantity: ${inventoryAddition.quantity}, totalPrice: ${inventoryAddition.totalPrice}, addedCost: ${inventoryAddition.addedCost}',
+    );
+
     final res = await _addInventoryAddition(currentState.inventoryAddition);
 
     await Future.delayed(Duration(milliseconds: 500));
@@ -63,10 +68,18 @@ class AddInventoryAdditionCubit extends Cubit<AddInventoryAdditionState> {
   void updateState({
     required InventoryAddition inventoryAddition,
     bool hasError = false,
-  }) => emit(
-    AddingInventoryAddition(
-      inventoryAddition: inventoryAddition,
-      hasError: hasError,
-    ),
-  );
+  }) {
+    OPrint.lineC('updateState (AddingInventoryAddition)');
+    OPrint.c('hasError: $hasError');
+    OPrint.c(
+      'inventoryAddition -> id: ${inventoryAddition.id}, productId: ${inventoryAddition.productId}, quantity: ${inventoryAddition.quantity}, totalPrice: ${inventoryAddition.totalPrice}, addedCost: ${inventoryAddition.addedCost}',
+    );
+
+    emit(
+      AddingInventoryAddition(
+        inventoryAddition: inventoryAddition,
+        hasError: hasError,
+      ),
+    );
+  }
 }

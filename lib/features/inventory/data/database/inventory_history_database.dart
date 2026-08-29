@@ -32,18 +32,22 @@ class InventoryHistoryDatabase {
   Future<void> addInitialInventory({
     required DatabaseExecutor executor,
     required int productId,
+    required String productName,
     required int quantity,
     required double unitPurchasePrice,
     required double unitSellingPrice,
+    required double addedCost,
     required String note,
     required String createdAt,
   }) async => tryDB<void>(() async {
     final additionMap = {
       'product_id': productId,
+      'product_name': productName,
       'quantity': quantity,
       'purchase_price': unitPurchasePrice,
       'unit_selling_price': unitSellingPrice,
       'total_cost': unitPurchasePrice * quantity,
+      'added_cost': addedCost,
       'note': note,
       'created_at': createdAt,
     };

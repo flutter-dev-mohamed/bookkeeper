@@ -89,7 +89,7 @@ class _AddClientPageState extends State<AddClientPage> {
                 shrinkWrap: true,
                 children: [
                   //
-                  CustomFormFiled(
+                  CustomFormField(
                     controller: _nameController,
                     label: "إسم الزبون",
                     onTapOutside: (_) => _updateState(context),
@@ -103,7 +103,7 @@ class _AddClientPageState extends State<AddClientPage> {
                   ),
 
                   SizedBox(height: 12),
-                  CustomFormFiled(
+                  CustomFormField(
                     //
                     controller: _phoneNumberController,
                     label: 'رقم الهاتف',
@@ -114,7 +114,7 @@ class _AddClientPageState extends State<AddClientPage> {
                   ),
 
                   SizedBox(height: 12),
-                  CustomFormFiled(
+                  CustomFormField(
                     //
                     controller: _whatsAppController,
                     label: "WhatsApp",
@@ -127,7 +127,7 @@ class _AddClientPageState extends State<AddClientPage> {
                   ),
 
                   SizedBox(height: 12),
-                  CustomFormFiled(
+                  CustomFormField(
                     //
                     controller: _instagramController,
                     label: 'Instagram',
@@ -140,7 +140,7 @@ class _AddClientPageState extends State<AddClientPage> {
                   ),
 
                   SizedBox(height: 12),
-                  CustomFormFiled(
+                  CustomFormField(
                     //
                     controller: _noteController,
                     label: 'ملاحظة',

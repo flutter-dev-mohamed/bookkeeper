@@ -134,6 +134,12 @@ class _ProductAdditionsHistoryCardState
                             ),
                             _buildInfoItem(
                               context,
+                              title: 'الكلفة المضافة',
+                              value:
+                                  '${addition.addedCost.toStringAsFixed(0)} د.ع',
+                            ),
+                            _buildInfoItem(
+                              context,
                               title: 'التكلفة الكلية',
                               value:
                                   '${addition.totalPrice.toStringAsFixed(0)} د.ع',

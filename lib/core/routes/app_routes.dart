@@ -15,6 +15,7 @@ import 'package:shagaf_ledger/features/clients/presentation/state_management/cli
 import 'package:shagaf_ledger/features/inventory/domain/entities/inventory_addition.dart';
 import 'package:shagaf_ledger/features/inventory/domain/repository/inventory_history_repository.dart';
 import 'package:shagaf_ledger/features/inventory/domain/use_cases/add_inventory_addition.dart';
+import 'package:shagaf_ledger/features/inventory/presentation/pages/inventory_addition_details_page.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/pages/inventory_history_page.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/state/add_inventory_addition_cubit/add_inventory_addition_cubit.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/state/inventory_history_cubit/inventory_history_cubit.dart';
@@ -217,6 +218,17 @@ class AppRoutes {
             child: InventoryHistoryPage(),
           );
         },
+        routes: [
+          GoRoute(
+            path: 'inventory_addition_details',
+            name: AppConsts().inventoryAdditionDetailsPage,
+            builder: (context, state) {
+              final addition = state.extra as InventoryAddition;
+
+              return InventoryAdditionDetailsPage(addition: addition);
+            },
+          ),
+        ],
       ),
     ],
   );

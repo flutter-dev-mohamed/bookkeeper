@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shagaf_ledger/core/common/colored_prints.dart';
 import 'package:shagaf_ledger/core/common/widgets/custom_form_filed.dart';
 import 'package:shagaf_ledger/features/inventory/domain/entities/inventory_addition.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/state/add_inventory_addition_cubit/add_inventory_addition_cubit.dart';
 
 class AddAdditionCard extends StatefulWidget {
   final int productId;
+  final String productName;
   final GlobalKey<FormState> formKey;
 
   const AddAdditionCard({
     super.key,
     required this.productId,
     required this.formKey,
+    required this.productName,
   });
 
   @override
@@ -23,6 +26,7 @@ class _AddAdditionCardState extends State<AddAdditionCard> {
   late final TextEditingController _noteController;
   late final TextEditingController _costController;
   late final TextEditingController _priceController;
+  late final TextEditingController _addedCostController;
 
   @override
   void initState() {
@@ -30,6 +34,7 @@ class _AddAdditionCardState extends State<AddAdditionCard> {
     _noteController = TextEditingController();
     _costController = TextEditingController();
     _priceController = TextEditingController();
+    _addedCostController = TextEditingController();
 
     super.initState();
   }
@@ -40,6 +45,7 @@ class _AddAdditionCardState extends State<AddAdditionCard> {
     _noteController.dispose();
     _costController.dispose();
     _priceController.dispose();
+    _addedCostController.dispose();
 
     super.dispose();
   }
@@ -49,9 +55,11 @@ class _AddAdditionCardState extends State<AddAdditionCard> {
       inventoryAddition: InventoryAddition(
         id: 0,
         productId: widget.productId,
+        productName: widget.productName,
         quantity: int.tryParse(_quantityController.text) ?? 0,
         unitPurchasePrice: double.tryParse(_costController.text) ?? 0,
         unitSellingPrice: double.tryParse(_priceController.text) ?? 0,
+        addedCost: double.tryParse(_addedCostController.text) ?? 0,
         note: _noteController.text,
         createdAt: DateTime.now().toIso8601String().split('T')[0],
       ),
@@ -160,6 +168,13 @@ class _AddAdditionCardState extends State<AddAdditionCard> {
                   ],
                 ),
 
+                // ————————————————————————————————————————————————————————————— added cost
+                _formField(
+                  controller: _addedCostController,
+                  label: 'تكلفة إضافية',
+                  validator: (value) => _validatePrice(value, 'سعر البيع'),
+                ),
+
                 // ————————————————————————————————————————————————————————————— note
                 TextFormField(
                   controller: _noteController,
@@ -206,14 +221,17 @@ class _AddAdditionCardState extends State<AddAdditionCard> {
     required String label,
     String? Function(String?)? validator,
   }) {
-    return CustomFormFiled(
+    return CustomFormField(
       controller: controller,
       label: label,
       validator: validator,
       textInputAction: TextInputAction.next,
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
       onTapOutside: (_) => _onTextSubmit(context),
-      onFieldSubmitted: (_) => _onTextSubmit(context),
+      onFieldSubmitted: (_) {
+        OPrint.lineY('onFieldSubmitted');
+        _onTextSubmit(context);
+      },
     );
   }
 }

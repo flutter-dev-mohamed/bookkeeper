@@ -51,10 +51,12 @@ Future<void> createTables(Database db) async {
   CREATE TABLE inventory_additions (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     product_id INTEGER NOT NULL,
+    product_name TEXT NOT NULL,
     quantity INTEGER NOT NULL CHECK (quantity >= 1),
     purchase_price REAL NOT NULL,
     unit_selling_price REAL NOT NULL,
     total_cost REAL NOT NULL,
+    added_cost REAL NOT NULL DEFAULT (0),
     note TEXT,
     created_at TEXT NOT NULL
   )''');

@@ -97,6 +97,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                     if (!product.isArchived)
                       AddInventoryAdditionButton(
                         productId: product.id,
+                        productName: product.name,
                         onInventoryAdditionAdded: () {
                           context.read<ProductCubit>().getProductDetails(
                             productId: product.id,

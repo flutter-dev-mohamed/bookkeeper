@@ -8,7 +8,12 @@ class AppConsts {
   final String editProductPage = "editProductPage";
   final String addProductPage = "addProductPage";
   final String archivedProductsPage = "archivedProductsPage";
+
+  // inventory history
   final String inventoryHistoryPage = "inventoryHistoryPage";
+
+  /// This page requires `InventoryAddition` to be passed as extra
+  final String inventoryAdditionDetailsPage = "inventoryAdditionDetailsPage";
 
   // orders
   final String addNewOrderPage = "addNewOrderPage";

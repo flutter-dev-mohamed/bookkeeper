@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class CustomFormFiled extends StatelessWidget {
+class CustomFormField extends StatelessWidget {
   final TextEditingController controller;
   final String? label;
   final String? Function(String?)? validator;
@@ -11,8 +11,9 @@ class CustomFormFiled extends StatelessWidget {
   final Widget? suffix;
   final Widget? prefix;
   final Widget? icon;
+  final FocusNode? focusNode;
 
-  const CustomFormFiled({
+  const CustomFormField({
     super.key,
     required this.controller,
     this.label,
@@ -24,12 +25,14 @@ class CustomFormFiled extends StatelessWidget {
     this.suffix,
     this.prefix,
     this.icon,
+    this.focusNode,
   });
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
+      focusNode: focusNode,
       decoration: InputDecoration(
         labelText: label,
         suffix: suffix,

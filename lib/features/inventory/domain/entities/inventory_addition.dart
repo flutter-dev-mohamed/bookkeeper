@@ -1,10 +1,12 @@
 class InventoryAddition {
   final int id;
   final int productId;
+  final String productName;
   final int quantity;
   final double unitPurchasePrice;
   final double unitSellingPrice;
   final double totalPrice;
+  final double addedCost;
   final String note;
   final String createdAt;
 
@@ -16,5 +18,7 @@ class InventoryAddition {
     required this.unitSellingPrice,
     this.note = '',
     required this.createdAt,
-  }) : totalPrice = quantity * unitPurchasePrice;
+    required this.addedCost,
+    required this.productName,
+  }) : totalPrice = (quantity * unitPurchasePrice) + addedCost;
 }

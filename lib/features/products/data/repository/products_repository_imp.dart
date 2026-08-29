@@ -36,7 +36,10 @@ class ProductsRepositoryImp implements ProductsRepository {
   }
 
   @override
-  Future<Either<Failure, int>> addProduct({required Product product}) async {
+  Future<Either<Failure, int>> addProduct({
+    required Product product,
+    required double addedCost,
+  }) async {
     return await tryRepo<int>(() async {
       return await _database.transaction<int>((txn) async {
         final productId = await productLocalDatabase.addProduct(
@@ -48,11 +51,13 @@ class ProductsRepositoryImp implements ProductsRepository {
             .addInitialInventory(
               executor: txn,
               productId: productId,
+              productName: product.name,
               quantity: product.currentInventory,
               unitPurchasePrice: product.purchasePrice,
               unitSellingPrice: product.sellingPrice,
+              addedCost: addedCost,
               note: product.note ?? '',
-              createdAt: product.createdAt.toIso8601String().split('')[0],
+              createdAt: product.createdAt.toIso8601String().split('T')[0],
             );
 
         return productId;

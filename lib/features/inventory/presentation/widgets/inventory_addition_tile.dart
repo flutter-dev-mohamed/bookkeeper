@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:shagaf_ledger/core/common/app_consts.dart';
 import 'package:shagaf_ledger/features/inventory/domain/entities/inventory_addition.dart';
 
 class InventoryAdditionTile extends StatelessWidget {
@@ -7,7 +9,10 @@ class InventoryAdditionTile extends StatelessWidget {
   const InventoryAdditionTile({super.key, required this.addition});
 
   void _navigateToAdditionDetailsPage(BuildContext context) {
-    throw UnimplementedError();
+    context.pushNamed(
+      AppConsts().inventoryAdditionDetailsPage,
+      extra: addition,
+    );
   }
 
   @override

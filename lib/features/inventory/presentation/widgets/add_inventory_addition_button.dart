@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shagaf_ledger/core/common/colored_prints.dart';
 import 'package:shagaf_ledger/core/common/widgets/custom_primary_button.dart';
 import 'package:shagaf_ledger/features/inventory/domain/entities/inventory_addition.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/state/add_inventory_addition_cubit/add_inventory_addition_cubit.dart';
@@ -8,12 +9,14 @@ import 'package:shagaf_ledger/features/inventory/presentation/widgets/add_additi
 
 class AddInventoryAdditionButton extends StatefulWidget {
   final int productId;
+  final String productName;
   final VoidCallback onInventoryAdditionAdded;
 
   const AddInventoryAdditionButton({
     super.key,
     required this.productId,
     required this.onInventoryAdditionAdded,
+    required this.productName,
   });
 
   @override
@@ -30,9 +33,11 @@ class _AddInventoryAdditionButtonState
     final InventoryAddition inventoryAddition = InventoryAddition(
       id: 0,
       productId: widget.productId,
+      productName: widget.productName,
       quantity: 0,
       unitPurchasePrice: 0,
       unitSellingPrice: 0,
+      addedCost: 0,
       createdAt: DateTime.now().toIso8601String().split('T')[0],
     );
 
@@ -73,62 +78,68 @@ class _AddInventoryAdditionButtonState
                 value: cubit,
                 child: Directionality(
                   textDirection: TextDirection.rtl,
-                  child: AlertDialog(
-                    title: const Text(
-                      'تسجيل إضافة للمخزون ',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    content: AddAdditionCard(
-                      productId: widget.productId,
-                      formKey: _formKey,
-                    ),
-                    contentPadding: const EdgeInsets.all(8),
-                    actions: [
-                      TextButton(
-                        onPressed: () => dialogContext.pop(),
-                        child: const Text(
-                          'إلغاء',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ),
-                      // Use a Builder here to get a context under the BlocProvider.value
-                      Builder(
-                        builder: (buttonContext) {
-                          return MaterialButton(
-                            onPressed: () {
-                              final bool isValid =
-                                  _formKey.currentState?.validate() ?? false;
-
-                              if (!isValid) return;
-
-                              buttonContext
-                                  .read<AddInventoryAdditionCubit>()
-                                  .addInventoryAddition();
-                              buttonContext.pop();
-                            },
-                            color: Colors.green.shade100,
-                            elevation: 0,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            child: Text(
-                              'إضافة',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
+                  child: _dialog(dialogContext),
                 ),
               );
             },
           ),
         );
       },
+    );
+  }
+
+  Widget _dialog(BuildContext dialogContext) {
+    return AlertDialog(
+      //  ——————————————————————————————————————————————————————————————————————  title
+      title: const Text(
+        'تسجيل إضافة للمخزون ',
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
+
+      //  ——————————————————————————————————————————————————————————————————————  content
+      content: AddAdditionCard(
+        productId: widget.productId,
+        productName: widget.productName,
+        formKey: _formKey,
+      ),
+      contentPadding: const EdgeInsets.all(8),
+
+      //  ——————————————————————————————————————————————————————————————————————  actions
+      actions: [
+        TextButton(
+          onPressed: () => dialogContext.pop(),
+          child: const Text('إلغاء', style: TextStyle(fontSize: 16)),
+        ),
+
+        Builder(
+          builder: (buttonContext) {
+            return MaterialButton(
+              onPressed: () {
+                final bool isValid = _formKey.currentState?.validate() ?? false;
+
+                if (!isValid) return;
+
+                buttonContext
+                    .read<AddInventoryAdditionCubit>()
+                    .addInventoryAddition();
+                buttonContext.pop();
+              },
+              color: Colors.green.shade100,
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Text(
+                'إضافة',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+            );
+          },
+        ),
+      ],
     );
   }
 }
