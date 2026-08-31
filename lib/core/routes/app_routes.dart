@@ -4,8 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:shagaf_ledger/core/common/app_consts.dart';
 import 'package:shagaf_ledger/core/common/colored_prints.dart';
 import 'package:shagaf_ledger/core/common/errors/UI/error_page.dart';
-import 'package:shagaf_ledger/core/common/widgets/shell_route_widget.dart';
 import 'package:shagaf_ledger/core/common/entities/product.dart';
+import 'package:shagaf_ledger/core/routes/home.dart';
 import 'package:shagaf_ledger/features/clients/domain/entities/client_entity.dart';
 import 'package:shagaf_ledger/features/clients/presentation/pages/add_client_page.dart';
 import 'package:shagaf_ledger/features/clients/presentation/pages/clients_details_page.dart';
@@ -63,7 +63,7 @@ class AppRoutes {
               BlocProvider(create: (context) => serviceLocator<OrdersBloc>()),
               BlocProvider(create: (context) => serviceLocator<ClientsCubit>()),
             ],
-            child: ShellRouteWidget(index: index, child: child),
+            child: Home(index: index),
           );
         },
         routes: [

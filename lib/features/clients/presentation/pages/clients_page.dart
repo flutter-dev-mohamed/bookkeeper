@@ -48,7 +48,12 @@ class ClientsPage extends StatelessWidget {
                           );
                         },
                       ),
+                floatingActionButtonLocation:
+                    FloatingActionButtonLocation.miniStartFloat,
                 floatingActionButton: FloatingActionButton(
+                  backgroundColor: Theme.of(
+                    context,
+                  ).colorScheme.secondaryContainer,
                   onPressed: () async {
                     final didChange = await context.pushNamed(
                       AppConsts().addClientPage,
@@ -58,7 +63,11 @@ class ClientsPage extends StatelessWidget {
                       context.read<ClientsCubit>().loadClients();
                     }
                   },
-                  child: const Icon(Icons.add),
+                  child: Image.asset(
+                    'lib/core/assets/icons/add_client.png',
+                    color: Theme.of(context).colorScheme.primary,
+                    width: 30,
+                  ),
                 ),
               );
             }
