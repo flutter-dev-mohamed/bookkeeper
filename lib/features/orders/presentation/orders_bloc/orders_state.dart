@@ -7,6 +7,8 @@ final class OrdersInitial extends OrdersState {}
 
 final class OrdersLoading extends OrdersState {}
 
+final class OrdersUpdating extends OrdersState {}
+
 final class OrdersLoaded extends OrdersState {
   final DateTime dateFilter;
   final List<OrderEntity> orders;

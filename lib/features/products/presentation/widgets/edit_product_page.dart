@@ -5,7 +5,7 @@ import 'package:shagaf_ledger/core/common/entities/product.dart';
 import 'package:shagaf_ledger/core/common/errors/UI/error_page.dart';
 import 'package:shagaf_ledger/core/common/pages/loading_page.dart';
 import 'package:shagaf_ledger/features/products/presentation/cubit/edit_product_cubit/edit_product_cubit.dart';
-import 'package:shagaf_ledger/features/products/presentation/navigation_return.dart';
+import 'package:shagaf_ledger/core/routes/navigation_return.dart';
 import 'package:shagaf_ledger/features/products/presentation/widgets/archive_product_button.dart';
 import 'package:shagaf_ledger/features/products/presentation/widgets/save_edit_button.dart';
 

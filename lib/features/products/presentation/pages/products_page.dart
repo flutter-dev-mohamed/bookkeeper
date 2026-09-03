@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:shagaf_ledger/core/common/app_consts.dart';
+import 'package:shagaf_ledger/core/app_navigator/app_navigator.dart';
 import 'package:shagaf_ledger/core/common/colored_prints.dart';
 import 'package:shagaf_ledger/core/common/errors/UI/error_page.dart';
 import 'package:shagaf_ledger/core/common/pages/loading_page.dart';
@@ -15,7 +15,7 @@ class ProductsPage extends StatelessWidget {
       context.read<ProductsBloc>().add(LoadProductsEvent());
 
   void _navigateToArchivedProductsPage(BuildContext context) async {
-    final changed = await context.pushNamed(AppConsts().archivedProductsPage);
+    final changed = await AppNavigator().navToArchivedProductsPage(context);
 
     if (changed == true && context.mounted) {
       loadProductsList(context);
@@ -51,7 +51,7 @@ class ProductsPage extends StatelessWidget {
               leading: IconButton.filledTonal(
                 tooltip: 'Add product',
                 onPressed: () {
-                  context.pushNamed(AppConsts().addProductPage).then((value) {
+                  AppNavigator().navToAddProductPage(context).then((value) {
                     if (context.mounted) {
                       loadProductsList(context);
                     }
@@ -70,7 +70,7 @@ class ProductsPage extends StatelessWidget {
                 ),
                 IconButton(
                   onPressed: () =>
-                      context.pushNamed(AppConsts().inventoryHistoryPage),
+                      AppNavigator().navToInventoryHistoryPage(context),
                   icon: Icon(Icons.history_edu_rounded, size: 30),
                 ),
               ],

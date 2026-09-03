@@ -8,6 +8,7 @@ import 'package:shagaf_ledger/initDependencies/init_dependencies.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // TODO: call this in side a splash screen note: splash screen -> animated splash screen that calls the initDependencies?!
   await initDependencies();
 
   runApp(const ShagafLedger());

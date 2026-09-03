@@ -20,4 +20,16 @@ class ClientsDatabase {
   }) async => tryDB<void>(() async {
     await executor.insert(clientsTable, clientMap);
   });
+
+  Future<Map<String, dynamic>> getClientDetails({
+    required int clientId,
+  }) async => await tryDB<Map<String, dynamic>>(() async {
+    final res = await _database.query(
+      clientsTable,
+      where: 'id = ?',
+      whereArgs: [clientId],
+    );
+
+    return res.first;
+  });
 }

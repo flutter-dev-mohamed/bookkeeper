@@ -3,8 +3,10 @@ import 'package:shagaf_ledger/features/clients/data/database/clients_database.da
 import 'package:shagaf_ledger/features/clients/data/repository/clients_repository_imp.dart';
 import 'package:shagaf_ledger/features/clients/domain/repository/clients_repository.dart';
 import 'package:shagaf_ledger/features/clients/domain/use_cases/add_client.dart';
+import 'package:shagaf_ledger/features/clients/domain/use_cases/get_client_details.dart';
 import 'package:shagaf_ledger/features/clients/domain/use_cases/get_clients.dart';
 import 'package:shagaf_ledger/features/clients/presentation/state_management/add_client_cubit/add_client_cubit.dart';
+import 'package:shagaf_ledger/features/clients/presentation/state_management/client_details_cubit/client_details_cubit.dart';
 import 'package:shagaf_ledger/features/clients/presentation/state_management/clients_cubit/clients_cubit.dart';
 import 'package:shagaf_ledger/features/inventory/data/database/inventory_history_database.dart';
 import 'package:shagaf_ledger/features/inventory/data/repository/inventory_history_repository_imp.dart';
@@ -64,6 +66,7 @@ Future<void> initDependencies() async {
   _initClientsCubit(db: localDatabase);
   _initAddClientCubit();
   _initClientOrdersCubit();
+  _initClientDetailsCubit();
 }
 
 void _initProductsBloc({required Database db}) {
@@ -301,5 +304,20 @@ void _initClientOrdersCubit() {
 
   serviceLocator.registerFactory<GetClientOrders>(
     () => GetClientOrders(ordersRepository: serviceLocator<OrdersRepository>()),
+  );
+}
+
+void _initClientDetailsCubit() {
+  serviceLocator.registerFactoryParam<ClientDetailsCubit, int, void>(
+    (clientId, _) => ClientDetailsCubit(
+      clientId: clientId,
+      getClientDetails: serviceLocator<GetClientDetails>(),
+    ),
+  );
+
+  serviceLocator.registerFactory<GetClientDetails>(
+    () => GetClientDetails(
+      clientsRepository: serviceLocator<ClientsRepository>(),
+    ),
   );
 }

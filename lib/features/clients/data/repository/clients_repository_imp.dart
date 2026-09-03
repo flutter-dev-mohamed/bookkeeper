@@ -38,4 +38,17 @@ class ClientsRepositoryImp implements ClientsRepository {
       (txn) => _clientsDatabase.addClient(executor: txn, clientMap: clientMap),
     );
   });
+
+  @override
+  Future<Either<Failure, ClientEntity>> getClientDetails({
+    required int clientId,
+  }) async => await tryRepo<ClientModel>(() async {
+    final clientMap = await _clientsDatabase.getClientDetails(
+      clientId: clientId,
+    );
+
+    final client = ClientModel.fromMap(clientMap);
+
+    return client;
+  });
 }

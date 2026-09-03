@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:shagaf_ledger/core/common/app_consts.dart';
+import 'package:shagaf_ledger/core/app_navigator/app_navigator.dart';
 import 'package:shagaf_ledger/features/orders/domain/entities/order_entity.dart';
 import 'package:shagaf_ledger/features/orders/presentation/orders_bloc/orders_bloc.dart';
 
@@ -30,11 +30,11 @@ class OrderTile extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
         onTap: () async {
-          final didChange = await context.pushNamed(
-            AppConsts().orderDetails,
-            pathParameters: {'orderId': order.id.toString()},
+          final didChange = await AppNavigator().navToOrderDetailsPage(
+            context,
+            orderId: order.id,
           );
-          if (didChange == true) {
+          if (didChange ?? false) {
             updateOrdersList();
           }
         },

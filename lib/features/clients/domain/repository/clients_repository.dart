@@ -6,4 +6,8 @@ abstract interface class ClientsRepository {
   Future<Either<Failure, List<ClientEntity>>> getClients();
 
   Future<Either<Failure, void>> addClient({required ClientEntity client});
+
+  Future<Either<Failure, ClientEntity>> getClientDetails({
+    required int clientId,
+  });
 }

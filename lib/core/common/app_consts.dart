@@ -23,7 +23,7 @@ class AppConsts {
 
   final String clientsPage = 'clientsPage';
 
-  /// This path need: `ClientEntity` as extra
+  /// This path need: clientId in the params
   final String clientDetailsPage = 'clientDetailsPage';
   final String addClientPage = 'addClientPage';
 }

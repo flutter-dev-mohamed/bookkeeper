@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:shagaf_ledger/core/common/app_consts.dart';
+import 'package:shagaf_ledger/core/app_navigator/app_navigator.dart';
 import 'package:shagaf_ledger/core/common/errors/UI/error_page.dart';
 import 'package:shagaf_ledger/core/common/pages/loading_page.dart';
 import 'package:shagaf_ledger/features/clients/presentation/pages/clients_details_page.dart';
@@ -40,9 +40,9 @@ class ClientsPage extends StatelessWidget {
                             client: client,
                             onTap: () {
                               // Navigate to the client details page.
-                              context.pushNamed(
-                                AppConsts().clientDetailsPage,
-                                extra: client,
+                              AppNavigator().navToClientDetailsPage(
+                                context,
+                                clientId: client.id,
                               );
                             },
                           );
@@ -55,8 +55,8 @@ class ClientsPage extends StatelessWidget {
                     context,
                   ).colorScheme.secondaryContainer,
                   onPressed: () async {
-                    final didChange = await context.pushNamed(
-                      AppConsts().addClientPage,
+                    final didChange = await AppNavigator().navToAddClientPage(
+                      context,
                     );
 
                     if (didChange == true && context.mounted) {

@@ -11,6 +11,7 @@ import 'package:shagaf_ledger/features/clients/presentation/pages/add_client_pag
 import 'package:shagaf_ledger/features/clients/presentation/pages/clients_details_page.dart';
 import 'package:shagaf_ledger/features/clients/presentation/pages/clients_page.dart';
 import 'package:shagaf_ledger/features/clients/presentation/state_management/add_client_cubit/add_client_cubit.dart';
+import 'package:shagaf_ledger/features/clients/presentation/state_management/client_details_cubit/client_details_cubit.dart';
 import 'package:shagaf_ledger/features/clients/presentation/state_management/clients_cubit/clients_cubit.dart';
 import 'package:shagaf_ledger/features/inventory/domain/entities/inventory_addition.dart';
 import 'package:shagaf_ledger/features/inventory/domain/repository/inventory_history_repository.dart';
@@ -91,23 +92,33 @@ class AppRoutes {
       ),
 
       // clients page
+      // client details page
       GoRoute(
-        path: '/clients/client_details_page',
+        path: '/clients/:clientId',
         name: AppConsts().clientDetailsPage,
         builder: (context, state) {
-          final client = state.extra as ClientEntity;
+          final clientId = int.parse(state.pathParameters['clientId'] ?? "");
 
-          return BlocProvider(
-            create: (context) =>
-                serviceLocator<ClientOrdersCubit>(param1: client.id),
-            child: ClientDetailsPage(client: client),
+          return MultiBlocProvider(
+            providers: [
+              BlocProvider(
+                create: (context) =>
+                    serviceLocator<ClientOrdersCubit>(param1: clientId),
+              ),
+              BlocProvider(
+                create: (context) =>
+                    serviceLocator<ClientDetailsCubit>(param1: clientId),
+              ),
+            ],
+
+            child: ClientDetailsPage(clientId: clientId),
           );
         },
       ),
 
       // add client page
       GoRoute(
-        path: '/clients/add_client_page',
+        path: '/add_client_page',
         name: AppConsts().addClientPage,
         builder: (context, state) {
           return BlocProvider(

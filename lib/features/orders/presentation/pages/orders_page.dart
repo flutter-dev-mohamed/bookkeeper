@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:shagaf_ledger/core/common/app_consts.dart';
+import 'package:shagaf_ledger/core/app_navigator/app_navigator.dart';
 import 'package:shagaf_ledger/core/common/colored_prints.dart';
 import 'package:shagaf_ledger/core/common/errors/UI/error_page.dart';
 import 'package:shagaf_ledger/core/common/pages/loading_page.dart';
@@ -53,9 +53,7 @@ class OrdersPage extends StatelessWidget {
                       order: orders[index],
                       updateOrdersList: () {
                         if (context.mounted) {
-                          context.read<OrdersBloc>().add(
-                            GetOrdersEvent(day: state.dateFilter),
-                          );
+                          context.read<OrdersBloc>().add(UpdateOrdersEvent());
                         }
                       },
                     ),
@@ -74,14 +72,11 @@ class OrdersPage extends StatelessWidget {
                       context,
                     ).colorScheme.onSecondaryContainer,
                     onPressed: () async {
-                      final didAddOrder = await context.pushNamed(
-                        AppConsts().addNewOrderPage,
-                      );
+                      final didAddOrder = await AppNavigator()
+                          .navToAddOrderPage(context);
 
                       if (context.mounted && didAddOrder == true) {
-                        context.read<OrdersBloc>().add(
-                          GetOrdersEvent(day: state.dateFilter),
-                        );
+                        context.read<OrdersBloc>().add(UpdateOrdersEvent());
                       }
                     },
                     icon: Image.asset(

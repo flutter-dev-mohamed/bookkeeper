@@ -19,16 +19,6 @@ class OrderDetailsPage extends StatefulWidget {
 }
 
 class _OrderDetailsPageState extends State<OrderDetailsPage> {
-  OrderEntity order = OrderEntity(
-    id: 0,
-    createdAt: DateTime.now().toIso8601String(),
-    totalPrice: 0,
-    originalPrice: 0,
-    discountType: DiscountType.amount,
-    discountValue: 0,
-  );
-  List<OrderItem> items = [];
-
   @override
   void initState() {
     context.read<OrderDetailsCubit>().getOrder(orderId: widget.orderId);
@@ -37,14 +27,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<OrderDetailsCubit, OrderDetailsState>(
-      listener: (context, state) {
-        if (state is GotOrderDetails) {
-          order = state.order;
-          items = state.items;
-        }
-      },
-
+    return BlocBuilder<OrderDetailsCubit, OrderDetailsState>(
       builder: (context, state) {
         final colorScheme = Theme.of(context).colorScheme;
 
@@ -54,6 +37,9 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
         } else
         // —————————————————————————————————————————————————————————————————————  Page UI
         if (state is GotOrderDetails) {
+          final order = state.order;
+          final items = state.items;
+
           return PopScope(
             canPop: false,
             onPopInvokedWithResult: (didPop, result) {
@@ -102,7 +88,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                       SizedBox(height: 12),
 
                       // items list
-                      _itemsListBuilder(colorScheme),
+                      _itemsListBuilder(colorScheme, items: items),
 
                       //  ——————————————————————————————————————————————————————————  note
                       if (order.note.isNotEmpty)
@@ -216,7 +202,10 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
   }
 
   //  ——————————————————————————————————————————————————————————————————————————  _itemsListBuilder: builds the items list
-  Widget _itemsListBuilder(ColorScheme colorScheme) {
+  Widget _itemsListBuilder(
+    ColorScheme colorScheme, {
+    required List<OrderItem> items,
+  }) {
     return ListView.builder(
       shrinkWrap: true,
       itemCount: items.length,

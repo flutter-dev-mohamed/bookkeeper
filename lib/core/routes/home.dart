@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shagaf_ledger/features/clients/presentation/pages/clients_page.dart';
+import 'package:shagaf_ledger/features/orders/presentation/orders_bloc/orders_bloc.dart';
 import 'package:shagaf_ledger/features/orders/presentation/pages/orders_page.dart';
+import 'package:shagaf_ledger/features/products/presentation/bloc/products_bloc.dart';
 import 'package:shagaf_ledger/features/products/presentation/pages/products_page.dart';
 
 class Home extends StatefulWidget {
@@ -15,6 +18,9 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final List<Widget> pages = [ProductsPage(), OrdersPage(), ClientsPage()];
+
+  void _reloadProducts(BuildContext context) =>
+      context.read<ProductsBloc>().add(LoadProductsEvent());
 
   @override
   Widget build(BuildContext context) {
@@ -43,45 +49,51 @@ class _HomeState extends State<Home> {
       width: 30,
     );
 
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Scaffold(
-        body: IndexedStack(index: widget.index, children: pages),
+    return BlocListener<OrdersBloc, OrdersState>(
+      listener: (context, state) {
+        if (state is OrdersUpdating) _reloadProducts(context);
+      },
 
-        //
-        bottomNavigationBar: NavigationBar(
-          labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
-          selectedIndex: widget.index,
-          destinations: [
-            NavigationDestination(
-              //
-              icon: productsIcon,
-              label: 'Products',
-            ),
-            NavigationDestination(
-              //
-              icon: ordersIcon,
-              label: 'Orders',
-            ),
-            NavigationDestination(
-              //
-              icon: clientsIcon,
-              label: 'Clients',
-            ),
-          ],
-          onDestinationSelected: (index) {
-            if (index == 2) {
-              context.go('/clients');
-            }
+      child: Directionality(
+        textDirection: TextDirection.rtl,
+        child: Scaffold(
+          body: IndexedStack(index: widget.index, children: pages),
 
-            if (index == 1) {
-              context.go('/orders');
-            }
+          //
+          bottomNavigationBar: NavigationBar(
+            labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
+            selectedIndex: widget.index,
+            destinations: [
+              NavigationDestination(
+                //
+                icon: productsIcon,
+                label: 'Products',
+              ),
+              NavigationDestination(
+                //
+                icon: ordersIcon,
+                label: 'Orders',
+              ),
+              NavigationDestination(
+                //
+                icon: clientsIcon,
+                label: 'Clients',
+              ),
+            ],
+            onDestinationSelected: (index) {
+              if (index == 2) {
+                context.go('/clients');
+              }
 
-            if (index == 0) {
-              context.go('/products');
-            }
-          },
+              if (index == 1) {
+                context.go('/orders');
+              }
+
+              if (index == 0) {
+                context.go('/products');
+              }
+            },
+          ),
         ),
       ),
     );
