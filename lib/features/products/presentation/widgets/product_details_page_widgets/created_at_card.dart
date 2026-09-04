@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shagaf_ledger/core/common/functions/date_formatting.dart';
 
 class CreatedAtCard extends StatelessWidget {
   final DateTime createdAt;
@@ -28,7 +29,7 @@ class CreatedAtCard extends StatelessWidget {
             const Spacer(),
 
             Text(
-              createdAt.toIso8601String().split('T')[0],
+              dateFormatting(createdAt),
               style: TextStyle(color: colors.onSurfaceVariant),
             ),
           ],

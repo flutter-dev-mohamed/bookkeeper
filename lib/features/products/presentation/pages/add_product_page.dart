@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shagaf_ledger/core/common/colored_prints.dart';
+import 'package:shagaf_ledger/core/common/widgets/custom_app_bar.dart';
 import 'package:shagaf_ledger/core/common/widgets/custom_form_filed.dart';
 import 'package:shagaf_ledger/core/common/widgets/custom_primary_button.dart';
 import 'package:shagaf_ledger/core/common/entities/product.dart';
@@ -94,12 +95,11 @@ class _AddProductPageState extends State<AddProductPage> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        appBar: AppBar(
+        appBar: CustomAppBar(
           title: const Text(
             'إضافة منتج',
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
-          centerTitle: true,
         ),
         body: Directionality(
           textDirection: TextDirection.rtl,
@@ -201,13 +201,6 @@ class _AddProductPageState extends State<AddProductPage> {
                               ),
 
                               const SizedBox(height: 28),
-
-                              Text(
-                                'تكلفة إضافية',
-                                style: theme.textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
 
                               CustomFormField(
                                 controller: _addedCostController,

@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -57,42 +59,50 @@ class _HomeState extends State<Home> {
       child: Directionality(
         textDirection: TextDirection.rtl,
         child: Scaffold(
+          extendBodyBehindAppBar: true,
           body: IndexedStack(index: widget.index, children: pages),
 
-          //
-          bottomNavigationBar: NavigationBar(
-            labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
-            selectedIndex: widget.index,
-            destinations: [
-              NavigationDestination(
-                //
-                icon: productsIcon,
-                label: 'Products',
-              ),
-              NavigationDestination(
-                //
-                icon: ordersIcon,
-                label: 'Orders',
-              ),
-              NavigationDestination(
-                //
-                icon: clientsIcon,
-                label: 'Clients',
-              ),
-            ],
-            onDestinationSelected: (index) {
-              if (index == 2) {
-                context.go('/clients');
-              }
+          extendBody: true,
+          bottomNavigationBar: ClipRRect(
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: colorScheme.primary.withAlpha(30),
+                  borderRadius: const BorderRadius.all(Radius.circular(20)),
+                  border: Border.all(
+                    color: colorScheme.primary.withAlpha(50),
+                    width: 1.0,
+                  ),
+                ),
 
-              if (index == 1) {
-                context.go('/orders');
-              }
-
-              if (index == 0) {
-                context.go('/products');
-              }
-            },
+                child: NavigationBar(
+                  height: 70,
+                  backgroundColor: Colors.transparent,
+                  // Must be transparent to let the blur show
+                  indicatorColor: Colors.white.withAlpha(40),
+                  // Sleek highlight for active item
+                  surfaceTintColor: Colors.transparent,
+                  elevation: 0,
+                  labelBehavior:
+                      NavigationDestinationLabelBehavior.onlyShowSelected,
+                  selectedIndex: widget.index,
+                  destinations: [
+                    NavigationDestination(
+                      icon: productsIcon,
+                      label: 'Products',
+                    ),
+                    NavigationDestination(icon: ordersIcon, label: 'Orders'),
+                    NavigationDestination(icon: clientsIcon, label: 'Clients'),
+                  ],
+                  onDestinationSelected: (index) {
+                    if (index == 2) context.go('/clients');
+                    if (index == 1) context.go('/orders');
+                    if (index == 0) context.go('/products');
+                  },
+                ),
+              ),
+            ),
           ),
         ),
       ),

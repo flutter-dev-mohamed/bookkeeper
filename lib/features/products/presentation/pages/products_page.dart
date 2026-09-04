@@ -5,6 +5,7 @@ import 'package:shagaf_ledger/core/app_navigator/app_navigator.dart';
 import 'package:shagaf_ledger/core/common/colored_prints.dart';
 import 'package:shagaf_ledger/core/common/errors/UI/error_page.dart';
 import 'package:shagaf_ledger/core/common/pages/loading_page.dart';
+import 'package:shagaf_ledger/core/common/widgets/custom_app_bar.dart';
 import 'package:shagaf_ledger/features/products/presentation/bloc/products_bloc.dart';
 import 'package:shagaf_ledger/features/products/presentation/widgets/product_tile.dart';
 
@@ -24,6 +25,8 @@ class ProductsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return BlocConsumer<ProductsBloc, ProductsState>(
       listener: (context, state) {
         OPrint.lineC(' Inventory Page Listener state: $state ');
@@ -42,13 +45,14 @@ class ProductsPage extends StatelessWidget {
         if (state is InventoryProductsLoaded) {
           final products = state.products;
           return Scaffold(
-            appBar: AppBar(
+            extendBodyBehindAppBar: true,
+
+            appBar: CustomAppBar(
               title: Text(
                 'المخزن',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 28),
               ),
-              centerTitle: true,
-              leading: IconButton.filledTonal(
+              leading: IconButton(
                 tooltip: 'Add product',
                 onPressed: () {
                   AppNavigator().navToAddProductPage(context).then((value) {
@@ -66,18 +70,26 @@ class ProductsPage extends StatelessWidget {
               actions: [
                 IconButton(
                   onPressed: () => _navigateToArchivedProductsPage(context),
-                  icon: Icon(Icons.archive_rounded, size: 30),
+                  icon: Icon(
+                    Icons.archive_rounded,
+                    color: colorScheme.primary,
+                    size: 30,
+                  ),
                 ),
                 IconButton(
                   onPressed: () =>
                       AppNavigator().navToInventoryHistoryPage(context),
-                  icon: Icon(Icons.history_edu_rounded, size: 30),
+                  icon: Icon(
+                    Icons.history_edu_rounded,
+                    color: colorScheme.primary,
+                    size: 30,
+                  ),
                 ),
               ],
             ),
 
             body: ListView.builder(
-              padding: const EdgeInsets.only(bottom: 24),
+              padding: const EdgeInsets.symmetric(vertical: 120),
               itemCount: products.length,
               itemBuilder: (context, index) => ProductTile(
                 product: products[index],

@@ -110,105 +110,109 @@ class _AddAdditionCardState extends State<AddAdditionCard> {
       constraints: const BoxConstraints(
         minWidth: 300,
         maxWidth: 500,
-        maxHeight: 350,
+        maxHeight: 400,
       ),
-      child: Card(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Form(
-            key: widget.formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              spacing: 8,
-              children: [
-                Text(
-                  'المخزون',
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-
-                _formField(
-                  controller: _quantityController,
-                  label: 'المخزون الإضافي',
-                  validator: _validateStock,
-                ),
-
-                // ————————————————————— prices
-                Text(
-                  'التسعير',
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-
-                Row(
-                  children: [
-                    Expanded(
-                      child: _formField(
-                        controller: _costController,
-                        label: 'تكلفة المنتج',
-                        validator: (value) =>
-                            _validatePrice(value, 'تكلفة المنتج'),
-                      ),
-                    ),
-
-                    const SizedBox(width: 12),
-
-                    Expanded(
-                      child: _formField(
-                        controller: _priceController,
-                        label: 'سعر البيع',
-                        validator: (value) =>
-                            _validatePrice(value, 'سعر البيع'),
-                      ),
-                    ),
-                  ],
-                ),
-
-                // ————————————————————————————————————————————————————————————— added cost
-                _formField(
-                  controller: _addedCostController,
-                  label: 'تكلفة إضافية',
-                  validator: (value) => _validatePrice(value, 'سعر البيع'),
-                ),
-
-                // ————————————————————————————————————————————————————————————— note
-                TextFormField(
-                  controller: _noteController,
-                  decoration: InputDecoration(
-                    labelText: 'ملاحظة',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: const BorderSide(color: Colors.grey),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: BorderSide(
-                        width: 1,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
+      child: SingleChildScrollView(
+        child: Card(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(18),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Form(
+              key: widget.formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                spacing: 8,
+                children: [
+                  Text(
+                    'المخزون',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                  keyboardType: TextInputType.multiline,
-                  textInputAction: TextInputAction.done,
-                  maxLines: 4,
-                  minLines: 1,
-                  onFieldSubmitted: (_) => _onTextSubmit(context),
-                  onTapOutside: (_) => _onTextSubmit(context),
-                  onTap: () {
-                    _noteController.selection = TextSelection(
-                      baseOffset: 0,
-                      extentOffset: _noteController.text.length,
-                    );
-                  },
-                ),
-              ],
+
+                  _formField(
+                    controller: _quantityController,
+                    label: 'المخزون الإضافي',
+                    validator: _validateStock,
+                  ),
+
+                  // ————————————————————— prices
+                  Text(
+                    'التسعير',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _formField(
+                          controller: _costController,
+                          label: 'تكلفة المنتج',
+                          validator: (value) =>
+                              _validatePrice(value, 'تكلفة المنتج'),
+                        ),
+                      ),
+
+                      const SizedBox(width: 12),
+
+                      Expanded(
+                        child: _formField(
+                          controller: _priceController,
+                          label: 'سعر البيع',
+                          validator: (value) =>
+                              _validatePrice(value, 'سعر البيع'),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  // ————————————————————————————————————————————————————————————— added cost
+                  _formField(
+                    controller: _addedCostController,
+                    label: 'تكلفة إضافية',
+                    validator: (value) => _validatePrice(value, 'سعر البيع'),
+                  ),
+
+                  // ————————————————————————————————————————————————————————————— note
+                  TextFormField(
+                    controller: _noteController,
+                    decoration: InputDecoration(
+                      labelText: 'ملاحظة',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: const BorderSide(color: Colors.grey),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: BorderSide(
+                          width: 1,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                    ),
+                    keyboardType: TextInputType.multiline,
+                    textInputAction: TextInputAction.done,
+                    maxLines: 4,
+                    minLines: 1,
+                    onFieldSubmitted: (_) => _onTextSubmit(context),
+                    onTapOutside: (_) => _onTextSubmit(context),
+                    onTap: () {
+                      _noteController.selection = TextSelection(
+                        baseOffset: 0,
+                        extentOffset: _noteController.text.length,
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
         ),

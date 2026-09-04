@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:shagaf_ledger/core/common/colored_prints.dart';
 import 'package:shagaf_ledger/core/common/errors/UI/error_page.dart';
 import 'package:shagaf_ledger/core/common/pages/loading_page.dart';
+import 'package:shagaf_ledger/core/common/widgets/custom_app_bar.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/state/inventory_history_cubit/inventory_history_cubit.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/widgets/add_inventory_addition_button.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/widgets/product_additions_history_card.dart';
@@ -64,12 +65,11 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
             child: Directionality(
               textDirection: TextDirection.rtl,
               child: Scaffold(
-                appBar: AppBar(
+                appBar: CustomAppBar(
                   title: const Text(
                     'تفاصيل المنتج',
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 28),
                   ),
-                  centerTitle: true,
                   actions: [
                     if (!product.isArchived) EditButton(product: product),
                   ],

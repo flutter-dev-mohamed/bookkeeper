@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:shagaf_ledger/core/common/widgets/custom_text_field.dart';
 import 'package:shagaf_ledger/features/clients/presentation/widgets/clients_dropdown_menu.dart';
@@ -78,6 +80,8 @@ class _OrderSummarySheetState extends State<OrderSummarySheet> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    // TODO: Stop the user from entering a discount that makes price in the negative
     //  ────────────────────────────────────────────────────────────────────────  this is so that when use empties the orderItems list and this shouldn't show you don't loss user input for: note and discount
     if (widget.orderItems.isEmpty) {
       return const SizedBox.shrink();
@@ -92,148 +96,164 @@ class _OrderSummarySheetState extends State<OrderSummarySheet> {
       snapSizes: const [0.13, 0.85],
 
       builder: (context, scrollController) {
-        return Container(
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
-            boxShadow: [
-              BoxShadow(
-                blurRadius: 15,
-                spreadRadius: 2,
-                color: Colors.black.withValues(alpha: 0.15),
-              ),
-            ],
-          ),
-
-          child: ListView(
-            controller: scrollController,
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            children: [
-              // Grab handle
-              Center(
-                child: Container(
-                  width: 40,
-                  height: 5,
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade400,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
+        return ClipRRect(
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
+            child: Container(
+              decoration: BoxDecoration(
+                color: colorScheme.surface.withAlpha(200),
+                border: Border(top: BorderSide(color: colorScheme.primary)),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(28),
                 ),
-              ),
-
-              const SizedBox(height: 12),
-
-              //  ──────────────────────────────────────────────────────────────  total and action button
-              Row(
-                children: [
-                  // total price
-                  Expanded(
-                    child: Text.rich(
-                      TextSpan(
-                        children: [
-                          TextSpan(
-                            //
-                            text: _calculateTotal(),
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.primary,
-                              fontSize: 30,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-
-                          TextSpan(text: " "),
-
-                          if (_discountValue > 0)
-                            TextSpan(
-                              text: originalPrice.toString(),
-                              style: TextStyle(
-                                color: Theme.of(context).colorScheme.secondary,
-                                fontWeight: FontWeight.w500,
-                                fontSize: 24,
-                                decoration: TextDecoration.lineThrough,
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
-                  ),
-
-                  // Action button
-                  Material(
-                    color: !widget.isLoading
-                        ? Theme.of(context).colorScheme.primary
-                        : null,
-                    shape: const CircleBorder(),
-                    child: InkWell(
-                      customBorder: const CircleBorder(),
-                      onTap: () => widget.onContinue(
-                        totalPrice: totalPrice,
-                        originalPrice: originalPrice,
-                        discountType: _discountType,
-                        discountValue: _discountValue,
-                        noteText: _noteController.text.trim(),
-                        clientId: _clientId,
-                      ),
-                      child: SizedBox(
-                        width: 52,
-                        height: 52,
-                        child: widget.isLoading
-                            ? CircularProgressIndicator(
-                                color: Theme.of(context).colorScheme.primary,
-                                strokeWidth: 2,
-                              )
-                            : const Icon(
-                                Icons.arrow_forward,
-                                color: Colors.white,
-                              ),
-                      ),
-                    ),
+                boxShadow: [
+                  BoxShadow(
+                    blurRadius: 15,
+                    spreadRadius: 2,
+                    color: Colors.black.withValues(alpha: 0.15),
                   ),
                 ],
               ),
-
-              const SizedBox(height: 24),
-
-              const Text(
-                'خصم',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-
-              const SizedBox(height: 10),
-
-              // TODO: add a completed check box for order status
-              //  ──────────────────────────────────────────────────────────────  discount
-              DiscountInput(
-                onChanged: ({required type, required value}) => setState(() {
-                  _discountType = type;
-                  _discountValue = value;
-                }),
-              ),
-
-              const SizedBox(height: 10),
-              //  ──────────────────────────────────────────────────────────────  note
-              CustomTextField(
-                controller: _noteController,
-                keyboardType: TextInputType.multiline,
-                maxLines: 5,
-                unfocusOnTapOutSide: true,
-                hint: Text(
-                  'ملاحظة',
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.tertiary,
-                  ),
+              child: ListView(
+                controller: scrollController,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 10,
                 ),
-              ),
+                children: [
+                  // Grab handle
+                  Center(
+                    child: Container(
+                      width: 40,
+                      height: 5,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade400,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  ),
 
-              const SizedBox(height: 10),
+                  const SizedBox(height: 12),
 
-              ClientsDropdownMenu(
-                onSelectClient: (clientId) {
-                  // TODO: ADD THE CLIENT ID TO THE ORDER
-                  _clientId = clientId;
-                },
+                  //  ──────────────────────────────────────────────────────────────  total and action button
+                  Row(
+                    children: [
+                      // total price
+                      Expanded(
+                        child: Text.rich(
+                          TextSpan(
+                            children: [
+                              TextSpan(
+                                //
+                                text: _calculateTotal(),
+                                style: TextStyle(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  fontSize: 30,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+
+                              TextSpan(text: " "),
+
+                              if (_discountValue > 0)
+                                TextSpan(
+                                  text: originalPrice.toString(),
+                                  style: TextStyle(
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.secondary,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 24,
+                                    decoration: TextDecoration.lineThrough,
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      // Action button
+                      Material(
+                        color: !widget.isLoading
+                            ? Theme.of(context).colorScheme.primary
+                            : null,
+                        shape: const CircleBorder(),
+                        child: InkWell(
+                          customBorder: const CircleBorder(),
+                          onTap: () => widget.onContinue(
+                            totalPrice: totalPrice,
+                            originalPrice: originalPrice,
+                            discountType: _discountType,
+                            discountValue: _discountValue,
+                            noteText: _noteController.text.trim(),
+                            clientId: _clientId,
+                          ),
+                          child: SizedBox(
+                            width: 52,
+                            height: 52,
+                            child: widget.isLoading
+                                ? CircularProgressIndicator(
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.primary,
+                                    strokeWidth: 2,
+                                  )
+                                : const Icon(
+                                    Icons.arrow_forward,
+                                    color: Colors.white,
+                                  ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  const Text(
+                    'خصم',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  // TODO: add a completed check box for order status
+                  //  ──────────────────────────────────────────────────────────────  discount
+                  DiscountInput(
+                    onChanged: ({required type, required value}) =>
+                        setState(() {
+                          _discountType = type;
+                          _discountValue = value;
+                        }),
+                  ),
+
+                  const SizedBox(height: 10),
+                  //  ──────────────────────────────────────────────────────────────  note
+                  CustomTextField(
+                    controller: _noteController,
+                    keyboardType: TextInputType.multiline,
+                    maxLines: 5,
+                    unfocusOnTapOutSide: true,
+                    hint: Text(
+                      'ملاحظة',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.tertiary,
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  ClientsDropdownMenu(
+                    onSelectClient: (clientId) {
+                      // TODO: ADD THE CLIENT ID TO THE ORDER
+                      _clientId = clientId;
+                    },
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         );
       },

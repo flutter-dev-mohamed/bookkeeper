@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:shagaf_ledger/core/app_navigator/app_navigator.dart';
 import 'package:shagaf_ledger/core/common/errors/UI/error_page.dart';
 import 'package:shagaf_ledger/core/common/pages/loading_page.dart';
+import 'package:shagaf_ledger/core/common/widgets/custom_app_bar.dart';
+import 'package:shagaf_ledger/core/common/widgets/custom_fab.dart';
 import 'package:shagaf_ledger/features/clients/presentation/pages/clients_details_page.dart';
 import 'package:shagaf_ledger/features/clients/presentation/state_management/clients_cubit/clients_cubit.dart';
 import 'package:shagaf_ledger/features/clients/presentation/widgets/client_tile.dart';
@@ -27,7 +29,13 @@ class ClientsPage extends StatelessWidget {
               final clients = state.clients;
 
               return Scaffold(
-                appBar: AppBar(title: const Text('Clients')),
+                appBar: CustomAppBar(
+                  title: const Text(
+                    'العملاء',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 28),
+                  ),
+                ),
+
                 body: clients.isEmpty
                     ? const Center(child: Text('No clients found'))
                     : ListView.builder(
@@ -50,23 +58,23 @@ class ClientsPage extends StatelessWidget {
                       ),
                 floatingActionButtonLocation:
                     FloatingActionButtonLocation.miniStartFloat,
-                floatingActionButton: FloatingActionButton(
-                  backgroundColor: Theme.of(
-                    context,
-                  ).colorScheme.secondaryContainer,
-                  onPressed: () async {
-                    final didChange = await AppNavigator().navToAddClientPage(
-                      context,
-                    );
+                floatingActionButton: Padding(
+                  padding: const EdgeInsets.only(bottom: 110.0),
+                  child: CustomFab(
+                    onPressed: () async {
+                      final didChange = await AppNavigator().navToAddClientPage(
+                        context,
+                      );
 
-                    if (didChange == true && context.mounted) {
-                      context.read<ClientsCubit>().loadClients();
-                    }
-                  },
-                  child: Image.asset(
-                    'lib/core/assets/icons/add_client.png',
-                    color: Theme.of(context).colorScheme.primary,
-                    width: 30,
+                      if (didChange == true && context.mounted) {
+                        context.read<ClientsCubit>().loadClients();
+                      }
+                    },
+                    child: Image.asset(
+                      'lib/core/assets/icons/add_client.png',
+                      color: Theme.of(context).colorScheme.primary,
+                      width: 30,
+                    ),
                   ),
                 ),
               );

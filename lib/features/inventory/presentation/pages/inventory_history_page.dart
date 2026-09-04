@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shagaf_ledger/core/common/errors/UI/error_page.dart';
 import 'package:shagaf_ledger/core/common/pages/loading_page.dart';
+import 'package:shagaf_ledger/core/common/widgets/custom_app_bar.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/state/inventory_history_cubit/inventory_history_cubit.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/widgets/inventory_addition_tile.dart';
 
@@ -33,12 +34,11 @@ class _InventoryHistoryPageState extends State<InventoryHistoryPage> {
             final additions = state.additions;
 
             return Scaffold(
-              appBar: AppBar(
+              appBar: CustomAppBar(
                 title: Text(
                   'السجل',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 28),
                 ),
-                centerTitle: true,
               ),
               body: ListView.builder(
                 shrinkWrap: true,

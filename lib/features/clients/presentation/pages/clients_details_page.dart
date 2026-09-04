@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shagaf_ledger/core/common/colored_prints.dart';
 import 'package:shagaf_ledger/core/common/errors/UI/error_page.dart';
 import 'package:shagaf_ledger/core/common/pages/loading_page.dart';
+import 'package:shagaf_ledger/core/common/widgets/custom_app_bar.dart';
 import 'package:shagaf_ledger/features/clients/domain/entities/client_entity.dart';
 import 'package:shagaf_ledger/features/clients/presentation/state_management/client_details_cubit/client_details_cubit.dart';
 import 'package:shagaf_ledger/features/orders/presentation/widgets/client_orders_card.dart';
@@ -31,7 +32,8 @@ class ClientDetailsPage extends StatelessWidget {
           return Directionality(
             textDirection: TextDirection.rtl,
             child: Scaffold(
-              appBar: AppBar(),
+              appBar: CustomAppBar(),
+
               body: ListView(
                 padding: const EdgeInsets.all(16),
                 children: [

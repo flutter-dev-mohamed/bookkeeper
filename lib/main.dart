@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:shagaf_ledger/core/assets/theme/lib/theme.dart';
 import 'package:shagaf_ledger/core/assets/theme/lib/util.dart';
 import 'package:shagaf_ledger/core/routes/app_routes.dart';
@@ -10,6 +11,8 @@ void main() async {
 
   // TODO: call this in side a splash screen note: splash screen -> animated splash screen that calls the initDependencies?!
   await initDependencies();
+
+  await initializeDateFormatting();
 
   runApp(const ShagafLedger());
 }

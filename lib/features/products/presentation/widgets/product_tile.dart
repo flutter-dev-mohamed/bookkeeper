@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shagaf_ledger/core/app_navigator/app_navigator.dart';
 import 'package:shagaf_ledger/core/common/entities/product.dart';
+import 'package:shagaf_ledger/core/common/functions/stock_formatting.dart';
 
 class ProductTile extends StatelessWidget {
   final Product product;
@@ -87,7 +88,7 @@ class ProductTile extends StatelessWidget {
                         ),
                         const SizedBox(width: 5),
                         Text(
-                          '${product.currentInventory} قطعة',
+                          '${stockFormatting(product.currentInventory)} قطعة',
                           style: theme.textTheme.bodyMedium?.copyWith(
                             color: colorScheme.onSurfaceVariant,
                           ),

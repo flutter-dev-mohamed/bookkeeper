@@ -124,7 +124,7 @@ class _AddInventoryAdditionButtonState
                     .addInventoryAddition();
                 buttonContext.pop();
               },
-              color: Colors.green.shade100,
+              color: Theme.of(context).primaryColor,
               elevation: 0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),

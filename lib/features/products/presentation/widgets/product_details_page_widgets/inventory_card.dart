@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shagaf_ledger/core/common/functions/stock_formatting.dart';
 
 class InventoryCard extends StatelessWidget {
   final int currentInventory;
@@ -42,7 +43,7 @@ class InventoryCard extends StatelessWidget {
                   const SizedBox(height: 8),
 
                   Text(
-                    '$currentInventory',
+                    stockFormatting(currentInventory),
                     style: TextStyle(
                       fontSize: 40,
                       fontWeight: FontWeight.bold,

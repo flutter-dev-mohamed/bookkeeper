@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shagaf_ledger/core/common/app_consts.dart';
+import 'package:shagaf_ledger/core/common/functions/price_formate.dart';
 import 'package:shagaf_ledger/features/inventory/domain/entities/inventory_addition.dart';
 
 class InventoryAdditionTile extends StatelessWidget {
@@ -96,10 +97,17 @@ class InventoryAdditionTile extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 3),
-                  Text(
-                    '${addition.totalPrice}',
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
+                  SizedBox(
+                    width: MediaQuery.sizeOf(context).width * 0.3,
+                    child: Directionality(
+                      textDirection: TextDirection.ltr,
+                      child: Text(
+                        priceFormate(addition.totalPrice),
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
                     ),
                   ),
                 ],

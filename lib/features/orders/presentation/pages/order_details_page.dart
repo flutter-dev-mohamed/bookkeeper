@@ -3,7 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shagaf_ledger/core/common/colored_prints.dart';
 import 'package:shagaf_ledger/core/common/errors/UI/error_page.dart';
+import 'package:shagaf_ledger/core/common/functions/price_formate.dart';
 import 'package:shagaf_ledger/core/common/pages/loading_page.dart';
+import 'package:shagaf_ledger/core/common/widgets/custom_app_bar.dart';
 import 'package:shagaf_ledger/core/common/widgets/custom_primary_button.dart';
 import 'package:shagaf_ledger/features/orders/domain/entities/order_entity.dart';
 import 'package:shagaf_ledger/features/orders/domain/entities/order_item.dart';
@@ -51,7 +53,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
               textDirection: TextDirection.rtl,
 
               child: Scaffold(
-                appBar: AppBar(),
+                appBar: CustomAppBar(),
 
                 //
                 body: Padding(
@@ -73,9 +75,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                       ),
 
                       Text(
-                        order.status == OrderStatus.completed
-                            ? "مكتمل"
-                            : "ملغي",
+                        order.status.name.toUpperCase(),
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
@@ -120,51 +120,35 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
                         child: Divider(height: 5, color: colorScheme.secondary),
                       ),
+
                       //  ——————————————————————————————————————————————————————————  total
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text.rich(
-                            TextSpan(
-                              children: [
-                                TextSpan(
-                                  //
-                                  text: order.totalPrice.toString(),
-                                  style: TextStyle(
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.primary,
-                                    fontSize: 30,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-
-                                TextSpan(text: " "),
-
-                                if (order.discountValue > 0)
-                                  TextSpan(
-                                    text: order.originalPrice.toString(),
-                                    style: TextStyle(
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.secondary,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 24,
-                                      decoration: TextDecoration.lineThrough,
-                                    ),
-                                  ),
-                              ],
-                            ),
-                          ),
-                          //  ——————————————————————————————————————————————————————  discount
-                          if (order.discountValue > 0)
-                            Text(
-                              (order.discountType == DiscountType.percentage)
-                                  ? '-${order.discountValue}%'
-                                  : '-${order.discountValue}',
-                            ),
-                        ],
+                      // subtotal
+                      Text(
+                        'المجموع: ${priceFormate(order.originalPrice)}',
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.primary,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
+                      // discount
+                      _discount(
+                        total: order.totalPrice,
+                        discountType: order.discountType,
+                        discountValue: order.discountValue,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+
+                      // total
+                      Text(
+                        'الصافي: ${priceFormate(order.totalPrice)}',
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.primary,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+
                       //  ——————————————————————————————————————————————————————————  cancel order button
                       SizedBox(height: 24),
                       if (order.status == OrderStatus.completed)
@@ -201,6 +185,47 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
     );
   }
 
+  //  ——————————————————————————————————————————————————————————————————————————  discount widget
+  Widget _discount({
+    required double total,
+    required DiscountType discountType,
+    required double discountValue,
+    required Color color,
+  }) {
+    double discount = 0;
+
+    if (discountType == DiscountType.amount) {
+      discount = discountValue;
+    } else {
+      discount = (total / 100) * discountValue;
+    }
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          'الخصم: ${priceFormate(discount)}',
+          style: TextStyle(
+            color: color,
+            fontSize: 20,
+            fontWeight: FontWeight.w500,
+            //
+          ),
+        ),
+        if (discountType == DiscountType.percentage)
+          Text(
+            '$discountValue%-',
+            style: TextStyle(
+              color: color,
+              fontSize: 18,
+              fontWeight: FontWeight.w500,
+              //
+            ),
+          ),
+      ],
+    );
+  }
+
   //  ——————————————————————————————————————————————————————————————————————————  _itemsListBuilder: builds the items list
   Widget _itemsListBuilder(
     ColorScheme colorScheme, {
@@ -229,7 +254,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
                     overflow: TextOverflow.ellipsis,
                   ),
-                  Text('IQD ${items[index].unitSellingPrice}'),
+                  Text(priceFormate(items[index].unitSellingPrice)),
                 ],
               ),
             ),
@@ -241,7 +266,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                   'x${items[index].quantity}',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.w300),
                 ),
-                Text('IQD ${items[index].totalPrice}'),
+                Text(priceFormate(items[index].totalPrice)),
               ],
             ),
           ],

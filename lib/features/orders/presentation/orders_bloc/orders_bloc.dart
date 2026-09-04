@@ -50,7 +50,10 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
     orders.fold(
       (error) => emit(OrdersFailer(message: error.message)),
       (orders) => emit(
-        OrdersLoaded(orders: orders, dateFilter: DateTime.parse(dateString)),
+        OrdersLoaded(
+          orders: orders.reversed.toList(),
+          dateFilter: DateTime.parse(dateString),
+        ),
       ),
     );
   }

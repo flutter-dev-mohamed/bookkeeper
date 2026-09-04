@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shagaf_ledger/core/common/colored_prints.dart';
+import 'package:shagaf_ledger/core/common/functions/date_formatting.dart';
+import 'package:shagaf_ledger/core/common/functions/price_formate.dart';
+import 'package:shagaf_ledger/core/common/functions/stock_formatting.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/state/inventory_history_cubit/inventory_history_cubit.dart';
 
 class ProductAdditionsHistoryCard extends StatefulWidget {
@@ -95,7 +98,7 @@ class _ProductAdditionsHistoryCardState
                             const SizedBox(width: 10),
 
                             Text(
-                              '+${addition.quantity} قطعة',
+                              '+${stockFormatting(addition.quantity)} قطعة',
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
@@ -123,28 +126,25 @@ class _ProductAdditionsHistoryCardState
                             _buildInfoItem(
                               context,
                               title: 'سعر الشراء',
-                              value:
-                                  '${addition.unitPurchasePrice.toStringAsFixed(0)} د.ع',
+                              value: addition.unitPurchasePrice,
                             ),
                             _buildInfoItem(
                               context,
                               title: 'سعر البيع',
-                              value:
-                                  '${addition.unitSellingPrice.toStringAsFixed(0)} د.ع',
-                            ),
-                            _buildInfoItem(
-                              context,
-                              title: 'الكلفة المضافة',
-                              value:
-                                  '${addition.addedCost.toStringAsFixed(0)} د.ع',
-                            ),
-                            _buildInfoItem(
-                              context,
-                              title: 'التكلفة الكلية',
-                              value:
-                                  '${addition.totalPrice.toStringAsFixed(0)} د.ع',
+                              value: addition.unitSellingPrice,
                             ),
                           ],
+                        ),
+
+                        _buildInfoItem(
+                          context,
+                          title: 'الكلفة المضافة',
+                          value: addition.addedCost,
+                        ),
+                        _buildInfoItem(
+                          context,
+                          title: 'التكلفة الكلية',
+                          value: addition.totalPrice,
                         ),
 
                         if (addition.note.isNotEmpty) ...[
@@ -186,7 +186,7 @@ class _ProductAdditionsHistoryCardState
   Widget _buildInfoItem(
     BuildContext context, {
     required String title,
-    required String value,
+    required double value,
   }) {
     final colors = Theme.of(context).colorScheme;
 
@@ -201,7 +201,7 @@ class _ProductAdditionsHistoryCardState
         const SizedBox(height: 4),
 
         Text(
-          value,
+          priceFormate(value),
           style: TextStyle(
             fontSize: 13,
             fontWeight: FontWeight.bold,
