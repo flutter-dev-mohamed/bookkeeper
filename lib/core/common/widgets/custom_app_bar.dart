@@ -39,7 +39,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           title: title,
           centerTitle: true,
 
-          leading: leading,
+          leading: (leading != null)
+              ? Row(mainAxisSize: MainAxisSize.min, children: [leading!])
+              : null,
           leadingWidth: leadingWidth,
 
           actions: actions,

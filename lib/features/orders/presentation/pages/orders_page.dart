@@ -34,7 +34,7 @@ class OrdersPage extends StatelessWidget {
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 28),
               ),
               leading: DateFilterWidget(),
-              leadingWidth: 100,
+              leadingWidth: 150,
             ),
             extendBodyBehindAppBar: true,
 
