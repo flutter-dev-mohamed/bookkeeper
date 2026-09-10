@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shagaf_ledger/core/common/colored_prints.dart';
 import 'package:shagaf_ledger/core/common/errors/UI/error_page.dart';
 import 'package:shagaf_ledger/core/common/pages/loading_page.dart';
 import 'package:shagaf_ledger/core/common/widgets/custom_app_bar.dart';
@@ -14,12 +15,12 @@ class InventoryHistoryPage extends StatefulWidget {
 }
 
 class _InventoryHistoryPageState extends State<InventoryHistoryPage> {
+  void _loadData() =>
+      context.read<InventoryHistoryCubit>().getInventoryAdditions();
+
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback(
-      (timeStamp) =>
-          context.read<InventoryHistoryCubit>().getInventoryAdditions(),
-    );
+    _loadData();
     super.initState();
   }
 
