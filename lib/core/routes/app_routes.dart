@@ -1,12 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shagaf_ledger/core/common/app_consts.dart';
+import 'package:shagaf_ledger/core/common/colored_prints.dart';
+import 'package:shagaf_ledger/core/common/errors/UI/error_page.dart';
 import 'package:shagaf_ledger/core/common/widgets/shell_route_widget.dart';
-import 'package:shagaf_ledger/features/inventory/domain/entities/product.dart';
-import 'package:shagaf_ledger/features/inventory/presentation/pages/add_product_page.dart';
-import 'package:shagaf_ledger/features/inventory/presentation/pages/inventory_page.dart';
-import 'package:shagaf_ledger/features/inventory/presentation/pages/orders_page.dart';
-import 'package:shagaf_ledger/features/inventory/presentation/pages/product_details_page.dart';
+import 'package:shagaf_ledger/core/common/entities/product.dart';
+import 'package:shagaf_ledger/features/products/presentation/bloc/products_bloc.dart';
+import 'package:shagaf_ledger/features/products/presentation/cubit/archived_products_cubit/archived_products_cubit.dart';
+import 'package:shagaf_ledger/features/products/presentation/cubit/edit_product_cubit/edit_product_cubit.dart';
+import 'package:shagaf_ledger/features/products/presentation/cubit/product_cubit/product_cubit.dart';
+import 'package:shagaf_ledger/features/products/presentation/pages/add_product_page.dart';
+import 'package:shagaf_ledger/features/products/presentation/pages/archived_products_page.dart';
+import 'package:shagaf_ledger/features/products/presentation/pages/products_page.dart';
+import 'package:shagaf_ledger/features/products/presentation/widgets/edit_product_page.dart';
+import 'package:shagaf_ledger/features/orders/presentation/add_order_cubit/add_order_cubit.dart';
+import 'package:shagaf_ledger/features/orders/presentation/orders_bloc/orders_bloc.dart';
+import 'package:shagaf_ledger/features/orders/presentation/order_details_cubit/order_details_cubit.dart';
+import 'package:shagaf_ledger/features/orders/presentation/pages/add_order_page.dart';
+import 'package:shagaf_ledger/features/orders/presentation/pages/order_details_page.dart';
+import 'package:shagaf_ledger/features/orders/presentation/pages/orders_page.dart';
+import 'package:shagaf_ledger/features/products/presentation/pages/product_details_page.dart';
+import 'package:shagaf_ledger/initDependencies/init_dependencies.dart';
 
 class AppRoutes {
   static final AppRoutes _instance = AppRoutes._internal();
@@ -17,48 +32,115 @@ class AppRoutes {
 
   GoRouter goRouter = GoRouter(
     initialLocation: "/orders",
+    redirect: (context, state) {
+      OPrint.lineBy('Path: ${state.uri}');
+    },
     routes: [
       // you should have:
       // in a shell route
       ShellRoute(
         builder: (context, state, child) {
-          final int index = state.matchedLocation == '/orders' ? 1 : 0;
-          return ShellRouteWidget(index: index);
+          final int index = state.matchedLocation.startsWith('/orders') ? 1 : 0;
+
+          return MultiBlocProvider(
+            providers: [
+              BlocProvider(create: (context) => serviceLocator<ProductsBloc>()),
+              BlocProvider(create: (context) => serviceLocator<OrdersBloc>()),
+            ],
+            child: ShellRouteWidget(index: index, child: child),
+          );
         },
         routes: [
           // orders page
           GoRoute(
-            //
-            path: "/orders",
+            path: '/orders',
             name: AppConsts().ordersPage,
             builder: (context, state) => OrdersPage(),
-            routes: [
-              // - the order page
-            ],
           ),
 
           // inventory page
           GoRoute(
-            path: "/inventory",
+            path: '/products',
             name: AppConsts().inventoryPage,
-            builder: (context, state) => InventoryPage(),
+            builder: (context, state) => ProductsPage(),
           ),
         ],
       ),
+
+      GoRoute(
+        path: '/products/archived_products',
+        name: AppConsts().archivedProductsPage,
+        builder: (context, state) {
+          return BlocProvider(
+            create: (context) => serviceLocator<ArchivedProductsCubit>(),
+            child: ArchivedProductsPage(),
+          );
+        },
+      ),
+
       // add product page
       GoRoute(
-        path: "/inventory/add_product",
+        path: "/products/add_product",
         name: AppConsts().addProductPage,
-        builder: (context, state) => AddProductPage(),
+        builder: (context, state) => BlocProvider(
+          create: (context) => serviceLocator<ProductsBloc>(),
+          child: AddProductPage(),
+        ),
       ),
 
       // - product details page
       GoRoute(
-        path: "/inventory/:productId",
+        path: "/:productId",
         name: AppConsts().productDetailsPage,
         builder: (context, state) {
-          final id = state.pathParameters['productId'];
-          return ProductDetailsPage(productId: int.parse(id ?? ''));
+          final productId = int.parse(state.pathParameters['productId']!);
+
+          return BlocProvider(
+            create: (context) => serviceLocator<ProductCubit>(),
+            child: ProductDetailsPage(productId: productId),
+          );
+        },
+        routes: [
+          GoRoute(
+            path: "edit_product",
+            name: AppConsts().editProductPage,
+            builder: (context, state) {
+              final product = state.extra! as Product;
+
+              return BlocProvider(
+                create: (context) => serviceLocator<EditProductCubit>(),
+                child: EditProductPage(product: product),
+              );
+            },
+          ),
+        ],
+      ),
+
+      // add order
+      GoRoute(
+        path: "/orders/addNewOrder",
+        name: AppConsts().addNewOrderPage,
+        builder: (context, state) {
+          return BlocProvider(
+            create: (context) => serviceLocator<AddOrderCubit>(),
+            child: AddOrderPage(),
+          );
+        },
+      ),
+
+      // order details page
+      GoRoute(
+        path: "/orders/:orderId",
+        name: AppConsts().orderDetails,
+        builder: (context, state) {
+          final orderId = int.tryParse(state.pathParameters['orderId'] ?? '');
+          if (orderId == null) {
+            return ErrorPage();
+          }
+          return BlocProvider(
+            create: (context) => serviceLocator<OrderDetailsCubit>(),
+            child: OrderDetailsPage(orderId: orderId),
+          );
         },
       ),
     ],

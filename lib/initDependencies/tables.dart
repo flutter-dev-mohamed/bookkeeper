@@ -6,12 +6,41 @@ Future<void> createTables(Database db) async {
   await db.execute('''
       CREATE TABLE products (
       id INTEGER PRIMARY KEY,
-      name TEXT,
+      name TEXT NOT NULL,
+      is_archived INTEGER,
       note TEXT,
       selling_price REAL,
       purchase_price REAL,
-      current_inventory INTEGER,
+      current_inventory INTEGER NOT NULL CHECK (current_inventory >= 0),
       created_at TEXT
       )''');
-  OPrint.bb('=========== db tables created ===========');
+
+  // create the orders table
+  await db.execute('''
+  CREATE TABLE orders (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    created_at TEXT NOT NULL DEFAULT (DATETIME('now')),
+    total_price REAL NOT NULL,
+    original_price REAL NOT NULL,
+    discount_type INTEGER NOT NULL,
+    discount_value REAL NOT NULL,
+    status INTEGER NOT NULL,
+    note TEXT
+  )''');
+
+  // create the order_item table
+  await db.execute('''
+  CREATE TABLE order_item (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    order_id INTEGER NOT NULL,
+    product_id INTEGER NOT NULL,
+    product_name TEXT NOT NULL,
+    quantity INTEGER NOT NULL CHECK (quantity >= 1),
+    unit_selling_price REAL NOT NULL,
+    total_price REAL NOT NULL,
+    FOREIGN KEY (order_id) REFERENCES orders (id) ON DELETE CASCADE
+  )''');
+  //      FOREIGN KEY (product_id) REFERENCES products (id) ON DELETE RESTRICT
+
+  OPrint.g('===========———————— db tables created ————————===========');
 }

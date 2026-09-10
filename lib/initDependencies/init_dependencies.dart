@@ -1,13 +1,29 @@
 import 'package:get_it/get_it.dart';
-import 'package:shagaf_ledger/features/inventory/data/database/product_local_database.dart';
-import 'package:shagaf_ledger/features/inventory/data/repository/inventory_repository_imp.dart';
-import 'package:shagaf_ledger/features/inventory/domain/repository/inventory_repository.dart';
-import 'package:shagaf_ledger/features/inventory/domain/use_cases/add_product.dart';
-import 'package:shagaf_ledger/features/inventory/domain/use_cases/delete_product.dart';
-import 'package:shagaf_ledger/features/inventory/domain/use_cases/get_product_by_id.dart';
-import 'package:shagaf_ledger/features/inventory/domain/use_cases/get_products.dart';
-import 'package:shagaf_ledger/features/inventory/domain/use_cases/update_product.dart';
-import 'package:shagaf_ledger/features/inventory/presentation/bloc/inventory_bloc/inventory_bloc.dart';
+import 'package:shagaf_ledger/features/products/data/database/product_local_database.dart';
+import 'package:shagaf_ledger/features/products/data/repository/products_repository_imp.dart';
+import 'package:shagaf_ledger/features/products/domain/repository/products_repository.dart';
+import 'package:shagaf_ledger/features/products/domain/use_cases/add_product.dart';
+import 'package:shagaf_ledger/features/products/domain/use_cases/archive_product.dart';
+import 'package:shagaf_ledger/features/products/domain/use_cases/get_archived_products.dart';
+import 'package:shagaf_ledger/features/products/domain/use_cases/get_product_by_id.dart';
+import 'package:shagaf_ledger/features/products/domain/use_cases/get_active_products.dart';
+import 'package:shagaf_ledger/features/products/domain/use_cases/remove_product_from_archive.dart';
+import 'package:shagaf_ledger/features/products/domain/use_cases/update_product.dart';
+import 'package:shagaf_ledger/features/products/presentation/bloc/products_bloc.dart';
+import 'package:shagaf_ledger/features/products/presentation/cubit/archived_products_cubit/archived_products_cubit.dart';
+import 'package:shagaf_ledger/features/products/presentation/cubit/edit_product_cubit/edit_product_cubit.dart';
+import 'package:shagaf_ledger/features/products/presentation/cubit/product_cubit/product_cubit.dart';
+import 'package:shagaf_ledger/features/orders/data/database/order_items_database.dart';
+import 'package:shagaf_ledger/features/orders/data/database/orders_database.dart';
+import 'package:shagaf_ledger/features/orders/data/repository/orders_repository_imp.dart';
+import 'package:shagaf_ledger/features/orders/domain/repository/orders_repository.dart';
+import 'package:shagaf_ledger/features/orders/domain/use_cases/create_order.dart';
+import 'package:shagaf_ledger/features/orders/domain/use_cases/cancel_order.dart';
+import 'package:shagaf_ledger/features/orders/domain/use_cases/get_order_details.dart';
+import 'package:shagaf_ledger/features/orders/domain/use_cases/get_orders.dart';
+import 'package:shagaf_ledger/features/orders/presentation/add_order_cubit/add_order_cubit.dart';
+import 'package:shagaf_ledger/features/orders/presentation/orders_bloc/orders_bloc.dart';
+import 'package:shagaf_ledger/features/orders/presentation/order_details_cubit/order_details_cubit.dart';
 import 'package:shagaf_ledger/initDependencies/init_local_database.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -20,22 +36,25 @@ Future<void> initDependencies() async {
   serviceLocator.registerLazySingleton<Database>(() => localDatabase);
 
   _initInventoryBloc(db: localDatabase);
+  _initOrdersBloc(db: localDatabase);
+  _initOrderDetailsCubit();
+  _initProductCubit();
+  _initAddOrderCubit();
+  _initEditProductCubit();
+  _initArchivedProductsCubit();
 }
 
 void _initInventoryBloc({required Database db}) {
-  serviceLocator.registerLazySingleton<InventoryBloc>(
-    () => InventoryBloc(
-      getProducts: serviceLocator<GetProducts>(),
+  serviceLocator.registerLazySingleton<ProductsBloc>(
+    () => ProductsBloc(
+      getActiveProducts: serviceLocator<GetActiveProducts>(),
       addProduct: serviceLocator<AddProduct>(),
-      getProductById: serviceLocator<GetProductById>(),
-      updateProduct: serviceLocator<UpdateProduct>(),
-      deleteProduct: serviceLocator<DeleteProduct>(),
     ),
   );
 
   // init inventoryRepository
-  serviceLocator.registerFactory<InventoryRepository>(
-    () => InventoryRepositoryImp(
+  serviceLocator.registerFactory<ProductsRepository>(
+    () => ProductsRepositoryImp(
       productLocalDatabase: serviceLocator<ProductLocalDatabase>(),
     ),
   );
@@ -45,35 +64,131 @@ void _initInventoryBloc({required Database db}) {
     () => ProductLocalDatabase(localDB: db),
   );
   // init getProducts
-  serviceLocator.registerFactory<GetProducts>(
-    () =>
-        GetProducts(inventoryRepository: serviceLocator<InventoryRepository>()),
+  serviceLocator.registerFactory<GetActiveProducts>(
+    () => GetActiveProducts(
+      productsRepository: serviceLocator<ProductsRepository>(),
+    ),
   );
 
   // init addProduct
   serviceLocator.registerFactory<AddProduct>(
-    () =>
-        AddProduct(inventoryRepository: serviceLocator<InventoryRepository>()),
+    () => AddProduct(productsRepository: serviceLocator<ProductsRepository>()),
+  );
+}
+
+void _initOrdersBloc({required Database db}) {
+  serviceLocator.registerLazySingleton<OrdersBloc>(
+    () => OrdersBloc(getOrders: serviceLocator<GetOrders>()),
+  );
+
+  serviceLocator.registerFactory<CancelOrder>(
+    () => CancelOrder(ordersRepository: serviceLocator<OrdersRepository>()),
+  );
+  serviceLocator.registerFactory<GetOrderDetails>(
+    () => GetOrderDetails(ordersRepository: serviceLocator<OrdersRepository>()),
+  );
+
+  serviceLocator.registerFactory<GetOrders>(
+    () => GetOrders(ordersRepository: serviceLocator<OrdersRepository>()),
+  );
+
+  serviceLocator.registerFactory<OrdersRepository>(
+    () => OrdersRepositoryImp(
+      ordersDatabase: serviceLocator<OrdersDatabase>(),
+      orderItemsDatabase: serviceLocator<OrderItemsDatabase>(),
+      productLocalDatabase: serviceLocator<ProductLocalDatabase>(),
+      localDB: db,
+    ),
+  );
+
+  serviceLocator.registerFactory<OrdersDatabase>(
+    () => OrdersDatabase(localDB: db),
+  );
+
+  serviceLocator.registerFactory<OrderItemsDatabase>(
+    () => OrderItemsDatabase(localDB: db),
+  );
+}
+
+void _initOrderDetailsCubit() {
+  serviceLocator.registerFactory<OrderDetailsCubit>(
+    () => OrderDetailsCubit(
+      getOrderDetails: serviceLocator<GetOrderDetails>(),
+      cancelOrder: serviceLocator<CancelOrder>(),
+    ),
+  );
+}
+
+void _initProductCubit() {
+  serviceLocator.registerFactory<ProductCubit>(
+    () => ProductCubit(
+      getProductById: serviceLocator<GetProductById>(),
+      removeProductFromArchive: serviceLocator<RemoveProductFromArchive>(),
+    ),
+  );
+
+  serviceLocator.registerFactory<RemoveProductFromArchive>(
+    () => RemoveProductFromArchive(
+      productsRepository: serviceLocator<ProductsRepository>(),
+    ),
   );
 
   // init getProductById
   serviceLocator.registerFactory<GetProductById>(
     () => GetProductById(
-      inventoryRepository: serviceLocator<InventoryRepository>(),
+      productsRepository: serviceLocator<ProductsRepository>(),
+    ),
+  );
+}
+
+void _initAddOrderCubit() {
+  serviceLocator.registerFactory<AddOrderCubit>(
+    () => AddOrderCubit(
+      createOrder: serviceLocator<CreateOrder>(),
+      getActiveProducts:
+          serviceLocator<
+            GetActiveProducts
+          >(), //  already declared in with products bloc
+    ),
+  );
+
+  serviceLocator.registerFactory<CreateOrder>(
+    () => CreateOrder(ordersRepository: serviceLocator<OrdersRepository>()),
+  );
+}
+
+void _initEditProductCubit() {
+  serviceLocator.registerFactory<EditProductCubit>(
+    () => EditProductCubit(
+      updateProduct: serviceLocator<UpdateProduct>(),
+      archiveProduct: serviceLocator<ArchiveProduct>(),
     ),
   );
 
   // init updateProduct
   serviceLocator.registerFactory<UpdateProduct>(
-    () => UpdateProduct(
-      inventoryRepository: serviceLocator<InventoryRepository>(),
-    ),
+    () =>
+        UpdateProduct(productsRepository: serviceLocator<ProductsRepository>()),
   );
 
   // init deleteProduct
-  serviceLocator.registerFactory<DeleteProduct>(
-    () => DeleteProduct(
-      inventoryRepository: serviceLocator<InventoryRepository>(),
+  serviceLocator.registerFactory<ArchiveProduct>(
+    () => ArchiveProduct(
+      productsRepository: serviceLocator<ProductsRepository>(),
+    ),
+  );
+}
+
+void _initArchivedProductsCubit() {
+  serviceLocator.registerFactory<ArchivedProductsCubit>(
+    () => ArchivedProductsCubit(
+      getArchivedProducts: serviceLocator<GetArchivedProducts>(),
+    ),
+  );
+
+  serviceLocator.registerFactory<GetArchivedProducts>(
+    () => GetArchivedProducts(
+      productsRepository: serviceLocator<ProductsRepository>(),
     ),
   );
 }

@@ -31,7 +31,7 @@ class CustomPrimaryButton extends StatelessWidget {
         foregroundColor: foregroundColor ?? colorScheme.onPrimary,
 
         // Define the rounded rectangle shape
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
 
         // Add padding to make it look substantial like a login button
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
