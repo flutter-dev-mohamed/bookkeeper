@@ -144,4 +144,19 @@ class OrdersRepositoryImp implements OrdersRepository {
       });
     });
   }
+
+  @override
+  Future<Either<Failure, List<OrderEntity>>> getClientOrders({
+    required int clientId,
+  }) async => tryRepo<List<OrderEntityModel>>(() async {
+    final orderMapList = await ordersDatabase.getClientOrders(
+      clientId: clientId,
+    );
+
+    final ordersList = orderMapList
+        .map((orderMap) => OrderEntityModel.fromMap(map: orderMap))
+        .toList();
+
+    return ordersList;
+  });
 }

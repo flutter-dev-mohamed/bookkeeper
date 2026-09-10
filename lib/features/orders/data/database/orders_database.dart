@@ -58,4 +58,15 @@ class OrdersDatabase {
       );
     });
   }
+
+  //  ——————————————————————————————————————————————————————————————————————————  get client orders
+  Future<List<Map<String, dynamic>>> getClientOrders({
+    required int clientId,
+  }) async => tryDB<List<Map<String, dynamic>>>(
+    () async => await _localDB.query(
+      ordersTable,
+      where: 'client_id = ?',
+      whereArgs: [clientId],
+    ),
+  );
 }

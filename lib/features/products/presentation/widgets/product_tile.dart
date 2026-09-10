@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:shagaf_ledger/core/common/app_consts.dart';
+import 'package:shagaf_ledger/core/app_navigator/app_navigator.dart';
 import 'package:shagaf_ledger/core/common/entities/product.dart';
+import 'package:shagaf_ledger/core/common/functions/stock_formatting.dart';
 
 class ProductTile extends StatelessWidget {
   final Product product;
@@ -14,9 +15,9 @@ class ProductTile extends StatelessWidget {
   });
 
   void _navigateToProductDetailsPage(BuildContext context) async {
-    final changed = await context.pushNamed(
-      AppConsts().productDetailsPage,
-      pathParameters: {"productId": product.id.toString()},
+    final changed = await AppNavigator().navToProductDetailsPage(
+      context,
+      productId: product.id,
     );
 
     if (changed == true && context.mounted) {
@@ -87,7 +88,7 @@ class ProductTile extends StatelessWidget {
                         ),
                         const SizedBox(width: 5),
                         Text(
-                          '${product.currentInventory} قطعة',
+                          '${stockFormatting(product.currentInventory)} قطعة',
                           style: theme.textTheme.bodyMedium?.copyWith(
                             color: colorScheme.onSurfaceVariant,
                           ),

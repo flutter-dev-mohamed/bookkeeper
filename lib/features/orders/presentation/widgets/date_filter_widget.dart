@@ -2,7 +2,9 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:shagaf_ledger/core/common/colored_prints.dart';
+import 'package:shagaf_ledger/core/common/functions/date_formatting.dart';
 import 'package:shagaf_ledger/features/orders/presentation/orders_bloc/orders_bloc.dart';
 
 class DateFilterWidget extends StatefulWidget {
@@ -43,7 +45,7 @@ class _DateFilterWidgetState extends State<DateFilterWidget> {
             ? state.dateFilter
             : DateTime.now();
         return Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(10.0),
           child: Hero(
             // Use a unique tag if you want this to transition to a full calendar page later
             tag: 'date_filter_hero',
@@ -70,6 +72,10 @@ class _DateFilterWidgetState extends State<DateFilterWidget> {
   }
 
   String _formatDateTime(DateTime dateTime) {
+    // final formatedDate = DateFo
+
+    // OPrint.lineBy(formatedDate);
+
     final now = DateTime.now();
 
     // Strip the time part by creating new DateTime objects using year, month, and day only
@@ -77,12 +83,15 @@ class _DateFilterWidgetState extends State<DateFilterWidget> {
     final targetDate = DateTime(dateTime.year, dateTime.month, dateTime.day);
 
     if (targetDate == today) {
-      return 'Today';
+      return 'اليوم';
     } else if (targetDate == today.subtract(const Duration(days: 1))) {
-      return 'Yesterday';
-    } else {
+      return 'البارحة';
+    } else if (dateTime.year == now.year) {
+      return DateFormat.MMMd('ar_IQ').format(dateTime);
+    }
+    {
       // Returns the yyyy-mm-dd format
-      return dateTime.toIso8601String().split('T')[0];
+      return dateFormatting(dateTime);
     }
   }
 }

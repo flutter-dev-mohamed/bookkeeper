@@ -18,4 +18,8 @@ abstract interface class OrdersRepository {
     required int orderId,
     required List<OrderItem> items,
   });
+
+  Future<Either<Failure, List<OrderEntity>>> getClientOrders({
+    required int clientId,
+  });
 }

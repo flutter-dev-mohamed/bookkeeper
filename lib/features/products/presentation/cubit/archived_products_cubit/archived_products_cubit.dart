@@ -16,6 +16,8 @@ class ArchivedProductsCubit extends Cubit<ArchivedProductsState> {
   }
 
   void loadArchivedProducts({bool didChanged = false}) async {
+    emit(ArchivedProductsLoading());
+
     final res = await _getArchivedProducts(NoParams());
 
     res.fold(

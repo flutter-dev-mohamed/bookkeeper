@@ -1,5 +1,6 @@
 part of 'products_bloc.dart';
 
+// TODO: RENAME TO Products
 @immutable
 sealed class ProductsState {}
 

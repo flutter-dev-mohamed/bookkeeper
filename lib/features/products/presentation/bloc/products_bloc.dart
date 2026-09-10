@@ -45,7 +45,9 @@ class ProductsBloc extends Bloc<ProductsEvent, ProductsState> {
     AddProductEvent event,
     Emitter<ProductsState> emit,
   ) async {
-    final product = await _addProduct(event.product);
+    final product = await _addProduct(
+      AddProductParams(product: event.product, addedCost: event.addedCost),
+    );
 
     product.fold(
       (error) => InventoryFailure(message: error.message),

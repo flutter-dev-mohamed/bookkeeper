@@ -1,15 +1,23 @@
 import 'package:fpdart/src/either.dart';
 import 'package:shagaf_ledger/core/common/errors/failure.dart';
 import 'package:shagaf_ledger/core/common/functions/try_repo.dart';
+import 'package:shagaf_ledger/features/inventory/data/database/inventory_history_database.dart';
 import 'package:shagaf_ledger/features/products/data/database/product_local_database.dart';
 import 'package:shagaf_ledger/features/products/data/models/product_model.dart';
 import 'package:shagaf_ledger/core/common/entities/product.dart';
 import 'package:shagaf_ledger/features/products/domain/repository/products_repository.dart';
+import 'package:sqflite/sqflite.dart';
 
 class ProductsRepositoryImp implements ProductsRepository {
   final ProductLocalDatabase productLocalDatabase;
+  final InventoryHistoryDatabase _inventoryHistoryDatabase;
+  final Database _database;
 
-  ProductsRepositoryImp({required this.productLocalDatabase});
+  ProductsRepositoryImp({
+    required this.productLocalDatabase,
+    required this._inventoryHistoryDatabase,
+    required this._database,
+  });
 
   @override
   Future<Either<Failure, List<Product>>> getActiveProducts() async {
@@ -28,12 +36,33 @@ class ProductsRepositoryImp implements ProductsRepository {
   }
 
   @override
-  Future<Either<Failure, int>> addProduct({required Product product}) async {
-    return await tryRepo<int>(
-      () async => await productLocalDatabase.addProduct(
-        productMap: ProductModel.fromProduct(product).toMap(),
-      ),
-    );
+  Future<Either<Failure, int>> addProduct({
+    required Product product,
+    required double addedCost,
+  }) async {
+    return await tryRepo<int>(() async {
+      return await _database.transaction<int>((txn) async {
+        final productId = await productLocalDatabase.addProduct(
+          productMap: ProductModel.fromProduct(product).toMap(),
+          executor: txn,
+        );
+
+        final inventoryHistoryRes = await _inventoryHistoryDatabase
+            .addInitialInventory(
+              executor: txn,
+              productId: productId,
+              productName: product.name,
+              quantity: product.currentInventory,
+              unitPurchasePrice: product.purchasePrice,
+              unitSellingPrice: product.sellingPrice,
+              addedCost: addedCost,
+              note: product.note ?? '',
+              createdAt: product.createdAt.toIso8601String().split('T')[0],
+            );
+
+        return productId;
+      });
+    });
   }
 
   @override

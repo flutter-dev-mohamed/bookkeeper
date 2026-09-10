@@ -1,4 +1,23 @@
 import 'package:get_it/get_it.dart';
+import 'package:shagaf_ledger/features/clients/data/database/clients_database.dart';
+import 'package:shagaf_ledger/features/clients/data/repository/clients_repository_imp.dart';
+import 'package:shagaf_ledger/features/clients/domain/repository/clients_repository.dart';
+import 'package:shagaf_ledger/features/clients/domain/use_cases/add_client.dart';
+import 'package:shagaf_ledger/features/clients/domain/use_cases/get_client_details.dart';
+import 'package:shagaf_ledger/features/clients/domain/use_cases/get_clients.dart';
+import 'package:shagaf_ledger/features/clients/presentation/state_management/add_client_cubit/add_client_cubit.dart';
+import 'package:shagaf_ledger/features/clients/presentation/state_management/client_details_cubit/client_details_cubit.dart';
+import 'package:shagaf_ledger/features/clients/presentation/state_management/clients_cubit/clients_cubit.dart';
+import 'package:shagaf_ledger/features/inventory/data/database/inventory_history_database.dart';
+import 'package:shagaf_ledger/features/inventory/data/repository/inventory_history_repository_imp.dart';
+import 'package:shagaf_ledger/features/inventory/domain/repository/inventory_history_repository.dart';
+import 'package:shagaf_ledger/features/inventory/domain/use_cases/add_inventory_addition.dart';
+import 'package:shagaf_ledger/features/inventory/domain/use_cases/get_inventory_additions.dart';
+import 'package:shagaf_ledger/features/inventory/domain/use_cases/get_product_additions.dart';
+import 'package:shagaf_ledger/features/inventory/presentation/state/add_inventory_addition_cubit/add_inventory_addition_cubit.dart';
+import 'package:shagaf_ledger/features/inventory/presentation/state/inventory_history_cubit/inventory_history_cubit.dart';
+import 'package:shagaf_ledger/features/orders/domain/use_cases/get_client_orders.dart';
+import 'package:shagaf_ledger/features/orders/presentation/client_orders_cubit/client_orders_cubit.dart';
 import 'package:shagaf_ledger/features/products/data/database/product_local_database.dart';
 import 'package:shagaf_ledger/features/products/data/repository/products_repository_imp.dart';
 import 'package:shagaf_ledger/features/products/domain/repository/products_repository.dart';
@@ -35,17 +54,23 @@ Future<void> initDependencies() async {
 
   serviceLocator.registerLazySingleton<Database>(() => localDatabase);
 
-  _initInventoryBloc(db: localDatabase);
+  _initProductsBloc(db: localDatabase);
   _initOrdersBloc(db: localDatabase);
   _initOrderDetailsCubit();
   _initProductCubit();
   _initAddOrderCubit();
   _initEditProductCubit();
   _initArchivedProductsCubit();
+  _initInventoryHistoryCubit(db: localDatabase);
+  _initAddInventoryAdditionCubit();
+  _initClientsCubit(db: localDatabase);
+  _initAddClientCubit();
+  _initClientOrdersCubit();
+  _initClientDetailsCubit();
 }
 
-void _initInventoryBloc({required Database db}) {
-  serviceLocator.registerLazySingleton<ProductsBloc>(
+void _initProductsBloc({required Database db}) {
+  serviceLocator.registerFactory<ProductsBloc>(
     () => ProductsBloc(
       getActiveProducts: serviceLocator<GetActiveProducts>(),
       addProduct: serviceLocator<AddProduct>(),
@@ -56,6 +81,8 @@ void _initInventoryBloc({required Database db}) {
   serviceLocator.registerFactory<ProductsRepository>(
     () => ProductsRepositoryImp(
       productLocalDatabase: serviceLocator<ProductLocalDatabase>(),
+      inventoryHistoryDatabase: serviceLocator<InventoryHistoryDatabase>(),
+      database: db,
     ),
   );
 
@@ -189,6 +216,108 @@ void _initArchivedProductsCubit() {
   serviceLocator.registerFactory<GetArchivedProducts>(
     () => GetArchivedProducts(
       productsRepository: serviceLocator<ProductsRepository>(),
+    ),
+  );
+}
+
+void _initInventoryHistoryCubit({required Database db}) {
+  serviceLocator.registerFactory<InventoryHistoryCubit>(
+    () => InventoryHistoryCubit(
+      getInventoryAdditions: serviceLocator<GetInventoryAdditions>(),
+      getProductAdditions: serviceLocator<GetProductAdditions>(),
+    ),
+  );
+
+  serviceLocator.registerFactory<GetProductAdditions>(
+    () => GetProductAdditions(
+      inventoryHistoryRepository: serviceLocator<InventoryHistoryRepository>(),
+    ),
+  );
+
+  serviceLocator.registerFactory<GetInventoryAdditions>(
+    () => GetInventoryAdditions(
+      inventoryHistoryRepository: serviceLocator<InventoryHistoryRepository>(),
+    ),
+  );
+  serviceLocator.registerFactory<InventoryHistoryRepository>(
+    () => InventoryHistoryRepositoryImp(
+      inventoryHistoryDatabase: serviceLocator<InventoryHistoryDatabase>(),
+      productsDatabase: serviceLocator<ProductLocalDatabase>(),
+      database: db,
+    ),
+  );
+  serviceLocator.registerLazySingleton<InventoryHistoryDatabase>(
+    () => InventoryHistoryDatabase(database: db),
+  );
+}
+
+void _initAddInventoryAdditionCubit() {
+  serviceLocator.registerFactory<AddInventoryAdditionCubit>(
+    () => AddInventoryAdditionCubit(
+      addInventoryAddition: serviceLocator<AddInventoryAddition>(),
+    ),
+  );
+
+  serviceLocator.registerFactory<AddInventoryAddition>(
+    () => AddInventoryAddition(
+      inventoryHistoryRepository: serviceLocator<InventoryHistoryRepository>(),
+    ),
+  );
+}
+
+void _initClientsCubit({required Database db}) {
+  serviceLocator.registerFactory<ClientsCubit>(
+    () => ClientsCubit(getClients: serviceLocator<GetClients>()),
+  );
+
+  serviceLocator.registerFactory<GetClients>(
+    () => GetClients(clientsRepository: serviceLocator<ClientsRepository>()),
+  );
+  serviceLocator.registerFactory<ClientsRepository>(
+    () => ClientsRepositoryImp(
+      clientsDatabase: serviceLocator<ClientsDatabase>(),
+      database: db,
+    ),
+  );
+  serviceLocator.registerFactory<ClientsDatabase>(
+    () => ClientsDatabase(database: db),
+  );
+}
+
+void _initAddClientCubit() {
+  serviceLocator.registerFactory<AddClientCubit>(
+    () => AddClientCubit(addClient: serviceLocator<AddClient>()),
+  );
+
+  serviceLocator.registerFactory<AddClient>(
+    () => AddClient(clientsRepository: serviceLocator<ClientsRepository>()),
+  );
+}
+
+void _initClientOrdersCubit() {
+  serviceLocator.registerFactoryParam<ClientOrdersCubit, int, void>(
+    (clientId, _) => ClientOrdersCubit(
+      getClientOrders: serviceLocator<GetClientOrders>(),
+      clientId: clientId,
+    ),
+  );
+
+  serviceLocator.registerFactory<GetClientOrders>(
+    () => GetClientOrders(ordersRepository: serviceLocator<OrdersRepository>()),
+  );
+}
+
+void _initClientDetailsCubit() {
+  serviceLocator.registerFactoryParam<ClientDetailsCubit, int, void>(
+    (clientId, _) => ClientDetailsCubit(
+      clientId: clientId,
+      getClientDetails: serviceLocator<GetClientDetails>(),
+    ),
+  );
+
+  serviceLocator.registerFactory<GetClientDetails>(
+    () => GetClientDetails(
+      clientsRepository: serviceLocator<ClientsRepository>(),
     ),
   );
 }

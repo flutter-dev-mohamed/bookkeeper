@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shagaf_ledger/core/common/colored_prints.dart';
 import 'package:shagaf_ledger/core/common/errors/UI/error_page.dart';
 import 'package:shagaf_ledger/core/common/pages/loading_page.dart';
+import 'package:shagaf_ledger/core/common/widgets/custom_app_bar.dart';
+import 'package:shagaf_ledger/features/inventory/presentation/state/inventory_history_cubit/inventory_history_cubit.dart';
+import 'package:shagaf_ledger/features/inventory/presentation/widgets/add_inventory_addition_button.dart';
+import 'package:shagaf_ledger/features/inventory/presentation/widgets/product_additions_history_card.dart';
 import 'package:shagaf_ledger/features/products/presentation/cubit/product_cubit/product_cubit.dart';
 import 'package:shagaf_ledger/features/products/presentation/widgets/product_details_page_widgets/created_at_card.dart';
 import 'package:shagaf_ledger/features/products/presentation/widgets/product_details_page_widgets/edit_button.dart';
@@ -60,12 +65,14 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
             child: Directionality(
               textDirection: TextDirection.rtl,
               child: Scaffold(
-                appBar: AppBar(
+                appBar: CustomAppBar(
                   title: const Text(
                     'تفاصيل المنتج',
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 28),
                   ),
-                  centerTitle: true,
+                  actions: [
+                    if (!product.isArchived) EditButton(product: product),
+                  ],
                 ),
                 body: ListView(
                   padding: const EdgeInsets.all(16),
@@ -87,9 +94,27 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
 
                     const SizedBox(height: 24),
 
-                    if (!product.isArchived) EditButton(product: product),
+                    if (!product.isArchived)
+                      AddInventoryAdditionButton(
+                        productId: product.id,
+                        productName: product.name,
+                        onInventoryAdditionAdded: () {
+                          context.read<ProductCubit>().getProductDetails(
+                            productId: product.id,
+                            didChange: true,
+                          );
+                          context
+                              .read<InventoryHistoryCubit>()
+                              .getProductAdditions(productId: product.id);
+                        },
+                      ),
+
                     if (product.isArchived)
                       UnarchiveProductButton(productId: product.id),
+
+                    const SizedBox(height: 16),
+                    ProductAdditionsHistoryCard(productId: product.id),
+
                     const SizedBox(height: 40),
                   ],
                 ),

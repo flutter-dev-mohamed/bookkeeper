@@ -6,14 +6,10 @@ Future<Database> initLocalDatabase() async {
   final dbPath = await getDatabasesPath();
   final path = join(dbPath, 'shagaf_leger.db');
 
-  return await openDatabase(
-    path,
-    version: 1,
-    onCreate: _onCreate,
-  );
+  return await openDatabase(path, version: 1, onCreate: _onCreate);
 }
 
 Future<void> _onCreate(Database db, int version) async {
   // create db tables
-  createTables(db);
+  await createTables(db);
 }

@@ -5,6 +5,8 @@ sealed class ArchivedProductsState {}
 
 final class ArchivedProductsInitial extends ArchivedProductsState {}
 
+final class ArchivedProductsLoading extends ArchivedProductsState {}
+
 final class GotArchivedProducts extends ArchivedProductsState {
   final List<Product> products;
   final bool didChanged;

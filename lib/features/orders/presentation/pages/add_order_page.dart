@@ -5,6 +5,7 @@ import 'package:shagaf_ledger/core/common/colored_prints.dart';
 import 'package:shagaf_ledger/core/common/entities/product.dart';
 import 'package:shagaf_ledger/core/common/errors/UI/error_page.dart';
 import 'package:shagaf_ledger/core/common/pages/loading_page.dart';
+import 'package:shagaf_ledger/core/common/widgets/custom_app_bar.dart';
 import 'package:shagaf_ledger/features/orders/domain/entities/order_entity.dart';
 import 'package:shagaf_ledger/features/orders/domain/entities/order_item.dart';
 import 'package:shagaf_ledger/features/orders/presentation/add_order_cubit/add_order_cubit.dart';
@@ -47,7 +48,6 @@ class _AddOrderPageState extends State<AddOrderPage> {
         }
       },
       builder: (context, state) {
-        OPrint.lineR("AddOrderPage State: ${state.toString()}");
         //  ————————————————————————————————————————————————————————————————————  indicate loading
         if (state is AddOrderLoading) {
           return LoadingPage();
@@ -65,13 +65,13 @@ class _AddOrderPageState extends State<AddOrderPage> {
           return Directionality(
             textDirection: TextDirection.rtl,
             child: Scaffold(
-              appBar: AppBar(
+              appBar: CustomAppBar(
                 title: Text(
                   'إضافة طلب',
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
-                centerTitle: true,
               ),
+
               body: availableProducts.isEmpty && orderItems.isEmpty
                   // indicate no products
                   ? Center(
@@ -91,7 +91,7 @@ class _AddOrderPageState extends State<AddOrderPage> {
                             separatorBuilder: (context, index) =>
                                 SizedBox(height: 10),
                             shrinkWrap: true,
-                            padding: EdgeInsets.only(bottom: 120),
+                            padding: EdgeInsets.only(bottom: 120, top: 20),
                             itemCount: orderItems.length + 1,
                             itemBuilder: (context, index) {
                               // show add order item at the end of the list
@@ -133,10 +133,12 @@ class _AddOrderPageState extends State<AddOrderPage> {
                                 required discountType,
                                 required discountValue,
                                 required noteText,
+                                clientId,
                               }) {
                                 context.read<AddOrderCubit>().addOrder(
                                   order: OrderEntity(
                                     id: 0,
+                                    clientId: clientId,
                                     note: noteText,
                                     discountType: discountType,
                                     discountValue: discountValue,

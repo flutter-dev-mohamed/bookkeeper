@@ -7,7 +7,10 @@ abstract interface class ProductsRepository {
 
   Future<Either<Failure, Product>> getProductById({required int productId});
 
-  Future<Either<Failure, int>> addProduct({required Product product});
+  Future<Either<Failure, int>> addProduct({
+    required Product product,
+    required double addedCost,
+  });
 
   Future<Either<Failure, void>> updateProduct({required Product product});
 

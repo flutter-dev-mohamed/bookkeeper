@@ -7,6 +7,7 @@ class OrderEntity {
   final DiscountType discountType;
   final double discountValue;
   final OrderStatus status;
+  final int? clientId;
 
   OrderEntity({
     required this.id,
@@ -17,6 +18,7 @@ class OrderEntity {
     required this.discountType,
     required this.discountValue,
     this.status = OrderStatus.completed,
+    this.clientId,
   });
 }
 

@@ -17,22 +17,32 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
   final GetOrders _getOrders;
 
   OrdersBloc({required this._getOrders}) : super(OrdersInitial()) {
-    OPrint.lineG('OrdersBloc init');
-
-    on<OrdersEvent>((event, emit) {
-      OPrint.lineC('OrdersEvent: ${event.toString()}');
-      emit(OrdersLoading());
-    });
-
     on<GetOrdersEvent>(_onGetOrdersEvent);
 
+    on<UpdateOrdersEvent>(_onUpdateOrdersEvent);
+
     add(GetOrdersEvent(day: DateTime.now()));
+  }
+
+  void _onUpdateOrdersEvent(
+    UpdateOrdersEvent event,
+    Emitter<OrdersState> emit,
+  ) {
+    final currentState = state;
+
+    if (currentState is! OrdersLoaded) return;
+
+    emit(OrdersUpdating());
+
+    add(GetOrdersEvent(day: currentState.dateFilter));
   }
 
   void _onGetOrdersEvent(
     GetOrdersEvent event,
     Emitter<OrdersState> emit,
   ) async {
+    emit(OrdersLoading());
+
     final dateString = event.day.toIso8601String().split('T')[0];
 
     final orders = await _getOrders(dateString);
@@ -40,7 +50,10 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
     orders.fold(
       (error) => emit(OrdersFailer(message: error.message)),
       (orders) => emit(
-        OrdersLoaded(orders: orders, dateFilter: DateTime.parse(dateString)),
+        OrdersLoaded(
+          orders: orders.reversed.toList(),
+          dateFilter: DateTime.parse(dateString),
+        ),
       ),
     );
   }

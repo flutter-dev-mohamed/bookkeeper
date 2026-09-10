@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shagaf_ledger/core/common/entities/product.dart';
+import 'package:shagaf_ledger/core/common/functions/price_formate.dart';
 
 class PricingCard extends StatelessWidget {
   final Product product;
@@ -81,7 +82,7 @@ class PricingCard extends StatelessWidget {
         ),
 
         Text(
-          '${_formatNumber(value)} IQD',
+          priceFormate(value),
           style: TextStyle(
             fontSize: 17,
             fontWeight: FontWeight.bold,
@@ -90,14 +91,5 @@ class PricingCard extends StatelessWidget {
         ),
       ],
     );
-  }
-
-  //  TODO: make this a common widget and use it in order details
-  String _formatNumber(double value) {
-    if (value == value.roundToDouble()) {
-      return value.toInt().toString();
-    }
-
-    return value.toStringAsFixed(2);
   }
 }

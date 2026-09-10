@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:shagaf_ledger/core/common/app_consts.dart';
+import 'package:shagaf_ledger/core/app_navigator/app_navigator.dart';
+import 'package:shagaf_ledger/core/common/functions/price_formate.dart';
 import 'package:shagaf_ledger/features/orders/domain/entities/order_entity.dart';
 import 'package:shagaf_ledger/features/orders/presentation/orders_bloc/orders_bloc.dart';
 
@@ -30,11 +31,11 @@ class OrderTile extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
         onTap: () async {
-          final didChange = await context.pushNamed(
-            AppConsts().orderDetails,
-            pathParameters: {'orderId': order.id.toString()},
+          final didChange = await AppNavigator().navToOrderDetailsPage(
+            context,
+            orderId: order.id,
           );
-          if (didChange == true) {
+          if (didChange ?? false) {
             updateOrdersList();
           }
         },
@@ -50,11 +51,15 @@ class OrderTile extends StatelessWidget {
                   color: colorScheme.secondaryContainer,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(
-                  Icons.receipt_long_outlined,
-                  color: order.status == OrderStatus.completed
-                      ? Colors.green.shade700
-                      : Colors.red.shade700,
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Image.asset(
+                    'lib/core/assets/icons/order_out_lined.png',
+                    width: 30,
+                    color: order.status == OrderStatus.completed
+                        ? Colors.green.shade700
+                        : Colors.red.shade700,
+                  ),
                 ),
               ),
 
@@ -108,8 +113,8 @@ class OrderTile extends StatelessWidget {
                   ),
                   const SizedBox(height: 3),
                   Text(
-                    '${order.totalPrice}',
-                    style: theme.textTheme.titleMedium?.copyWith(
+                    priceFormate(order.totalPrice),
+                    style: theme.textTheme.titleSmall?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
                   ),

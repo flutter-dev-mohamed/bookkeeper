@@ -39,11 +39,12 @@ dependencies:
   fpdart: ^1.2.0
   flutter_bloc: ^9.1.1
   get_it: ^9.2.1
-  go_router: ^17.3.0
+  go_router: ^18.0.1
   google_fonts: ^8.2.0
   animated_custom_dropdown: ^4.0.0
   flutter_slidable: ^4.0.3
   animated_segmented_tab_control_plus: ^2.0.2
+  intl: ^0.20.3
 
 dev_dependencies:
   flutter_test:

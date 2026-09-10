@@ -4,7 +4,9 @@ import 'package:go_router/go_router.dart';
 import 'package:shagaf_ledger/core/common/entities/product.dart';
 import 'package:shagaf_ledger/core/common/errors/UI/error_page.dart';
 import 'package:shagaf_ledger/core/common/pages/loading_page.dart';
+import 'package:shagaf_ledger/core/common/widgets/custom_app_bar.dart';
 import 'package:shagaf_ledger/features/products/presentation/cubit/edit_product_cubit/edit_product_cubit.dart';
+import 'package:shagaf_ledger/core/routes/navigation_return.dart';
 import 'package:shagaf_ledger/features/products/presentation/widgets/archive_product_button.dart';
 import 'package:shagaf_ledger/features/products/presentation/widgets/save_edit_button.dart';
 
@@ -78,8 +80,11 @@ class _EditProductPageState extends State<EditProductPage> {
           _priceController.text = product.sellingPrice.toString();
         }
 
-        if (state is EditProductSaved || state is EditProductArchived) {
-          context.pop(true);
+        if (state is EditProductSaved) {
+          context.pop(NavigationReturn.productUpdated);
+        }
+        if (state is EditProductArchived) {
+          context.pop(NavigationReturn.productArchived);
         }
       },
 
@@ -98,18 +103,12 @@ class _EditProductPageState extends State<EditProductPage> {
           return Directionality(
             textDirection: TextDirection.rtl,
             child: Scaffold(
-              appBar: AppBar(
-                title: const Text('تعديل المنتج'),
-                centerTitle: true,
-              ),
+              appBar: CustomAppBar(title: const Text('تعديل المنتج')),
               body: ListView(
                 padding: const EdgeInsets.all(16),
                 children: [
                   _productInfoCard(colors, product),
                   const SizedBox(height: 16),
-
-                  _inventoryCard(colors, product),
-                  const SizedBox(height: 24),
 
                   SaveEditButton(),
 
@@ -176,9 +175,9 @@ class _EditProductPageState extends State<EditProductPage> {
               children: [
                 Expanded(
                   child: _priceField(
-                    controller: _priceController,
-                    label: 'سعر البيع',
-                    icon: Icons.sell_outlined,
+                    controller: _costController,
+                    label: 'سعر الشراء',
+                    icon: Icons.shopping_cart_outlined,
                     onSubmitted: (_) =>
                         _updateStateProduct(context, product: product),
                   ),
@@ -186,9 +185,9 @@ class _EditProductPageState extends State<EditProductPage> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: _priceField(
-                    controller: _costController,
-                    label: 'سعر الشراء',
-                    icon: Icons.shopping_cart_outlined,
+                    controller: _priceController,
+                    label: 'سعر البيع',
+                    icon: Icons.sell_outlined,
                     onSubmitted: (_) =>
                         _updateStateProduct(context, product: product),
                   ),
@@ -213,81 +212,6 @@ class _EditProductPageState extends State<EditProductPage> {
                 const SizedBox(width: 6),
                 Text(product.createdAt.toIso8601String().split('T')[0]),
               ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _inventoryCard(ColorScheme colors, Product product) {
-    final inventory = product.currentInventory;
-
-    return Card(
-      elevation: 1,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'المخزون',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-
-            const SizedBox(height: 14),
-
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
-              decoration: BoxDecoration(
-                color: colors.secondaryContainer,
-                borderRadius: BorderRadius.circular(14),
-              ),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.inventory_2_outlined,
-                    color: colors.primary,
-                    size: 28,
-                  ),
-                  const SizedBox(width: 12),
-
-                  const Expanded(
-                    child: Text(
-                      'المخزون الحالي',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-
-                  Text(
-                    '$inventory',
-                    style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                      color: colors.primary,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 10),
-
-            Text(
-              'يتم تحديث المخزون تلقائياً عند إنشاء أو إلغاء الطلبات.',
-              style: TextStyle(color: colors.onSurfaceVariant, fontSize: 13),
-            ),
-
-            const SizedBox(height: 4),
-
-            Text(
-              'لذلك لا يتم تعديل المخزون من صفحة تعديل المنتج.',
-              style: TextStyle(color: colors.onSurfaceVariant, fontSize: 13),
             ),
           ],
         ),

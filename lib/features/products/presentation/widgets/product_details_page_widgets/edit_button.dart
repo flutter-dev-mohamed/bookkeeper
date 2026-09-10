@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:shagaf_ledger/core/common/app_consts.dart';
+import 'package:shagaf_ledger/core/app_navigator/app_navigator.dart';
 import 'package:shagaf_ledger/core/common/entities/product.dart';
 import 'package:shagaf_ledger/features/products/presentation/cubit/product_cubit/product_cubit.dart';
+import 'package:shagaf_ledger/core/routes/navigation_return.dart';
 
 class EditButton extends StatelessWidget {
   final Product product;
@@ -12,31 +13,24 @@ class EditButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: FilledButton.icon(
-        onPressed: () async {
-          final didChange = await context.pushNamed(
-            AppConsts().editProductPage,
-            extra: product,
-            pathParameters: {"productId": product.id.toString()},
-          );
+    return IconButton(
+      onPressed: () async {
+        final respond = await AppNavigator().navToEditProductPage(
+          context,
+          product: product,
+        );
 
-          if (didChange == true && context.mounted) {
-            context.read<ProductCubit>().getProductDetails(
-              productId: product.id,
-              didChange: true,
-            );
-          }
-        },
-        icon: const Icon(Icons.edit_outlined),
-        label: const Text('تعديل المنتج'),
-        style: FilledButton.styleFrom(
-          padding: const EdgeInsets.symmetric(vertical: 15),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
-          ),
-        ),
+        if (respond == NavigationReturn.productUpdated && context.mounted) {
+          context.read<ProductCubit>().getProductDetails(productId: product.id);
+        }
+        if (respond == NavigationReturn.productArchived && context.mounted) {
+          context.pop(true);
+        }
+      },
+      icon: const Icon(Icons.edit_outlined),
+      style: FilledButton.styleFrom(
+        padding: const EdgeInsets.symmetric(vertical: 15),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       ),
     );
   }

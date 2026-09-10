@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shagaf_ledger/core/common/errors/UI/error_page.dart';
+import 'package:shagaf_ledger/core/common/pages/loading_page.dart';
+import 'package:shagaf_ledger/core/common/widgets/custom_app_bar.dart';
 import 'package:shagaf_ledger/features/products/presentation/cubit/archived_products_cubit/archived_products_cubit.dart';
 import 'package:shagaf_ledger/features/products/presentation/widgets/product_tile.dart';
 
@@ -16,6 +18,9 @@ class ArchivedProductsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<ArchivedProductsCubit, ArchivedProductsState>(
       builder: (context, state) {
+        //  ————————————————————————————————————————————————————————————————————  loading
+        if (state is ArchivedProductsLoading) return LoadingPage();
+
         //  ————————————————————————————————————————————————————————————————————  Page UI
         if (state is GotArchivedProducts) {
           final products = state.products;
@@ -30,12 +35,11 @@ class ArchivedProductsPage extends StatelessWidget {
             child: Directionality(
               textDirection: TextDirection.rtl,
               child: Scaffold(
-                appBar: AppBar(
+                appBar: CustomAppBar(
                   title: Text(
                     'الأرشيف',
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 28),
                   ),
-                  centerTitle: true,
                 ),
 
                 body: ListView.builder(
