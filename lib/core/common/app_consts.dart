@@ -26,4 +26,8 @@ class AppConsts {
   /// This path need: clientId in the params
   final String clientDetailsPage = 'clientDetailsPage';
   final String addClientPage = 'addClientPage';
+
+  // expenses
+  final String expensesPage = "expensesPage";
+  final String addExpensePage = "addExpensePage";
 }

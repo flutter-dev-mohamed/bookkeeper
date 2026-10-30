@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shagaf_ledger/features/clients/presentation/pages/clients_page.dart';
+import 'package:shagaf_ledger/features/daily_expenses/presentation/pages/expenses_page.dart';
 import 'package:shagaf_ledger/features/orders/presentation/orders_bloc/orders_bloc.dart';
 import 'package:shagaf_ledger/features/orders/presentation/pages/orders_page.dart';
 import 'package:shagaf_ledger/features/products/presentation/bloc/products_bloc.dart';
@@ -19,7 +20,12 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  final List<Widget> pages = [ProductsPage(), OrdersPage(), ClientsPage()];
+  final List<Widget> pages = [
+    ProductsPage(),
+    OrdersPage(),
+    ClientsPage(),
+    ExpensesPage(),
+  ];
 
   void _reloadProducts(BuildContext context) =>
       context.read<ProductsBloc>().add(LoadProductsEvent());
@@ -29,6 +35,13 @@ class _HomeState extends State<Home> {
     final colorScheme = Theme.of(context).colorScheme;
 
     final index = widget.index;
+    final expenseIcon = Image.asset(
+      index == 3
+          ? 'lib/core/assets/icons/expense_filled.png'
+          : 'lib/core/assets/icons/expense_outlined.png',
+      color: colorScheme.primary,
+      width: 30,
+    );
     final clientsIcon = Image.asset(
       index == 2
           ? 'lib/core/assets/icons/users_avatar_filled.png'
@@ -80,7 +93,9 @@ class _HomeState extends State<Home> {
                   height: 70,
                   backgroundColor: Colors.transparent,
                   // Must be transparent to let the blur show
-                  indicatorColor: Colors.white.withAlpha(40),
+                  indicatorColor: Theme.of(
+                    context,
+                  ).colorScheme.onPrimary.withAlpha(80),
                   // Sleek highlight for active item
                   surfaceTintColor: Colors.transparent,
                   elevation: 0,
@@ -94,8 +109,10 @@ class _HomeState extends State<Home> {
                     ),
                     NavigationDestination(icon: ordersIcon, label: 'Orders'),
                     NavigationDestination(icon: clientsIcon, label: 'Clients'),
+                    NavigationDestination(icon: expenseIcon, label: 'Expenses'),
                   ],
                   onDestinationSelected: (index) {
+                    if (index == 3) context.go('/expenses');
                     if (index == 2) context.go('/clients');
                     if (index == 1) context.go('/orders');
                     if (index == 0) context.go('/products');

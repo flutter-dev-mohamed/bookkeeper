@@ -8,6 +8,11 @@ import 'package:shagaf_ledger/features/clients/domain/use_cases/get_clients.dart
 import 'package:shagaf_ledger/features/clients/presentation/state_management/add_client_cubit/add_client_cubit.dart';
 import 'package:shagaf_ledger/features/clients/presentation/state_management/client_details_cubit/client_details_cubit.dart';
 import 'package:shagaf_ledger/features/clients/presentation/state_management/clients_cubit/clients_cubit.dart';
+import 'package:shagaf_ledger/features/daily_expenses/data/database/expenses_database.dart';
+import 'package:shagaf_ledger/features/daily_expenses/data/repository/expenses_repo_imp.dart';
+import 'package:shagaf_ledger/features/daily_expenses/domain/repository/expenses_repo.dart';
+import 'package:shagaf_ledger/features/daily_expenses/domain/use_cases/add_expense.dart';
+import 'package:shagaf_ledger/features/daily_expenses/presentation/state_management/add_expense/add_expense_cubit.dart';
 import 'package:shagaf_ledger/features/inventory/data/database/inventory_history_database.dart';
 import 'package:shagaf_ledger/features/inventory/data/repository/inventory_history_repository_imp.dart';
 import 'package:shagaf_ledger/features/inventory/domain/repository/inventory_history_repository.dart';
@@ -67,6 +72,7 @@ Future<void> initDependencies() async {
   _initAddClientCubit();
   _initClientOrdersCubit();
   _initClientDetailsCubit();
+  _initAddExpenseCubit();
 }
 
 void _initProductsBloc({required Database db}) {
@@ -319,5 +325,23 @@ void _initClientDetailsCubit() {
     () => GetClientDetails(
       clientsRepository: serviceLocator<ClientsRepository>(),
     ),
+  );
+}
+
+void _initAddExpenseCubit() {
+  serviceLocator.registerFactory<AddExpenseCubit>(
+    () => AddExpenseCubit(addExpense: serviceLocator<AddExpense>()),
+  );
+
+  serviceLocator.registerFactory<AddExpense>(
+    () => AddExpense(expensesRepo: serviceLocator<ExpensesRepo>()),
+  );
+
+  serviceLocator.registerFactory<ExpensesRepo>(
+    () => ExpensesRepoImp(expensesDatabase: serviceLocator<ExpensesDatabase>()),
+  );
+
+  serviceLocator.registerFactory<ExpensesDatabase>(
+    () => ExpensesDatabase(database: serviceLocator<Database>()),
   );
 }

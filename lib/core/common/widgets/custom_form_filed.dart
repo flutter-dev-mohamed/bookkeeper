@@ -12,6 +12,7 @@ class CustomFormField extends StatelessWidget {
   final Widget? prefix;
   final Widget? icon;
   final FocusNode? focusNode;
+  final int? maxLines;
 
   const CustomFormField({
     super.key,
@@ -26,6 +27,7 @@ class CustomFormField extends StatelessWidget {
     this.prefix,
     this.icon,
     this.focusNode,
+    this.maxLines,
   });
 
   @override
@@ -52,7 +54,7 @@ class CustomFormField extends StatelessWidget {
         ),
       ),
       textInputAction: textInputAction,
-      maxLines: 1,
+      maxLines: maxLines,
       keyboardType: keyboardType,
       validator: validator,
       onFieldSubmitted: (_) => onFieldSubmitted,

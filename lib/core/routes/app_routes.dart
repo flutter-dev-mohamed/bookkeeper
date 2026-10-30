@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shagaf_ledger/core/common/app_consts.dart';
@@ -13,6 +12,9 @@ import 'package:shagaf_ledger/features/clients/presentation/pages/clients_page.d
 import 'package:shagaf_ledger/features/clients/presentation/state_management/add_client_cubit/add_client_cubit.dart';
 import 'package:shagaf_ledger/features/clients/presentation/state_management/client_details_cubit/client_details_cubit.dart';
 import 'package:shagaf_ledger/features/clients/presentation/state_management/clients_cubit/clients_cubit.dart';
+import 'package:shagaf_ledger/features/daily_expenses/presentation/pages/add_expense_page.dart';
+import 'package:shagaf_ledger/features/daily_expenses/presentation/pages/expenses_page.dart';
+import 'package:shagaf_ledger/features/daily_expenses/presentation/state_management/add_expense/add_expense_cubit.dart';
 import 'package:shagaf_ledger/features/inventory/domain/entities/inventory_addition.dart';
 import 'package:shagaf_ledger/features/inventory/domain/repository/inventory_history_repository.dart';
 import 'package:shagaf_ledger/features/inventory/domain/use_cases/add_inventory_addition.dart';
@@ -46,7 +48,7 @@ class AppRoutes {
   AppRoutes._internal();
 
   GoRouter goRouter = GoRouter(
-    initialLocation: "/orders",
+    initialLocation: "/expenses",
     routes: [
       // you should have:
       // in a shell route
@@ -56,7 +58,9 @@ class AppRoutes {
               ? 1
               : state.matchedLocation.startsWith('/products')
               ? 0
-              : 2;
+              : state.matchedLocation.startsWith('/clients')
+              ? 2
+              : 3;
 
           return MultiBlocProvider(
             providers: [
@@ -88,10 +92,30 @@ class AppRoutes {
             name: AppConsts().clientsPage,
             builder: (context, state) => ClientsPage(),
           ),
+
+          // expenses page
+          GoRoute(
+            path: '/expenses',
+            name: AppConsts().expensesPage,
+            builder: (context, state) => ExpensesPage(),
+          ),
         ],
       ),
 
-      // clients page
+      // add expense page
+      GoRoute(
+        path: '/expenses/add_expense_page',
+        name: AppConsts().addExpensePage,
+        builder: (context, state) {
+          OPrint.lineBy('You navigated to AddExpensePage');
+
+          return BlocProvider(
+            create: (context) => serviceLocator<AddExpenseCubit>(),
+            child: AddExpensePage(),
+          );
+        },
+      ),
+
       // client details page
       GoRoute(
         path: '/clients/:clientId',

@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:shagaf_ledger/core/common/app_consts.dart';
 import 'package:shagaf_ledger/core/common/entities/product.dart';
 import 'package:shagaf_ledger/core/routes/navigation_return.dart';
+import 'package:shagaf_ledger/features/daily_expenses/presentation/pages/add_expense_page.dart';
 
 class AppNavigator {
   Future<bool?> navToOrderDetailsPage(
@@ -52,4 +53,7 @@ class AppNavigator {
     AppConsts().productDetailsPage,
     pathParameters: {"productId": productId.toString()},
   );
+
+  Future<bool?> navToAddExpensePage(BuildContext context) async =>
+      await context.pushNamed(AppConsts().addExpensePage);
 }
