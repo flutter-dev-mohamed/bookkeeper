@@ -12,6 +12,17 @@ class ExpensesRepoImp implements ExpensesRepo {
   ExpensesRepoImp({required this._expensesDatabase});
 
   @override
+  Future<Either<Failure, List<Expense>>> getExpenses() async =>
+      tryRepo<List<ExpenseModel>>(() async {
+        final expensesMapList = await _expensesDatabase.getAllExpenses();
+        final expensesList = expensesMapList
+            .map((expenseMap) => ExpenseModel.fromMap(expenseMap))
+            .toList();
+
+        return expensesList;
+      });
+
+  @override
   Future<Either<Failure, void>> addExpense({required Expense expense}) async =>
       tryRepo<void>(() async {
         final expenseModel = ExpenseModel.fromEntity(expense);
@@ -20,8 +31,16 @@ class ExpensesRepoImp implements ExpensesRepo {
       });
 
   @override
-  Future<Either<Failure, List<Expense>>> getExpenses() async {
-    // TODO: implement getExpenses
-    throw UnimplementedError();
-  }
+  Future<Either<Failure, bool>> deleteExpense({
+    required Expense expense,
+  }) async => await tryRepo<bool>(() async {
+    final expenseModel = ExpenseModel.fromEntity(expense);
+
+    final resId = await _expensesDatabase.deleteExpense(
+      id: expenseModel.id,
+      expenseMap: expenseModel.toMap(),
+    );
+
+    return resId == expenseModel.id;
+  });
 }

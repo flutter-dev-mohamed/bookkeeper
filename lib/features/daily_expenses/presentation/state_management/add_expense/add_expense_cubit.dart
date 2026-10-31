@@ -66,7 +66,7 @@ class AddExpenseCubit extends Cubit<AddExpenseState> {
       },
       (_) {
         OPrint.g('✅ Add expense succeeded. Emitting AddExpenseSuccess.');
-        emit(AddExpenseSuccess());
+        emit(AddExpenseSuccess(addedExpense: currentState.expense));
       },
     );
   }

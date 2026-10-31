@@ -95,7 +95,9 @@ class _AddExpensePageState extends State<AddExpensePage> {
         body: BlocConsumer<AddExpenseCubit, AddExpenseState>(
           listener: (context, state) {
             // TODO: 1)  ON AddExpenseSuccess POP PAGE AND RETURN [TRUE]. 2) show a dialog on AddExpenseFailure and go back to init state
-            if (state is AddExpenseSuccess) context.pop<bool>(true);
+            if (state is AddExpenseSuccess) {
+              context.pop<Expense>(state.addedExpense);
+            }
           },
           builder: (context, state) {
             if (state is AddExpenseInitial) {

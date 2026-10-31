@@ -9,6 +9,12 @@ class ExpensesDatabase {
   ExpensesDatabase({required this._database});
 
   // get all expenses
+  Future<List<Map<String, dynamic>>> getAllExpenses() async =>
+      await tryDB<List<Map<String, dynamic>>>(() async {
+        final expensesMapList = _database.query(_expensesTable);
+
+        return expensesMapList;
+      });
 
   // add an expense
   Future<void> insetExpense({required Map<String, dynamic> expenseMap}) async {
@@ -26,4 +32,15 @@ class ExpensesDatabase {
       rethrow;
     }
   }
+
+  Future<int> deleteExpense({
+    required int id,
+    required Map<String, dynamic> expenseMap,
+  }) async => await tryDB<int>(
+    () async => await _database.delete(
+      _expensesTable,
+      where: ' id = ?',
+      whereArgs: [id],
+    ),
+  );
 }

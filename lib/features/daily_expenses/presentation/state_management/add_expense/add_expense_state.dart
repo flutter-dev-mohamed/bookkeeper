@@ -11,7 +11,11 @@ final class AddExpenseInitial extends AddExpenseState {
 
 final class AddExpenseLoading extends AddExpenseState {}
 
-final class AddExpenseSuccess extends AddExpenseState {}
+final class AddExpenseSuccess extends AddExpenseState {
+  final Expense addedExpense;
+
+  AddExpenseSuccess({required this.addedExpense});
+}
 
 final class AddExpenseFailure extends AddExpenseState {
   final String message;

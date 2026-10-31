@@ -6,4 +6,6 @@ abstract interface class ExpensesRepo {
   Future<Either<Failure, List<Expense>>> getExpenses();
 
   Future<Either<Failure, void>> addExpense({required Expense expense});
+
+  Future<Either<Failure, bool>> deleteExpense({required Expense expense});
 }

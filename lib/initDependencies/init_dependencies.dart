@@ -12,7 +12,9 @@ import 'package:shagaf_ledger/features/daily_expenses/data/database/expenses_dat
 import 'package:shagaf_ledger/features/daily_expenses/data/repository/expenses_repo_imp.dart';
 import 'package:shagaf_ledger/features/daily_expenses/domain/repository/expenses_repo.dart';
 import 'package:shagaf_ledger/features/daily_expenses/domain/use_cases/add_expense.dart';
+import 'package:shagaf_ledger/features/daily_expenses/domain/use_cases/get_all_expense.dart';
 import 'package:shagaf_ledger/features/daily_expenses/presentation/state_management/add_expense/add_expense_cubit.dart';
+import 'package:shagaf_ledger/features/daily_expenses/presentation/state_management/expenses/expenses_cubit.dart';
 import 'package:shagaf_ledger/features/inventory/data/database/inventory_history_database.dart';
 import 'package:shagaf_ledger/features/inventory/data/repository/inventory_history_repository_imp.dart';
 import 'package:shagaf_ledger/features/inventory/domain/repository/inventory_history_repository.dart';
@@ -73,6 +75,7 @@ Future<void> initDependencies() async {
   _initClientOrdersCubit();
   _initClientDetailsCubit();
   _initAddExpenseCubit();
+  _initExpensesCubit();
 }
 
 void _initProductsBloc({required Database db}) {
@@ -335,6 +338,24 @@ void _initAddExpenseCubit() {
 
   serviceLocator.registerFactory<AddExpense>(
     () => AddExpense(expensesRepo: serviceLocator<ExpensesRepo>()),
+  );
+
+  serviceLocator.registerFactory<ExpensesRepo>(
+    () => ExpensesRepoImp(expensesDatabase: serviceLocator<ExpensesDatabase>()),
+  );
+
+  serviceLocator.registerFactory<ExpensesDatabase>(
+    () => ExpensesDatabase(database: serviceLocator<Database>()),
+  );
+}
+
+void _initExpensesCubit() {
+  serviceLocator.registerFactory<ExpensesCubit>(
+    () => ExpensesCubit(getAllExpense: serviceLocator<GetAllExpense>()),
+  );
+
+  serviceLocator.registerFactory<GetAllExpense>(
+    () => GetAllExpense(expensesRepo: serviceLocator<ExpensesRepo>()),
   );
 
   serviceLocator.registerFactory<ExpensesRepo>(

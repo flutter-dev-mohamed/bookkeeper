@@ -15,6 +15,7 @@ import 'package:shagaf_ledger/features/clients/presentation/state_management/cli
 import 'package:shagaf_ledger/features/daily_expenses/presentation/pages/add_expense_page.dart';
 import 'package:shagaf_ledger/features/daily_expenses/presentation/pages/expenses_page.dart';
 import 'package:shagaf_ledger/features/daily_expenses/presentation/state_management/add_expense/add_expense_cubit.dart';
+import 'package:shagaf_ledger/features/daily_expenses/presentation/state_management/expenses/expenses_cubit.dart';
 import 'package:shagaf_ledger/features/inventory/domain/entities/inventory_addition.dart';
 import 'package:shagaf_ledger/features/inventory/domain/repository/inventory_history_repository.dart';
 import 'package:shagaf_ledger/features/inventory/domain/use_cases/add_inventory_addition.dart';
@@ -97,7 +98,10 @@ class AppRoutes {
           GoRoute(
             path: '/expenses',
             name: AppConsts().expensesPage,
-            builder: (context, state) => ExpensesPage(),
+            builder: (context, state) => BlocProvider(
+              create: (context) => serviceLocator<ExpensesCubit>(),
+              child: ExpensesPage(),
+            ),
           ),
         ],
       ),
