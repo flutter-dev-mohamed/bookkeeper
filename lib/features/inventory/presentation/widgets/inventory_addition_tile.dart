@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shagaf_ledger/core/app_navigator/app_navigator.dart';
 import 'package:shagaf_ledger/core/common/app_consts.dart';
 import 'package:shagaf_ledger/core/common/functions/price_formate.dart';
 import 'package:shagaf_ledger/features/inventory/domain/entities/inventory_addition.dart';
@@ -8,13 +9,6 @@ class InventoryAdditionTile extends StatelessWidget {
   final InventoryAddition addition;
 
   const InventoryAdditionTile({super.key, required this.addition});
-
-  void _navigateToAdditionDetailsPage(BuildContext context) {
-    context.pushNamed(
-      AppConsts().inventoryAdditionDetailsPage,
-      extra: addition,
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +24,10 @@ class InventoryAdditionTile extends StatelessWidget {
       ),
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
-        onTap: () => _navigateToAdditionDetailsPage(context),
+        onTap: () => AppNavigator().navToInventoryAdditionDetailsPage(
+          context,
+          addition: addition,
+        ),
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Row(
