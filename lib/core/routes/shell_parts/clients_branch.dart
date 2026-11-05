@@ -5,19 +5,16 @@ final clientsBranch = StatefulShellBranch(
     GoRoute(
       path: AppRoutes.clientsPage,
       name: AppPageNames.clientsPage,
-      builder: (context, state) {
-        OPrint.lineBg('Using GoRoute');
-
-        return BlocProvider(
-          create: (context) => serviceLocator<ClientsCubit>(),
-          child: ClientsPage(),
-        );
-      },
+      builder: (context, state) => BlocProvider(
+        create: (context) => serviceLocator<ClientsCubit>(),
+        child: ClientsPage(),
+      ),
       routes: [
         // —————————————————————————————————————————————————————————————————————  add client page
         GoRoute(
           path: AppRoutes.addClient,
           name: AppPageNames.addClientPage,
+          parentNavigatorKey: _routeNavigatorKey,
           builder: (context, state) => BlocProvider(
             create: (context) => serviceLocator<AddClientCubit>(),
             child: AddClientPage(),
@@ -28,6 +25,7 @@ final clientsBranch = StatefulShellBranch(
         GoRoute(
           path: AppRoutes.clientDetails,
           name: AppPageNames.clientDetailsPage,
+          parentNavigatorKey: _routeNavigatorKey,
           builder: (context, state) {
             final clientId = int.parse(state.pathParameters['clientId'] ?? "");
 
@@ -42,7 +40,7 @@ final clientsBranch = StatefulShellBranch(
                       serviceLocator<ClientDetailsCubit>(param1: clientId),
                 ),
               ],
-              child: AddClientPage(),
+              child: ClientDetailsPage(clientId: clientId),
             );
           },
         ),

@@ -13,16 +13,58 @@ final productsBranch = StatefulShellBranch(
         GoRoute(
           path: AppRoutes.addProduct,
           name: AppPageNames.addProductPage,
+          parentNavigatorKey: _routeNavigatorKey,
           builder: (context, state) => BlocProvider(
             create: (context) => serviceLocator<ProductsBloc>(),
             child: AddProductPage(),
           ),
+        ),
+        // —————————————————————————————————————————————————————————————————————  product details page
+        GoRoute(
+          path: AppRoutes.productDetails,
+          name: AppPageNames.productDetailsPage,
+          parentNavigatorKey: _routeNavigatorKey,
+          builder: (context, state) {
+            final productId = int.parse(state.pathParameters['productId']!);
+            return MultiBlocProvider(
+              providers: [
+                BlocProvider(
+                  create: (context) => serviceLocator<ProductCubit>(),
+                ),
+                BlocProvider(
+                  create: (context) => serviceLocator<InventoryHistoryCubit>(),
+                ),
+                BlocProvider(
+                  create: (context) =>
+                      serviceLocator<AddInventoryAdditionCubit>(),
+                ),
+              ],
+              child: ProductDetailsPage(productId: productId),
+            );
+          },
+          routes: [
+            // —————————————————————————————————————————————————————————————————  edit product page
+            GoRoute(
+              path: AppRoutes.editProduct,
+              name: AppPageNames.editProductPage,
+              builder: (context, state) {
+                // TODO: FIX THIS SHOULD NOT USE "!"
+                final product = state.extra! as Product;
+
+                return BlocProvider(
+                  create: (context) => serviceLocator<EditProductCubit>(),
+                  child: EditProductPage(product: product),
+                );
+              },
+            ),
+          ],
         ),
 
         // ————————————————————————————————————————————————————————————————————— archived products page
         GoRoute(
           path: AppRoutes.archivedProducts,
           name: AppPageNames.archivedProductsPage,
+          parentNavigatorKey: _routeNavigatorKey,
           builder: (context, state) {
             return BlocProvider(
               create: (context) => serviceLocator<ArchivedProductsCubit>(),
@@ -38,6 +80,7 @@ final productsBranch = StatefulShellBranch(
         GoRoute(
           path: AppRoutes.inventoryHistory,
           name: AppPageNames.inventoryHistoryPage,
+          parentNavigatorKey: _routeNavigatorKey,
           builder: (context, state) => BlocProvider(
             create: (context) => serviceLocator<InventoryHistoryCubit>(),
             child: InventoryHistoryPage(),
@@ -53,50 +96,10 @@ final productsBranch = StatefulShellBranch(
                 return InventoryAdditionDetailsPage(addition: addition);
               },
             ),
-
-            // details // edit
-            // —————————————————————————————————————————————————————————————————————  product details page
-            GoRoute(
-              path: AppRoutes.productDetails,
-              name: AppPageNames.productDetailsPage,
-              builder: (context, state) {
-                final productId = int.parse(state.pathParameters['productId']!);
-                return MultiBlocProvider(
-                  providers: [
-                    BlocProvider(
-                      create: (context) => serviceLocator<ProductCubit>(),
-                    ),
-                    BlocProvider(
-                      create: (context) =>
-                          serviceLocator<InventoryHistoryCubit>(),
-                    ),
-                    BlocProvider(
-                      create: (context) =>
-                          serviceLocator<AddInventoryAdditionCubit>(),
-                    ),
-                  ],
-                  child: ProductDetailsPage(productId: productId),
-                );
-              },
-              routes: [
-                // —————————————————————————————————————————————————————————————————  edit product page
-                GoRoute(
-                  path: AppRoutes.editProduct,
-                  name: AppPageNames.editProductPage,
-                  builder: (context, state) {
-                    // TODO: FIX THIS SHOULD NOT USE "!"
-                    final product = state.extra! as Product;
-
-                    return BlocProvider(
-                      create: (context) => serviceLocator<EditProductCubit>(),
-                      child: EditProductPage(product: product),
-                    );
-                  },
-                ),
-              ],
-            ),
           ],
         ),
+
+        // details // edit
       ],
     ),
   ],

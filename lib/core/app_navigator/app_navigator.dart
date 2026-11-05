@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shagaf_ledger/core/common/colored_prints.dart';
 import 'package:shagaf_ledger/core/common/entities/product.dart';
 import 'package:shagaf_ledger/core/routes/navigation_return.dart';
 import 'package:shagaf_ledger/core/routes/app_page_names.dart';
@@ -55,10 +56,17 @@ class AppNavigator {
   Future<bool?> navToProductDetailsPage(
     BuildContext context, {
     required int productId,
-  }) async => await context.pushNamed(
-    AppPageNames.productDetailsPage,
-    pathParameters: {"productId": productId.toString()},
-  );
+  }) async {
+    OPrint.lineBy('navToProductDetailsPage');
+    final res = await context.pushNamed<bool?>(
+      AppPageNames.productDetailsPage,
+      pathParameters: {"productId": productId.toString()},
+    );
+
+    OPrint.lineBg('res: $res');
+
+    return res;
+  }
 
   Future<bool?> navToInventoryAdditionDetailsPage(
     BuildContext context, {

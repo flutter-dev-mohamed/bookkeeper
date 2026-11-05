@@ -13,6 +13,7 @@ final ordersBranch = StatefulShellBranch(
         GoRoute(
           path: AppRoutes.addNewOrder,
           name: AppPageNames.addNewOrderPage,
+          parentNavigatorKey: _routeNavigatorKey,
           builder: (context, state) {
             return MultiBlocProvider(
               providers: [
@@ -32,6 +33,7 @@ final ordersBranch = StatefulShellBranch(
         GoRoute(
           path: AppRoutes.orderDetails,
           name: AppPageNames.orderDetails,
+          parentNavigatorKey: _routeNavigatorKey,
           builder: (context, state) {
             final orderId = int.tryParse(state.pathParameters['orderId'] ?? '');
             if (orderId == null) {

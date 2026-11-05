@@ -8,6 +8,7 @@ import 'package:shagaf_ledger/core/routes/app_page_names.dart';
 import 'package:shagaf_ledger/core/routes/app_routes.dart';
 import 'package:shagaf_ledger/core/routes/home.dart';
 import 'package:shagaf_ledger/features/clients/presentation/pages/add_client_page.dart';
+import 'package:shagaf_ledger/features/clients/presentation/pages/clients_details_page.dart';
 import 'package:shagaf_ledger/features/clients/presentation/pages/clients_page.dart';
 import 'package:shagaf_ledger/features/clients/presentation/state_management/add_client_cubit/add_client_cubit.dart';
 import 'package:shagaf_ledger/features/clients/presentation/state_management/client_details_cubit/client_details_cubit.dart';
@@ -46,7 +47,7 @@ final _routeNavigatorKey = GlobalKey<NavigatorState>(debugLabel: "root");
 final router = GoRouter(
   navigatorKey: _routeNavigatorKey,
   initialLocation: AppRoutes.ordersPage,
-  
+
   routes: [
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) =>
