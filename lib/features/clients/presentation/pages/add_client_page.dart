@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shagaf_ledger/core/common/errors/UI/error_page.dart';
+import 'package:shagaf_ledger/core/common/functions/date_formatting.dart';
 import 'package:shagaf_ledger/core/common/pages/loading_page.dart';
 import 'package:shagaf_ledger/core/common/widgets/custom_form_filed.dart';
 import 'package:shagaf_ledger/core/common/widgets/custom_primary_button.dart';
@@ -49,7 +50,7 @@ class _AddClientPageState extends State<AddClientPage> {
         client: ClientEntity(
           id: 0,
           name: _nameController.text.trim(),
-          createdAt: DateTime.now().toIso8601String().split('T')[0],
+          createdAt: dateFormatting(DateTime.now()),
           phoneNumber: _phoneNumberController.text.trim(),
           whatsApp: _whatsAppController.text.trim(),
           instagram: _instagramController.text.trim(),

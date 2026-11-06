@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:shagaf_ledger/core/common/colored_prints.dart';
+import 'package:shagaf_ledger/core/common/functions/date_formatting.dart';
 import 'package:shagaf_ledger/features/orders/domain/entities/Order_details.dart';
 import 'package:shagaf_ledger/features/orders/domain/entities/order_entity.dart';
 import 'package:shagaf_ledger/features/orders/domain/entities/order_item.dart';
@@ -43,7 +44,7 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
   ) async {
     emit(OrdersLoading());
 
-    final dateString = event.day.toIso8601String().split('T')[0];
+    final dateString = dateFormatting(event.day);
 
     final orders = await _getOrders(dateString);
 

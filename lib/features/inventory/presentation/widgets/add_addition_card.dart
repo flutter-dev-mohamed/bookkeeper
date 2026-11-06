@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shagaf_ledger/core/common/colored_prints.dart';
+import 'package:shagaf_ledger/core/common/functions/date_formatting.dart';
 import 'package:shagaf_ledger/core/common/widgets/custom_form_filed.dart';
 import 'package:shagaf_ledger/features/inventory/domain/entities/inventory_addition.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/state/add_inventory_addition_cubit/add_inventory_addition_cubit.dart';
@@ -61,7 +62,7 @@ class _AddAdditionCardState extends State<AddAdditionCard> {
         unitSellingPrice: double.tryParse(_priceController.text) ?? 0,
         addedCost: double.tryParse(_addedCostController.text) ?? 0,
         note: _noteController.text,
-        createdAt: DateTime.now().toIso8601String().split('T')[0],
+        createdAt: dateFormatting(DateTime.now()),
       ),
     );
   }
