@@ -23,7 +23,10 @@ class AppNavigator {
     pathParameters: {'orderId': orderId.toString()},
   );
 
-  Future<bool?> navToAddOrderPage(BuildContext context) async =>
+  /// ```dart
+  /// This will return Future<int?> orderId if and order was added
+  /// ```
+  Future<int?> navToAddOrderPage(BuildContext context) async =>
       await context.pushNamed(AppPageNames.addNewOrderPage);
 
   Future<bool?> navToArchivedProductsPage(BuildContext context) async =>

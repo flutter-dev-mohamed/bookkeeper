@@ -44,7 +44,7 @@ class _AddOrderPageState extends State<AddOrderPage> {
         }
 
         if (state is NewOrderAdded) {
-          context.pop(true);
+          context.pop(state.orderId);
         }
       },
       builder: (context, state) {
@@ -62,99 +62,96 @@ class _AddOrderPageState extends State<AddOrderPage> {
           final availableProducts = state.availableProducts;
           final orderItems = state.orderItems;
 
-          return Directionality(
-            textDirection: TextDirection.rtl,
-            child: Scaffold(
-              appBar: CustomAppBar(
-                title: Text(
-                  'إضافة طلب',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                ),
+          return Scaffold(
+            appBar: CustomAppBar(
+              title: Text(
+                'إضافة طلب',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
+            ),
 
-              body: availableProducts.isEmpty && orderItems.isEmpty
-                  // indicate no products
-                  ? Center(
-                      child: Text(
-                        "يرجى اضافة منتجات!",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 24,
+            body: availableProducts.isEmpty && orderItems.isEmpty
+                // indicate no products
+                ? Center(
+                    child: Text(
+                      "يرجى اضافة منتجات!",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 24,
+                      ),
+                    ),
+                  )
+                : Stack(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                        child: ListView.separated(
+                          separatorBuilder: (context, index) =>
+                              SizedBox(height: 10),
+                          shrinkWrap: true,
+                          padding: EdgeInsets.only(bottom: 120, top: 20),
+                          itemCount: orderItems.length + 1,
+                          itemBuilder: (context, index) {
+                            // show add order item at the end of the list
+                            if (index == orderItems.length ||
+                                orderItems.isEmpty) {
+                              return OrderItemDropdownMenu(
+                                availableProducts: availableProducts,
+                                onChanged: (product) => (product != null)
+                                    ? context
+                                          .read<AddOrderCubit>()
+                                          .selectProduct(product)
+                                    : null,
+                              );
+                            }
+
+                            //
+                            return SelectedOrderItemTile(
+                              index: index,
+                              initialItem: orderItems[index],
+                              availableProducts: availableProducts,
+                              initProduct: state.productsInStock.firstWhere(
+                                (product) =>
+                                    product.id == orderItems[index].productId,
+                              ),
+                            );
+                          },
                         ),
                       ),
-                    )
-                  : Stack(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                          child: ListView.separated(
-                            separatorBuilder: (context, index) =>
-                                SizedBox(height: 10),
-                            shrinkWrap: true,
-                            padding: EdgeInsets.only(bottom: 120, top: 20),
-                            itemCount: orderItems.length + 1,
-                            itemBuilder: (context, index) {
-                              // show add order item at the end of the list
-                              if (index == orderItems.length ||
-                                  orderItems.isEmpty) {
-                                return OrderItemDropdownMenu(
-                                  availableProducts: availableProducts,
-                                  onChanged: (product) => (product != null)
-                                      ? context
-                                            .read<AddOrderCubit>()
-                                            .selectProduct(product)
-                                      : null,
-                                );
-                              }
 
-                              //
-                              return SelectedOrderItemTile(
-                                index: index,
-                                initialItem: orderItems[index],
-                                availableProducts: availableProducts,
-                                initProduct: state.productsInStock.firstWhere(
-                                  (product) =>
-                                      product.id == orderItems[index].productId,
+                      //  ————————————————————————————————————————————————————————————————  OrderSummarySheet
+                      OrderSummarySheet(
+                        isLoading: state.isSubmitting,
+                        orderItems: orderItems,
+                        //  ———————————————————————————————————————————————————— this will run when pressed continue
+                        onContinue:
+                            ({
+                              required totalPrice,
+                              required originalPrice,
+                              required discountType,
+                              required discountValue,
+                              required noteText,
+                              clientId,
+                            }) {
+                              context.read<AddOrderCubit>().addOrder(
+                                order: OrderEntity(
+                                  id: 0,
+                                  clientId: clientId,
+                                  note: noteText,
+                                  discountType: discountType,
+                                  discountValue: discountValue,
+                                  createdAt: DateTime.now()
+                                      .toIso8601String()
+                                      .split('T')[0],
+                                  totalPrice: totalPrice,
+                                  originalPrice: originalPrice,
                                 ),
+                                items: orderItems,
                               );
                             },
-                          ),
-                        ),
-
-                        //  ————————————————————————————————————————————————————————————————  OrderSummarySheet
-                        OrderSummarySheet(
-                          isLoading: state.isSubmitting,
-                          orderItems: orderItems,
-                          //  ———————————————————————————————————————————————————— this will run when pressed continue
-                          onContinue:
-                              ({
-                                required totalPrice,
-                                required originalPrice,
-                                required discountType,
-                                required discountValue,
-                                required noteText,
-                                clientId,
-                              }) {
-                                context.read<AddOrderCubit>().addOrder(
-                                  order: OrderEntity(
-                                    id: 0,
-                                    clientId: clientId,
-                                    note: noteText,
-                                    discountType: discountType,
-                                    discountValue: discountValue,
-                                    createdAt: DateTime.now()
-                                        .toIso8601String()
-                                        .split('T')[0],
-                                    totalPrice: totalPrice,
-                                    originalPrice: originalPrice,
-                                  ),
-                                  items: orderItems,
-                                );
-                              },
-                        ),
-                      ],
-                    ),
-            ),
+                      ),
+                    ],
+                  ),
           );
         }
 
@@ -164,6 +161,7 @@ class _AddOrderPageState extends State<AddOrderPage> {
     );
   }
 
+  // TODO: WTF is this shit use and custom method showAlertDialog
   //  ——————————————————————————————————————————————————————————————————————————   show Order Error Dialog
   void showOrderErrorDialog(BuildContext context) {
     showDialog(

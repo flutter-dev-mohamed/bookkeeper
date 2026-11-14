@@ -4,6 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:shagaf_ledger/core/common/functions/date_formatting.dart';
 import 'package:shagaf_ledger/features/orders/domain/entities/order_entity.dart';
+import 'package:shagaf_ledger/features/orders/domain/use_cases/get_new_order.dart';
 import 'package:shagaf_ledger/features/orders/domain/use_cases/get_orders.dart';
 import 'package:shagaf_ledger/features/orders/presentation/orders_cubit/orders_effect.dart';
 
@@ -11,8 +12,10 @@ part 'orders_state.dart';
 
 class OrdersCubit extends Cubit<OrdersState> {
   final GetOrders _getOrders;
+  final GetNewOrder _getNewOrder;
 
-  OrdersCubit({required this._getOrders}) : super(OrdersInitial()) {
+  OrdersCubit({required this._getOrders, required this._getNewOrder})
+    : super(OrdersInitial()) {
     loadOrders(dateFilter: DateTime.now());
   }
 
@@ -45,32 +48,40 @@ class OrdersCubit extends Cubit<OrdersState> {
     emit(state);
   }
 
-  // this function is used to reduce DB requests
   // in case of cancelling an order: call this function after the cancelling is succeeded
-  // in case of adding on order: call after adding succeeded
-  void updateOrdersList({
-    required OrderEntity newOrder,
-    bool add = false,
-    int? atIndex,
-  }) {
+  void updateOrdersList({required OrderEntity newOrder, required int atIndex}) {
     final currentState = state;
     if (currentState is! OrdersLoaded) return;
 
-    if (add) {
-      final updatedOrders = [...currentState.orders, newOrder];
+    // ensure the item actually exists in the list for safety
+    if (atIndex != -1) {
+      final updatedOrders = List<OrderEntity>.from(currentState.orders);
+      updatedOrders[atIndex] = newOrder;
+
       emit(currentState.copyWith(orders: updatedOrders));
-    } else {
-      final index =
-          atIndex ??
-          currentState.orders.indexWhere((order) => order.id == newOrder.id);
-
-      // ensure the item actually exists in the list for safety
-      if (index != -1) {
-        final updatedOrders = List<OrderEntity>.from(currentState.orders);
-        updatedOrders[index] = newOrder;
-
-        emit(currentState.copyWith(orders: updatedOrders));
-      }
     }
+  }
+
+  void getNewOrder({required int orderId}) async {
+    final currentState = state;
+    if (currentState is! OrdersLoaded) return;
+    final updatedOrders = currentState.orders;
+
+    final newOrder = await _getNewOrder(orderId);
+
+    newOrder.fold(
+      // emit last successful state
+      (error) => _onFailure(error.message, currentState),
+
+      (newOrder) {
+        updatedOrders.insert(0, newOrder);
+        emit(
+          OrdersLoaded(
+            orders: updatedOrders,
+            dateFilter: currentState.dateFilter,
+          ),
+        );
+      },
+    );
   }
 }

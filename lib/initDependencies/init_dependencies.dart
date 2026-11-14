@@ -18,6 +18,7 @@ import 'package:shagaf_ledger/features/inventory/domain/use_cases/get_product_ad
 import 'package:shagaf_ledger/features/inventory/presentation/state/add_inventory_addition_cubit/add_inventory_addition_cubit.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/state/inventory_history_cubit/inventory_history_cubit.dart';
 import 'package:shagaf_ledger/features/orders/domain/use_cases/get_client_orders.dart';
+import 'package:shagaf_ledger/features/orders/domain/use_cases/get_new_order.dart';
 import 'package:shagaf_ledger/features/orders/presentation/client_orders_cubit/client_orders_cubit.dart';
 import 'package:shagaf_ledger/features/orders/presentation/orders_cubit/orders_cubit.dart';
 import 'package:shagaf_ledger/features/products/data/database/product_local_database.dart';
@@ -111,7 +112,14 @@ void _initProductsBloc({required Database db}) {
 
 void _initOrdersBloc({required Database db}) {
   serviceLocator.registerLazySingleton<OrdersCubit>(
-    () => OrdersCubit(getOrders: serviceLocator<GetOrders>()),
+    () => OrdersCubit(
+      getOrders: serviceLocator<GetOrders>(),
+      getNewOrder: serviceLocator<GetNewOrder>(),
+    ),
+  );
+
+  serviceLocator.registerFactory<GetNewOrder>(
+    () => GetNewOrder(repository: serviceLocator<OrdersRepository>()),
   );
 
   serviceLocator.registerFactory<CancelOrder>(
@@ -183,6 +191,7 @@ void _initAddOrderCubit() {
           serviceLocator<
             GetActiveProducts
           >(), //  already declared in with products bloc
+      appNotifications: serviceLocator<AppNotifications>(),
     ),
   );
 

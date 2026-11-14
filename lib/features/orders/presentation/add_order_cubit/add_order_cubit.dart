@@ -1,5 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
+import 'package:shagaf_ledger/core/app_notifications/app_notifications.dart';
+import 'package:shagaf_ledger/core/app_notifications/notifications/inventory_changes.dart';
 import 'package:shagaf_ledger/core/common/colored_prints.dart';
 import 'package:shagaf_ledger/core/common/entities/product.dart';
 import 'package:shagaf_ledger/core/common/use_cases/use_cases.dart';
@@ -11,11 +13,16 @@ import 'package:shagaf_ledger/features/orders/domain/use_cases/create_order.dart
 part 'add_order_state.dart';
 
 class AddOrderCubit extends Cubit<AddOrderState> {
+  /// `TODO:` send an [`InventoryChanges`] [`AppNotification`]
   final CreateOrder _createOrder;
   final GetActiveProducts _getActiveProducts;
+  final AppNotifications _appNotifications;
 
-  AddOrderCubit({required this._createOrder, required this._getActiveProducts})
-    : super(AddOrderInitial());
+  AddOrderCubit({
+    required this._createOrder,
+    required this._getActiveProducts,
+    required this._appNotifications,
+  }) : super(AddOrderInitial());
 
   void getActiveProducts() async {
     emit(AddOrderLoading());
@@ -52,7 +59,20 @@ class AddOrderCubit extends Cubit<AddOrderState> {
       (error) => emit(
         currentState.copyWith(isSubmitting: false, errorMessage: error.message),
       ),
-      (_) => emit(NewOrderAdded()),
+      (orderId) {
+        _appNotifications.notifyInventoryChanged(
+          InventoryChanges(
+            inventoryChanges: currentState.orderItems.map((item) {
+              return InventoryChange(
+                productId: item.productId,
+                quantity: item.quantity,
+                changeType: InventoryChangeType.subtract,
+              );
+            }).toList(),
+          ),
+        );
+        emit(NewOrderAdded(orderId: orderId));
+      },
     );
   }
 

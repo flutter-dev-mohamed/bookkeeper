@@ -97,12 +97,14 @@ class _OrdersPageState extends State<OrdersPage> {
                       child: CustomFab(
                         onPressed: () async {
                           // TODO: fix adding an order
-                          final didAddOrder = await AppNavigator()
+                          final newOrderId = await AppNavigator()
                               .navToAddOrderPage(context);
 
-                          // if (context.mounted && didAddOrder == true) {
-                          //   context.read<OrdersBloc>().add(UpdateOrdersEvent());
-                          // }
+                          if (context.mounted && newOrderId is int) {
+                            context.read<OrdersCubit>().getNewOrder(
+                              orderId: newOrderId,
+                            );
+                          }
                         },
                         child: Image.asset(
                           'lib/core/assets/icons/delivery_box.png',

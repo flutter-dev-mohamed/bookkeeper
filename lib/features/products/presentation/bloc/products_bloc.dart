@@ -29,7 +29,8 @@ class ProductsBloc extends Bloc<ProductsEvent, ProductsState> {
     required this._appNotifications,
   }) : super(InventoryInitial()) {
     on<ProductsEvent>((event, emit) {
-      emit(InventoryLoading());
+      // TODO: LET EACH EVENT HANDLE LOADING ON ITS OWN
+      // emit(InventoryLoading());
       OPrint.bg(event.toString());
     });
 

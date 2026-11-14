@@ -12,6 +12,4 @@ class AppNotifications {
       _inventoryController.add(event);
 
   Future<void> dispose() => _inventoryController.close();
-
-  // ——————————————————————————————————————————————————————————————————————————— orders notifications
 }
