@@ -5,7 +5,7 @@ final ordersBranch = StatefulShellBranch(
     GoRoute(
       path: AppRoutes.ordersPage,
       builder: (context, state) => BlocProvider(
-        create: (context) => serviceLocator<OrdersBloc>(),
+        create: (context) => serviceLocator<OrdersCubit>(),
         child: OrdersPage(),
       ),
       routes: [

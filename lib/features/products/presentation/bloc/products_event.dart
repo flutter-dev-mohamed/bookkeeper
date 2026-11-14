@@ -11,3 +11,9 @@ class AddProductEvent extends ProductsEvent {
 
   AddProductEvent({required this.product, required this.addedCost});
 }
+
+final class InventoryChangesReceived extends ProductsEvent {
+  final InventoryChanges changes;
+
+  InventoryChangesReceived(this.changes);
+}

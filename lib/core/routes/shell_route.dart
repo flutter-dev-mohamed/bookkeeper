@@ -21,7 +21,7 @@ import 'package:shagaf_ledger/features/inventory/presentation/state/inventory_hi
 import 'package:shagaf_ledger/features/orders/presentation/add_order_cubit/add_order_cubit.dart';
 import 'package:shagaf_ledger/features/orders/presentation/client_orders_cubit/client_orders_cubit.dart';
 import 'package:shagaf_ledger/features/orders/presentation/order_details_cubit/order_details_cubit.dart';
-import 'package:shagaf_ledger/features/orders/presentation/orders_bloc/orders_bloc.dart';
+import 'package:shagaf_ledger/features/orders/presentation/orders_cubit/orders_cubit.dart';
 import 'package:shagaf_ledger/features/orders/presentation/pages/add_order_page.dart';
 import 'package:shagaf_ledger/features/orders/presentation/pages/order_details_page.dart';
 import 'package:shagaf_ledger/features/orders/presentation/pages/orders_page.dart';

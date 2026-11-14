@@ -2,6 +2,7 @@ class AppIcons {
   AppIcons._();
 
   // TODO: ADD ALL THE ICONS AND REPLACE ALL THE ONES WHERE YOU USE THE FULL PATH!
+  // search for lib/core/assets/icons/
 
   // Clients Icons
   static const String usersAvatarFilled =

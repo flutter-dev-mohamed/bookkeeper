@@ -1,4 +1,5 @@
 import 'package:get_it/get_it.dart';
+import 'package:shagaf_ledger/core/app_notifications/app_notifications.dart';
 import 'package:shagaf_ledger/features/clients/data/database/clients_database.dart';
 import 'package:shagaf_ledger/features/clients/data/repository/clients_repository_imp.dart';
 import 'package:shagaf_ledger/features/clients/domain/repository/clients_repository.dart';
@@ -18,6 +19,7 @@ import 'package:shagaf_ledger/features/inventory/presentation/state/add_inventor
 import 'package:shagaf_ledger/features/inventory/presentation/state/inventory_history_cubit/inventory_history_cubit.dart';
 import 'package:shagaf_ledger/features/orders/domain/use_cases/get_client_orders.dart';
 import 'package:shagaf_ledger/features/orders/presentation/client_orders_cubit/client_orders_cubit.dart';
+import 'package:shagaf_ledger/features/orders/presentation/orders_cubit/orders_cubit.dart';
 import 'package:shagaf_ledger/features/products/data/database/product_local_database.dart';
 import 'package:shagaf_ledger/features/products/data/repository/products_repository_imp.dart';
 import 'package:shagaf_ledger/features/products/domain/repository/products_repository.dart';
@@ -41,7 +43,6 @@ import 'package:shagaf_ledger/features/orders/domain/use_cases/cancel_order.dart
 import 'package:shagaf_ledger/features/orders/domain/use_cases/get_order_details.dart';
 import 'package:shagaf_ledger/features/orders/domain/use_cases/get_orders.dart';
 import 'package:shagaf_ledger/features/orders/presentation/add_order_cubit/add_order_cubit.dart';
-import 'package:shagaf_ledger/features/orders/presentation/orders_bloc/orders_bloc.dart';
 import 'package:shagaf_ledger/features/orders/presentation/order_details_cubit/order_details_cubit.dart';
 import 'package:shagaf_ledger/initDependencies/init_local_database.dart';
 import 'package:sqflite/sqflite.dart';
@@ -53,6 +54,10 @@ Future<void> initDependencies() async {
   final Database localDatabase = await initLocalDatabase();
 
   serviceLocator.registerLazySingleton<Database>(() => localDatabase);
+
+  serviceLocator.registerLazySingleton<AppNotifications>(
+    () => AppNotifications(),
+  );
 
   _initProductsBloc(db: localDatabase);
   _initOrdersBloc(db: localDatabase);
@@ -74,6 +79,7 @@ void _initProductsBloc({required Database db}) {
     () => ProductsBloc(
       getActiveProducts: serviceLocator<GetActiveProducts>(),
       addProduct: serviceLocator<AddProduct>(),
+      appNotifications: serviceLocator<AppNotifications>(),
     ),
   );
 
@@ -104,8 +110,8 @@ void _initProductsBloc({required Database db}) {
 }
 
 void _initOrdersBloc({required Database db}) {
-  serviceLocator.registerLazySingleton<OrdersBloc>(
-    () => OrdersBloc(getOrders: serviceLocator<GetOrders>()),
+  serviceLocator.registerLazySingleton<OrdersCubit>(
+    () => OrdersCubit(getOrders: serviceLocator<GetOrders>()),
   );
 
   serviceLocator.registerFactory<CancelOrder>(
@@ -142,6 +148,7 @@ void _initOrderDetailsCubit() {
     () => OrderDetailsCubit(
       getOrderDetails: serviceLocator<GetOrderDetails>(),
       cancelOrder: serviceLocator<CancelOrder>(),
+      appNotifications: serviceLocator<AppNotifications>(),
     ),
   );
 }

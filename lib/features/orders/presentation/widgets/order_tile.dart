@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:shagaf_ledger/core/app_navigator/app_navigator.dart';
 import 'package:shagaf_ledger/core/common/functions/price_formate.dart';
 import 'package:shagaf_ledger/features/orders/domain/entities/order_entity.dart';
-import 'package:shagaf_ledger/features/orders/presentation/orders_bloc/orders_bloc.dart';
+import 'package:shagaf_ledger/features/orders/presentation/orders_cubit/orders_cubit.dart';
 
 class OrderTile extends StatelessWidget {
   final OrderEntity order;
-  final VoidCallback updateOrdersList;
+  final int index;
 
-  const OrderTile({
-    super.key,
-    required this.order,
-    required this.updateOrdersList,
-  });
+  const OrderTile({super.key, required this.order, required this.index});
+
+  void _updateOrdersList(BuildContext context) {
+    context.read<OrdersCubit>().updateOrdersList(
+      newOrder: order.copyWith(status: OrderStatus.canceled),
+      atIndex: index,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,12 +33,12 @@ class OrderTile extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
         onTap: () async {
-          final didChange = await AppNavigator().navToOrderDetailsPage(
+          final didCancelOrder = await AppNavigator().navToOrderDetailsPage(
             context,
             orderId: order.id,
           );
-          if (didChange ?? false) {
-            updateOrdersList();
+          if ((didCancelOrder ?? false) && context.mounted) {
+            _updateOrdersList(context);
           }
         },
         child: Padding(

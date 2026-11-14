@@ -13,6 +13,8 @@ class AppNavigator {
 
   factory AppNavigator() => _instance;
 
+  // TODO: pass the order as an extra instead of giving order id and having the OrderDetailCubit REFETCH data from db
+  /// This will return (true) if the order is canceled
   Future<bool?> navToOrderDetailsPage(
     BuildContext context, {
     required int orderId,
