@@ -30,3 +30,33 @@ void showAlertDialogue({
     ),
   ),
 );
+
+// void showOrderErrorDialog(BuildContext context) {
+//   showDialog(
+//     context: context,
+//     builder: (BuildContext context) {
+//       final colorScheme = Theme.of(context).colorScheme;
+//       return AlertDialog(
+//         backgroundColor: colorScheme.surface,
+//         shadowColor: colorScheme.shadow,
+//         title: Text(
+//           'Error',
+//           style: TextStyle(
+//             color: colorScheme.error,
+//             fontWeight: FontWeight.bold,
+//           ),
+//         ),
+//         content: const Text(
+//           'There was an error saving or adding your order into the database. Please try again.',
+//         ),
+//         actions: [
+//           TextButton(
+//             onPressed: () => Navigator.of(context).pop(),
+//             // Note: If you are using GoRouter, you can use context.pop() instead
+//             child: const Text('Okay'),
+//           ),
+//         ],
+//       );
+//     },
+//   );
+// }

@@ -1,14 +1,18 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shagaf_ledger/core/common/colored_prints.dart';
 import 'package:shagaf_ledger/core/common/entities/product.dart';
 import 'package:shagaf_ledger/core/common/errors/UI/error_page.dart';
+import 'package:shagaf_ledger/core/common/functions/show_alert_dialogue.dart';
 import 'package:shagaf_ledger/core/common/pages/loading_page.dart';
 import 'package:shagaf_ledger/core/common/widgets/custom_app_bar.dart';
 import 'package:shagaf_ledger/features/orders/domain/entities/order_entity.dart';
 import 'package:shagaf_ledger/features/orders/domain/entities/order_item.dart';
 import 'package:shagaf_ledger/features/orders/presentation/add_order_cubit/add_order_cubit.dart';
+import 'package:shagaf_ledger/features/orders/presentation/add_order_cubit/add_order_effect.dart';
 import 'package:shagaf_ledger/features/orders/presentation/widgets/order_item_dropdown_menu.dart';
 import 'package:shagaf_ledger/features/orders/presentation/widgets/order_summary_sheet.dart';
 import 'package:shagaf_ledger/features/orders/presentation/widgets/selected_order_item_tile.dart';
@@ -21,32 +25,37 @@ class AddOrderPage extends StatefulWidget {
 }
 
 class _AddOrderPageState extends State<AddOrderPage> {
+  late final StreamSubscription<AddOrderEffect> _effectsSubscription;
+
   @override
   void initState() {
-    if (context.mounted) {
-      context.read<AddOrderCubit>().getActiveProducts();
-    }
-
     super.initState();
+
+    final cubit = context.read<AddOrderCubit>();
+
+    _effectsSubscription = cubit.effects.listen((effect) {
+      if (!mounted) return;
+
+      switch (effect) {
+        case ShowAddOrderErrorDialog():
+          showAlertDialogue(context: context, message: effect.message);
+      }
+    });
   }
 
-  //  ==========================================================================
+  @override
+  void dispose() {
+    _effectsSubscription.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AddOrderCubit, AddOrderState>(
       listener: (context, state) {
-        if (state is AddOrderLoaded) {
-          if (state.errorMessage != null) {
-            // alert use in case of error
-            showOrderErrorDialog(context);
-          }
-        }
-
-        if (state is NewOrderAdded) {
-          context.pop(state.orderId);
-        }
+        if (state is NewOrderAdded) context.pop(state.orderId);
       },
+
       builder: (context, state) {
         //  ————————————————————————————————————————————————————————————————————  indicate loading
         if (state is AddOrderLoading) {
@@ -157,38 +166,6 @@ class _AddOrderPageState extends State<AddOrderPage> {
 
         //  ————————————————————————————————————————————————————————————————————  error
         return ErrorPage();
-      },
-    );
-  }
-
-  // TODO: WTF is this shit use and custom method showAlertDialog
-  //  ——————————————————————————————————————————————————————————————————————————   show Order Error Dialog
-  void showOrderErrorDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        final colorScheme = Theme.of(context).colorScheme;
-        return AlertDialog(
-          backgroundColor: colorScheme.surface,
-          shadowColor: colorScheme.shadow,
-          title: Text(
-            'Error',
-            style: TextStyle(
-              color: colorScheme.error,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          content: const Text(
-            'There was an error saving or adding your order into the database. Please try again.',
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              // Note: If you are using GoRouter, you can use context.pop() instead
-              child: const Text('Okay'),
-            ),
-          ],
-        );
       },
     );
   }

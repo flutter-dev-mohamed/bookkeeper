@@ -245,6 +245,7 @@ class _OrderSummarySheetState extends State<OrderSummarySheet> {
 
                   const SizedBox(height: 10),
 
+                  //  ——————————————————————————————————————————————————————————  clients dropdown menu
                   ClientsDropdownMenu(
                     onSelectClient: (clientId) {
                       // TODO: ADD THE CLIENT ID TO THE ORDER

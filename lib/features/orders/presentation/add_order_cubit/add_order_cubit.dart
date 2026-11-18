@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:shagaf_ledger/core/app_notifications/app_notifications.dart';
@@ -5,6 +7,7 @@ import 'package:shagaf_ledger/core/app_notifications/notifications/inventory_cha
 import 'package:shagaf_ledger/core/common/colored_prints.dart';
 import 'package:shagaf_ledger/core/common/entities/product.dart';
 import 'package:shagaf_ledger/core/common/use_cases/use_cases.dart';
+import 'package:shagaf_ledger/features/orders/presentation/add_order_cubit/add_order_effect.dart';
 import 'package:shagaf_ledger/features/products/domain/use_cases/get_active_products.dart';
 import 'package:shagaf_ledger/features/orders/domain/entities/order_entity.dart';
 import 'package:shagaf_ledger/features/orders/domain/entities/order_item.dart';
@@ -22,7 +25,14 @@ class AddOrderCubit extends Cubit<AddOrderState> {
     required this._createOrder,
     required this._getActiveProducts,
     required this._appNotifications,
-  }) : super(AddOrderInitial());
+  }) : super(AddOrderInitial()) {
+    // get the active available products
+    getActiveProducts();
+  }
+
+  final _effectsController = StreamController<AddOrderEffect>.broadcast();
+
+  Stream<AddOrderEffect> get effects => _effectsController.stream;
 
   void getActiveProducts() async {
     emit(AddOrderLoading());
@@ -30,7 +40,7 @@ class AddOrderCubit extends Cubit<AddOrderState> {
     final res = await _getActiveProducts(NoParams());
 
     res.fold(
-      (error) => emit(AddOrderLoaded(productsInStock: [], orderItems: [])),
+      (error) => emit(AddOrdersFailure(message: error.message)),
       (productsList) => emit(
         AddOrderLoaded(
           productsInStock: productsList
@@ -51,14 +61,24 @@ class AddOrderCubit extends Cubit<AddOrderState> {
     if (currentState is! AddOrderLoaded) return;
 
     emit(currentState.copyWith(isSubmitting: true));
+
+    await Future.delayed(Duration(seconds: 6));
+
     final res = await _createOrder(
       CreateOrderParams(order: order, items: items),
     );
 
     res.fold(
-      (error) => emit(
-        currentState.copyWith(isSubmitting: false, errorMessage: error.message),
-      ),
+      // if failed
+      (error) {
+        // restore last stable state
+        emit(currentState.copyWith(isSubmitting: false));
+
+        // add an effect to show an error dialog
+        _effectsController.add(ShowAddOrderErrorDialog(message: error.message));
+      },
+
+      // if success
       (orderId) {
         _appNotifications.notifyInventoryChanged(
           InventoryChanges(
@@ -76,6 +96,7 @@ class AddOrderCubit extends Cubit<AddOrderState> {
     );
   }
 
+  // ———————————————————————————————————————————————————————————————————————————  UI control methods
   void selectProduct(Product product) {
     final currentState = state;
 
