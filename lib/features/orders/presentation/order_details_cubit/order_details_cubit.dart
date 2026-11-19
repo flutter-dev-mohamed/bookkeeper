@@ -24,6 +24,12 @@ class OrderDetailsCubit extends Cubit<OrderDetailsState> {
     required this._appNotifications,
   }) : super(OrderDetailsInitial());
 
+  @override
+  Future<void> close() {
+    _effectsController.close();
+    return super.close();
+  }
+
   //  ——————————————————————————————————————————————————————————————————————————  effect streamer start
   final _effectsController = StreamController<OrderDetailsEffect>.broadcast();
 

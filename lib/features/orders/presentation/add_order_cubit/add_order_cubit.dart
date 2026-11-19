@@ -30,6 +30,12 @@ class AddOrderCubit extends Cubit<AddOrderState> {
     getActiveProducts();
   }
 
+  @override
+  Future<void> close() {
+    _effectsController.close();
+    return super.close();
+  }
+
   final _effectsController = StreamController<AddOrderEffect>.broadcast();
 
   Stream<AddOrderEffect> get effects => _effectsController.stream;

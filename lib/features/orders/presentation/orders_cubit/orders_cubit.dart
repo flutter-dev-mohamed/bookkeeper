@@ -19,6 +19,12 @@ class OrdersCubit extends Cubit<OrdersState> {
     loadOrders(dateFilter: DateTime.now());
   }
 
+  @override
+  Future<void> close() {
+    _effectsController.close();
+    return super.close();
+  }
+
   final _effectsController = StreamController<OrdersEffect>.broadcast();
 
   Stream<OrdersEffect> get effects => _effectsController.stream;
