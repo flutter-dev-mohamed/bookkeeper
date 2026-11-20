@@ -42,7 +42,7 @@ class ProductCubit extends Cubit<ProductState> {
     emit(
       GotProductDetails(
         product: currentState.product,
-        didChange: null,
+        didChange: false,
         isSubmitting: true,
       ),
     );

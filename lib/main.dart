@@ -4,6 +4,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:shagaf_ledger/core/assets/theme/lib/theme.dart';
 import 'package:shagaf_ledger/core/assets/theme/lib/util.dart';
 import 'package:shagaf_ledger/core/routes/app_routes.dart';
+import 'package:shagaf_ledger/core/routes/shell_route.dart';
 import 'package:shagaf_ledger/initDependencies/init_dependencies.dart';
 
 void main() async {
@@ -34,7 +35,7 @@ class ShagafLedger extends StatelessWidget {
       theme: theme.light(),
       darkTheme: theme.dark(),
       themeMode: ThemeMode.system,
-      routerConfig: AppRoutes().goRouter,
+      routerConfig: router,
     );
   }
 }

@@ -11,15 +11,17 @@ class AddOrderLoaded extends AddOrderState {
   final List<Product> productsInStock;
   final List<OrderItem> orderItems;
   final bool isSubmitting;
-  final String? errorMessage;
 
   AddOrderLoaded({
     required this.productsInStock,
     required this.orderItems,
     this.isSubmitting = false,
-    this.errorMessage,
   });
 
+  /// Returns in-stock products that have not yet been added to the order.
+  ///
+  /// Excludes products whose IDs already appear in [orderItems], preventing
+  /// the same product from being selected more than once.
   List<Product> get availableProducts {
     final selectedIds = orderItems.map((item) => item.productId).toSet();
 
@@ -32,15 +34,31 @@ class AddOrderLoaded extends AddOrderState {
     List<Product>? productsInStock,
     List<OrderItem>? orderItems,
     bool? isSubmitting,
-    String? errorMessage,
   }) {
     return AddOrderLoaded(
       productsInStock: productsInStock ?? this.productsInStock,
       orderItems: orderItems ?? this.orderItems,
       isSubmitting: isSubmitting ?? this.isSubmitting,
-      errorMessage: errorMessage,
     );
   }
 }
 
-final class NewOrderAdded extends AddOrderState {}
+/// Emitted when the order creation succeeds.
+///
+/// Bloc listener should:
+/// return the resulting `[orderId]` via `Navigator.pop`
+/// and close the current screen:
+/// ```dart
+/// Navigator.of(context).pop(state.orderId);
+/// ```
+final class NewOrderAdded extends AddOrderState {
+  final int orderId;
+
+  NewOrderAdded({required this.orderId});
+}
+
+final class AddOrdersFailure extends AddOrderState {
+  final String message;
+
+  AddOrdersFailure({required this.message});
+}

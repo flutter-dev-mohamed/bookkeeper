@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:shagaf_ledger/core/common/colored_prints.dart';
 import 'package:shagaf_ledger/core/common/functions/date_formatting.dart';
-import 'package:shagaf_ledger/features/orders/presentation/orders_bloc/orders_bloc.dart';
+import 'package:shagaf_ledger/features/orders/presentation/orders_cubit/orders_cubit.dart';
 
 class DateFilterWidget extends StatefulWidget {
   const DateFilterWidget({super.key});
@@ -32,14 +32,14 @@ class _DateFilterWidgetState extends State<DateFilterWidget> {
         'Selected Date: ${pickedDate.toLocal().toString().split(' ')[0]}',
       );
       if (context.mounted) {
-        context.read<OrdersBloc>().add(GetOrdersEvent(day: pickedDate));
+        context.read<OrdersCubit>().loadOrders(dateFilter: pickedDate);
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<OrdersBloc, OrdersState>(
+    return BlocBuilder<OrdersCubit, OrdersState>(
       builder: (context, state) {
         final dateFilter = state is OrdersLoaded
             ? state.dateFilter

@@ -33,18 +33,18 @@ class OrdersRepositoryImp implements OrdersRepository {
   // use the id to insert the order items using map to map all items
   // use productId to decrement the products
   @override
-  Future<Either<Failure, void>> createOrder({
+  Future<Either<Failure, int>> createOrder({
     required OrderEntity order,
     required List<OrderItem> items,
   }) async {
-    return await tryRepo<void>(() async {
+    return await tryRepo<int>(() async {
       // convert entity to model
       final OrderEntityModel orderModel = OrderEntityModel.fromOrderEntity(
         order,
       );
 
       // make a transaction
-      await localDB.transaction((txn) async {
+      return await localDB.transaction<int>((txn) async {
         // insert the order and get the order id
         final int orderId = await ordersDatabase.createOrder(
           orderMap: orderModel.toMap(),
@@ -69,9 +69,20 @@ class OrdersRepositoryImp implements OrdersRepository {
             executor: txn,
           );
         }
+
+        return orderId;
       });
     });
   }
+
+  @override
+  Future<Either<Failure, OrderEntity>> getNewOrder({
+    required int orderId,
+  }) async => await tryRepo<OrderEntityModel>(
+    () async => OrderEntityModel.fromMap(
+      map: await ordersDatabase.getOrder(orderId: orderId),
+    ),
+  );
 
   @override
   Future<Either<Failure, List<OrderEntity>>> getOrders({

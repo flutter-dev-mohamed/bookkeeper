@@ -55,12 +55,12 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
           final product = state.product;
 
           return PopScope(
-            canPop: false,
+            canPop: true,
             onPopInvokedWithResult: (didPop, result) {
               if (didPop) return;
 
               // on popping this page this will return true if the product has changed else return false
-              context.pop(state.didChange);
+              context.pop<bool>(state.didChange);
             },
             child: Directionality(
               textDirection: TextDirection.rtl,
