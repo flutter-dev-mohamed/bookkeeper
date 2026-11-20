@@ -9,6 +9,7 @@ class AppRoutes {
   static const String ordersPage = '/orders';
   static const String productsPage = '/products';
   static const String clientsPage = '/clients';
+  static const String expensesSummaryPage = '/expenses_summary';
 
   // --- Clients Nested Routes ---
   /// Nested route for the clients page HAS A clientId PARAM
@@ -38,8 +39,11 @@ class AppRoutes {
 
   // --- Orders Nested Routes ---
   /// Nested route for the orders page
-  static const String addNewOrder = '$ordersPage/addNewOrder';
+  static const String addNewOrder = 'addNewOrder';
 
   /// Nested route for the orders page HAS orderId AS PARAM
   static const String orderDetails = ':orderId';
+
+  static const String addExpense = 'add_expense';
+  static const String expenses = 'expenses';
 }

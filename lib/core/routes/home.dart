@@ -14,6 +14,11 @@ class Home extends StatelessWidget {
 
   List<Widget> get destinations => [
     NavigationDestination(
+      label: 'Expenses',
+      icon: Image.asset(AppIcons.expensesOutlined, width: 30, height: 30),
+      selectedIcon: Image.asset(AppIcons.expensesFilled, width: 30, height: 30),
+    ),
+    NavigationDestination(
       label: 'Clients',
       icon: Image.asset(AppIcons.usersAvatarOutlined, width: 30, height: 30),
       selectedIcon: Image.asset(

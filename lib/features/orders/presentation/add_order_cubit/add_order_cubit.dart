@@ -16,7 +16,6 @@ import 'package:shagaf_ledger/features/orders/domain/use_cases/create_order.dart
 part 'add_order_state.dart';
 
 class AddOrderCubit extends Cubit<AddOrderState> {
-  /// `TODO:` send an [`InventoryChanges`] [`AppNotification`]
   final CreateOrder _createOrder;
   final GetActiveProducts _getActiveProducts;
   final AppNotifications _appNotifications;

@@ -2,7 +2,6 @@ class AppPageNames {
   AppPageNames._();
 
   // products
-  static const String ordersPage = "ordersPage";
   static const String productsPage = "productsPage";
   static const String productDetailsPage = "productDetailsPage";
   static const String editProductPage = "editProductPage";
@@ -17,6 +16,7 @@ class AppPageNames {
       "inventoryAdditionDetailsPage";
 
   // orders
+  static const String ordersPage = "ordersPage";
   static const String addNewOrderPage = "addNewOrderPage";
   static const String orderDetails = "orderDetails";
 
@@ -27,4 +27,10 @@ class AppPageNames {
   /// This path need: clientId in the params
   static const String clientDetailsPage = 'clientDetailsPage';
   static const String addClientPage = 'addClientPage';
+
+  // expenses
+
+  static const String expensesSummaryPage = 'expensesSummaryPage';
+  static const String expensesPage = 'expensesPage';
+  static const String addExpensePage = 'addExpensePage';
 }

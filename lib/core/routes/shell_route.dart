@@ -13,6 +13,11 @@ import 'package:shagaf_ledger/features/clients/presentation/pages/clients_page.d
 import 'package:shagaf_ledger/features/clients/presentation/state_management/add_client_cubit/add_client_cubit.dart';
 import 'package:shagaf_ledger/features/clients/presentation/state_management/client_details_cubit/client_details_cubit.dart';
 import 'package:shagaf_ledger/features/clients/presentation/state_management/clients_cubit/clients_cubit.dart';
+import 'package:shagaf_ledger/features/daily_expenses/presentation/pages/expenses_page.dart';
+import 'package:shagaf_ledger/features/daily_expenses/presentation/pages/expenses_summary_page.dart';
+import 'package:shagaf_ledger/features/daily_expenses/presentation/state_management/add_expense/add_expense_cubit.dart';
+import 'package:shagaf_ledger/features/daily_expenses/presentation/state_management/expenses/expenses_cubit.dart';
+import 'package:shagaf_ledger/features/daily_expenses/presentation/widgets/add_expense_sheet.dart';
 import 'package:shagaf_ledger/features/inventory/domain/entities/inventory_addition.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/pages/inventory_addition_details_page.dart';
 import 'package:shagaf_ledger/features/inventory/presentation/pages/inventory_history_page.dart';
@@ -42,6 +47,8 @@ part 'shell_parts/orders_branch.dart';
 
 part 'shell_parts/products_branch.dart';
 
+part 'shell_parts/expenses_branch.dart';
+
 final _routeNavigatorKey = GlobalKey<NavigatorState>(debugLabel: "root");
 
 final router = GoRouter(
@@ -53,6 +60,8 @@ final router = GoRouter(
       builder: (context, state, navigationShell) =>
           Home(navigationShell: navigationShell),
       branches: [
+        //
+        expensesBranch,
         //
         clientsBranch,
         //

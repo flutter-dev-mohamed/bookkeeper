@@ -1,23 +1,26 @@
 class AppIcons {
   AppIcons._();
 
+  static const String _iconsFolder = 'lib/core/assets/icons/';
+
   // TODO: ADD ALL THE ICONS AND REPLACE ALL THE ONES WHERE YOU USE THE FULL PATH!
   // search for lib/core/assets/icons/
 
   // Clients Icons
   static const String usersAvatarFilled =
-      'lib/core/assets/icons/users_avatar_filled.png';
+      '${_iconsFolder}users_avatar_filled.png';
   static const String usersAvatarOutlined =
-      'lib/core/assets/icons/users_avatar_out_lined.png';
+      '${_iconsFolder}users_avatar_out_lined.png';
 
   // Orders Icons
-  static const String orderFilled = 'lib/core/assets/icons/order_filled.png';
-  static const String orderOutlined =
-      'lib/core/assets/icons/order_out_lined.png';
+  static const String orderFilled = '${_iconsFolder}order_filled.png';
+  static const String orderOutlined = '${_iconsFolder}order_out_lined.png';
 
   // Products / Package Icons
-  static const String packageFilled =
-      'lib/core/assets/icons/package_filled.png';
-  static const String packageOutlined =
-      'lib/core/assets/icons/package_out_lined.png';
+  static const String packageFilled = '${_iconsFolder}package_filled.png';
+  static const String packageOutlined = '${_iconsFolder}package_out_lined.png';
+
+  // Expenses Icons
+  static const String expensesFilled = '${_iconsFolder}expense_filled.png';
+  static const String expensesOutlined = '${_iconsFolder}expense_outlined.png';
 }

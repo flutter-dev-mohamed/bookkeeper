@@ -34,7 +34,7 @@ class CustomPrimaryButton extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
 
         // Add padding to make it look substantial like a login button
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
 
         // Ensure elevation for the "lifted" look
         elevation: 4,
