@@ -136,7 +136,7 @@ class _OrderSummarySheetState extends State<OrderSummarySheet> {
 
                   const SizedBox(height: 12),
 
-                  //  ──────────────────────────────────────────────────────────────  total and action button
+                  //  ──────────────────────────────────────────────────────────  total and action button
                   Row(
                     children: [
                       // total price
@@ -219,7 +219,7 @@ class _OrderSummarySheetState extends State<OrderSummarySheet> {
                   const SizedBox(height: 10),
 
                   // TODO: add a completed check box for order status
-                  //  ──────────────────────────────────────────────────────────────  discount
+                  //  ──────────────────────────────────────────────────────────  discount
                   DiscountInput(
                     onChanged: ({required type, required value}) =>
                         setState(() {
@@ -229,7 +229,7 @@ class _OrderSummarySheetState extends State<OrderSummarySheet> {
                   ),
 
                   const SizedBox(height: 10),
-                  //  ──────────────────────────────────────────────────────────────  note
+                  //  ──────────────────────────────────────────────────────────  note
                   CustomTextField(
                     controller: _noteController,
                     keyboardType: TextInputType.multiline,
@@ -245,6 +245,7 @@ class _OrderSummarySheetState extends State<OrderSummarySheet> {
 
                   const SizedBox(height: 10),
 
+                  //  ——————————————————————————————————————————————————————————  clients dropdown menu
                   ClientsDropdownMenu(
                     onSelectClient: (clientId) {
                       // TODO: ADD THE CLIENT ID TO THE ORDER

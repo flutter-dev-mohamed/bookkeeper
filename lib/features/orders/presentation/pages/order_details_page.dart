@@ -1,15 +1,19 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shagaf_ledger/core/common/colored_prints.dart';
 import 'package:shagaf_ledger/core/common/errors/UI/error_page.dart';
 import 'package:shagaf_ledger/core/common/functions/price_formate.dart';
+import 'package:shagaf_ledger/core/common/functions/show_alert_dialogue.dart';
 import 'package:shagaf_ledger/core/common/pages/loading_page.dart';
 import 'package:shagaf_ledger/core/common/widgets/custom_app_bar.dart';
 import 'package:shagaf_ledger/core/common/widgets/custom_primary_button.dart';
 import 'package:shagaf_ledger/features/orders/domain/entities/order_entity.dart';
 import 'package:shagaf_ledger/features/orders/domain/entities/order_item.dart';
 import 'package:shagaf_ledger/features/orders/presentation/order_details_cubit/order_details_cubit.dart';
+import 'package:shagaf_ledger/features/orders/presentation/order_details_cubit/order_details_effect.dart';
 
 class OrderDetailsPage extends StatefulWidget {
   final int orderId;
@@ -21,9 +25,23 @@ class OrderDetailsPage extends StatefulWidget {
 }
 
 class _OrderDetailsPageState extends State<OrderDetailsPage> {
+  late final StreamSubscription<OrderDetailsEffect> _effectsSubscription;
+
   @override
   void initState() {
     context.read<OrderDetailsCubit>().getOrder(orderId: widget.orderId);
+
+    final cubit = context.read<OrderDetailsCubit>();
+
+    _effectsSubscription = cubit.effects.listen((effect) {
+      if (!mounted) return;
+
+      switch (effect) {
+        case ShowOrderDetailsErrorDialog():
+          showAlertDialogue(context: context, message: effect.message);
+      }
+    });
+
     super.initState();
   }
 
@@ -159,7 +177,6 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                             _showCancelDialog(
                               context,
                               onCancelOrder: () {
-                                OPrint.lineR('cancel order');
                                 context.read<OrderDetailsCubit>().cancelOrder(
                                   orderId: order.id,
                                   items: items,

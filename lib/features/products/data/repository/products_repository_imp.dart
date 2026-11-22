@@ -1,5 +1,6 @@
 import 'package:fpdart/src/either.dart';
 import 'package:shagaf_ledger/core/common/errors/failure.dart';
+import 'package:shagaf_ledger/core/common/functions/date_formatting.dart';
 import 'package:shagaf_ledger/core/common/functions/try_repo.dart';
 import 'package:shagaf_ledger/features/inventory/data/database/inventory_history_database.dart';
 import 'package:shagaf_ledger/features/products/data/database/product_local_database.dart';
@@ -57,7 +58,7 @@ class ProductsRepositoryImp implements ProductsRepository {
               unitSellingPrice: product.sellingPrice,
               addedCost: addedCost,
               note: product.note ?? '',
-              createdAt: product.createdAt.toIso8601String().split('T')[0],
+              createdAt: dateFormatting(product.createdAt),
             );
 
         return productId;

@@ -12,6 +12,7 @@ class CustomFormField extends StatelessWidget {
   final Widget? prefix;
   final Widget? icon;
   final FocusNode? focusNode;
+  final bool autofocus;
 
   const CustomFormField({
     super.key,
@@ -26,11 +27,13 @@ class CustomFormField extends StatelessWidget {
     this.prefix,
     this.icon,
     this.focusNode,
+    this.autofocus = false,
   });
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      autofocus: autofocus,
       controller: controller,
       focusNode: focusNode,
       decoration: InputDecoration(

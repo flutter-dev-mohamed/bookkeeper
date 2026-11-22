@@ -15,7 +15,7 @@ final class ProductFailure extends ProductState {
 
 final class GotProductDetails extends ProductState {
   final Product product;
-  final didChange;
+  final bool didChange;
   final bool isSubmitting;
 
   GotProductDetails({

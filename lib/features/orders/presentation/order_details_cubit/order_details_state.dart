@@ -7,6 +7,7 @@ final class OrderDetailsInitial extends OrderDetailsState {}
 
 final class OrderDetailsLoading extends OrderDetailsState {}
 
+/// This State should only be emitted if the initial data loading failed
 final class OrderDetailsFailure extends OrderDetailsState {
   final String message;
 

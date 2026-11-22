@@ -88,5 +88,14 @@ Future<void> createTables(Database db) async {
         ON DELETE CASCADE
   )''');
 
+  await db.execute('''
+  CREATE TABLE expenses (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    type INTEGER NOT NULL,
+    amount REAL NOT NULL,
+    note TEXT,
+    created_at TEXT NOT NULL DEFAULT (DATETIME('now'))
+  )''');
+
   OPrint.g('===========———————— db tables created ————————===========');
 }

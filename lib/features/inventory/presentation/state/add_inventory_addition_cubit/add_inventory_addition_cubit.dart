@@ -68,18 +68,10 @@ class AddInventoryAdditionCubit extends Cubit<AddInventoryAdditionState> {
   void updateState({
     required InventoryAddition inventoryAddition,
     bool hasError = false,
-  }) {
-    OPrint.lineC('updateState (AddingInventoryAddition)');
-    OPrint.c('hasError: $hasError');
-    OPrint.c(
-      'inventoryAddition -> id: ${inventoryAddition.id}, productId: ${inventoryAddition.productId}, quantity: ${inventoryAddition.quantity}, totalPrice: ${inventoryAddition.totalPrice}, addedCost: ${inventoryAddition.addedCost}',
-    );
-
-    emit(
-      AddingInventoryAddition(
-        inventoryAddition: inventoryAddition,
-        hasError: hasError,
-      ),
-    );
-  }
+  }) => emit(
+    AddingInventoryAddition(
+      inventoryAddition: inventoryAddition,
+      hasError: hasError,
+    ),
+  );
 }
