@@ -23,7 +23,6 @@ class ProductCubit extends Cubit<ProductState> {
   }) async {
     emit(ProductLoading());
 
-    OPrint.b('Getting Product...');
     final res = await _getProductById(productId);
 
     res.fold(

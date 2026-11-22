@@ -47,6 +47,7 @@ final productsBranch = StatefulShellBranch(
             GoRoute(
               path: AppRoutes.editProduct,
               name: AppPageNames.editProductPage,
+              parentNavigatorKey: _routeNavigatorKey,
               builder: (context, state) {
                 // TODO: FIX THIS SHOULD NOT USE "!"
                 final product = state.extra! as Product;

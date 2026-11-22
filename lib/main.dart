@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:shagaf_ledger/core/assets/theme/lib/theme.dart';
 import 'package:shagaf_ledger/core/assets/theme/lib/util.dart';
+import 'package:shagaf_ledger/core/debugging/go_router_daignostics.dart';
 import 'package:shagaf_ledger/core/routes/app_routes.dart';
 import 'package:shagaf_ledger/core/routes/shell_route.dart';
 import 'package:shagaf_ledger/initDependencies/init_dependencies.dart';
@@ -14,6 +15,9 @@ void main() async {
   await initDependencies();
 
   await initializeDateFormatting();
+
+  // Attach GoRouter diagnostics once router is initialized and before runApp
+  // GoRouterDiagnostics.attach(router);
 
   runApp(const ShagafLedger());
 }

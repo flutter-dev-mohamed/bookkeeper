@@ -23,7 +23,7 @@ class AppRoutes {
   static const String addProduct = 'add_product';
 
   /// Nested route for the products page HAS productId AS PARAM
-  static const String productDetails = ':productId';
+  static const String productDetails = 'details/:productId';
 
   /// Nested route for the productDetails page
   static const String editProduct = 'edit_product';

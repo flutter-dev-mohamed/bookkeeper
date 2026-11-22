@@ -67,8 +67,6 @@ class AddOrderCubit extends Cubit<AddOrderState> {
 
     emit(currentState.copyWith(isSubmitting: true));
 
-    await Future.delayed(Duration(seconds: 6));
-
     final res = await _createOrder(
       CreateOrderParams(order: order, items: items),
     );
