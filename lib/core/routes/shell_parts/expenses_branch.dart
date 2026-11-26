@@ -28,7 +28,10 @@ final expensesBranch = StatefulShellBranch(
           path: AppRoutes.expenses,
           name: AppPageNames.expensesPage,
           parentNavigatorKey: _routeNavigatorKey,
-          builder: (context, state) => ExpensesPage(),
+          builder: (context, state) => BlocProvider(
+            create: (context) => serviceLocator<ExpensesCubit>(),
+            child: ExpensesPage(),
+          ),
           //
         ),
       ],

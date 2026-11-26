@@ -31,16 +31,8 @@ class ExpensesRepoImp implements ExpensesRepo {
       });
 
   @override
-  Future<Either<Failure, bool>> deleteExpense({
-    required Expense expense,
-  }) async => await tryRepo<bool>(() async {
-    final expenseModel = ExpenseModel.fromEntity(expense);
-
-    final resId = await _expensesDatabase.deleteExpense(
-      id: expenseModel.id,
-      expenseMap: expenseModel.toMap(),
-    );
-
-    return resId == expenseModel.id;
-  });
+  Future<Either<Failure, void>> deleteExpense({required int expenseId}) async =>
+      await tryRepo<void>(
+        () async => await _expensesDatabase.deleteExpense(id: expenseId),
+      );
 }

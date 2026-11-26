@@ -18,5 +18,22 @@ final class ExpensesLoaded extends ExpensesState {
 
   ExpensesLoaded({required this.expenses});
 
-  // TODO: Make a getter for  marketing, transport, rent, and other expense types
+  List<Expense> get marketingExpenses =>
+      expenses.where((e) => e.type == ExpenseType.marketing).toList();
+
+  List<Expense> get transportExpenses =>
+      expenses.where((e) => e.type == ExpenseType.transport).toList();
+
+  List<Expense> get rentExpenses =>
+      expenses.where((e) => e.type == ExpenseType.rent).toList();
+
+  List<Expense> get otherExpenses =>
+      expenses.where((e) => e.type == ExpenseType.other).toList();
+
+  double totalAmountFor(ExpenseType type) => expenses
+      .where((e) => e.type == type)
+      .fold(0.0, (sum, item) => sum + item.amount);
+
+  double get totalAllExpenses =>
+      expenses.fold(0.0, (sum, item) => sum + item.amount);
 }

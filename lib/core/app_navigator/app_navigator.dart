@@ -81,6 +81,9 @@ class AppNavigator {
     extra: addition,
   );
 
-  Future<int?> navToAddExpenseSheet(BuildContext context) async =>
-      await context.pushNamed<int>(AppPageNames.addExpensePage);
+  void navToAddExpenseSheet(BuildContext context) =>
+      context.pushNamed(AppPageNames.addExpensePage);
+
+  void navToExpensesPage(BuildContext context) =>
+      context.pushNamed(AppPageNames.expensesPage);
 }

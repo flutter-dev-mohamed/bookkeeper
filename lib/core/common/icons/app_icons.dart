@@ -23,4 +23,11 @@ class AppIcons {
   // Expenses Icons
   static const String expensesFilled = '${_iconsFolder}expense_filled.png';
   static const String expensesOutlined = '${_iconsFolder}expense_outlined.png';
+  static const String accountingFiled = '${_iconsFolder}accounting_filed.png';
+  static const String accountingOutlined =
+      '${_iconsFolder}accounting_outlined.png';
+  static const String expensesListFiled =
+      '${_iconsFolder}expenses_list_filed.png';
+  static const String expensesListOutlined =
+      '${_iconsFolder}expenses_list_filed.png';
 }

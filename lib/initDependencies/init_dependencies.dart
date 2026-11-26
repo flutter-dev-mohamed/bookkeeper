@@ -13,6 +13,7 @@ import 'package:shagaf_ledger/features/daily_expenses/data/database/expenses_dat
 import 'package:shagaf_ledger/features/daily_expenses/data/repository/expenses_repo_imp.dart';
 import 'package:shagaf_ledger/features/daily_expenses/domain/repository/expenses_repo.dart';
 import 'package:shagaf_ledger/features/daily_expenses/domain/use_cases/add_expense.dart';
+import 'package:shagaf_ledger/features/daily_expenses/domain/use_cases/delete_expense.dart';
 import 'package:shagaf_ledger/features/daily_expenses/domain/use_cases/get_all_expense.dart';
 import 'package:shagaf_ledger/features/daily_expenses/presentation/state_management/add_expense/add_expense_cubit.dart';
 import 'package:shagaf_ledger/features/daily_expenses/presentation/state_management/expenses/expenses_cubit.dart';
@@ -253,6 +254,10 @@ void _registerUseCases() {
   serviceLocator.registerFactory<AddExpense>(
     () => AddExpense(expensesRepo: serviceLocator<ExpensesRepo>()),
   );
+
+  serviceLocator.registerFactory<DeleteExpense>(
+    () => DeleteExpense(expensesRepo: serviceLocator<ExpensesRepo>()),
+  );
 }
 
 // -----------------------------------------------------------------------------
@@ -351,8 +356,11 @@ void _registerStateManagement() {
   );
 
   // Expenses
-  serviceLocator.registerFactory<ExpensesCubit>(
-    () => ExpensesCubit(getAllExpense: serviceLocator<GetAllExpense>()),
+  serviceLocator.registerLazySingleton<ExpensesCubit>(
+    () => ExpensesCubit(
+      getAllExpense: serviceLocator<GetAllExpense>(),
+      deleteExpense: serviceLocator<DeleteExpense>(),
+    ),
   );
 
   serviceLocator.registerFactory<AddExpenseCubit>(

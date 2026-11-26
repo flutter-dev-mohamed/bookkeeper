@@ -33,10 +33,7 @@ class ExpensesDatabase {
     }
   }
 
-  Future<int> deleteExpense({
-    required int id,
-    required Map<String, dynamic> expenseMap,
-  }) async => await tryDB<int>(
+  Future<int> deleteExpense({required int id}) async => await tryDB<int>(
     () async => await _database.delete(
       _expensesTable,
       where: ' id = ?',
